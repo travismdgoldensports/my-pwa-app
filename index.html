@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+
+  <title>My PWA</title>
+  <meta name="theme-color" content="#0f172a">
+
+  <!-- iOS PWA helpers -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+
+  <!-- Manifest (works both on root domain and /repo-name/) -->
+  <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+  <h1>It works!</h1>
+  <p>This is your PWA shell.</p>
+
+  <script src="app.js" defer></script>
+
+  <!-- Service worker registration with dynamic subpath detection -->
+  <script>
+    (function () {
+      if (!('serviceWorker' in navigator)) return;
+
+      // If hosted at https://username.github.io/repo-name/, pathname starts with /repo-name/
+      const basePath = location.pathname.split('/').slice(0, 2).join('/') + '/';
+      const swUrl = (basePath === '//' ? '/service-worker.js' : basePath + 'service-worker.js');
+
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register(swUrl).catch(err => {
+          console.error('SW registration failed:', err);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
