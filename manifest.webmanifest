@@ -1,6 +1,6 @@
 {
-  "name": "My PWA",
-  "short_name": "MyPWA",
+  "name": "Heads Up Hold Em",
+  "short_name": "Heads Up Hold Em",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
