@@ -93,12 +93,19 @@
   #feltStack .felt-block:nth-child(3){ display:none; }
   /* Hide original inline ODDS block inside feltStack; replaced with table version */
   
-  /* Make TRIPS PLUS and POCKET BONUS paytables about 30% narrower */
-  #feltStack .felt-block:nth-child(1),
-  #feltStack .felt-block:nth-child(2){
-    width:70%;
-  }
+  
+  /* Expand felt paytables width and keep bottom aligned */
+  .felt-left{ width: calc(114px + 170px + 12px); bottom:24px; }
 
+
+  /* Lay out left paytables and place ODDS to their right */
+  #feltStack{ display:grid; grid-template-columns: 114px 170px; grid-auto-rows:auto; column-gap:12px; align-items:end; }
+  #feltStack .felt-block:nth-child(1), #feltStack .felt-block:nth-child(2){ grid-column:1; width:auto; }
+  /* Make TRIPS PLUS and POCKET BONUS ~30% narrower than the column */
+  #feltStack .felt-block:nth-child(1),
+  #feltStack .felt-block:nth-child(2){ width:100%; }
+  /* Keep the original inline ODDS (3rd) hidden; show the compact ODDS (4th) to the right spanning both rows */
+  #feltStack .felt-block:nth-child(4){ grid-column:2; grid-row:1 / span 2; width:auto; }
 
   /* Compact felt table for ODDS payouts */
   .felt-table{ width:100%; border-collapse:collapse; }
@@ -206,7 +213,7 @@
   .actions button{width:100%}
   .bar-row{ display:flex; align-items:stretch; gap:10px; }
   .sticky-actions .actions{ flex:1 1 auto; }
-  .bar-meta{ display:flex; flex-direction:column; gap:4px; align-items:flex-end; justify-content:center; text-align:right; min-width:80px; font-size:13px; }
+  .bar-meta{ display:flex; flex-direction:column; gap:4px; align-items:flex-end; justify-content:center; text-align:right; min-width:120px; font-size:20px; }
 
   /* Keep table and actions compact on narrow screens */
   @media(max-width:1000px){
@@ -217,21 +224,19 @@
   /* Between 725px and 501px: move stats below buttons, keep buttons in one row */
   @media (max-width:725px) and (min-width:501px){
     .sticky-actions .bar-row{ flex-direction:column; align-items:stretch; gap:8px; }
-    .sticky-actions .actions{ grid-template-columns: repeat(4, minmax(0,1fr)); gap:8px; }
-    .sticky-actions .actions .action{ width:100%; }
-    .sticky-actions .bar-meta{ flex-direction:row; align-items:center; justify-content:space-between; text-align:left; min-width:0; }
+    .sticky-actions .bar-meta{ flex-direction:row; align-items:center; justify-content:space-between; text-align:left; min-width:0; order:-1; }
     .sticky-actions .bar-meta > div{ white-space:nowrap; }
+    .sticky-actions .actions{ order:0; grid-template-columns: repeat(4, minmax(0,1fr)); gap:8px; }
+    .sticky-actions .actions .action{ width:100%; }
   }
 
-  /* Stack actions on very small screens: 2x2 grid above a single-line meta */
   @media(max-width:500px){
     .sticky-actions .bar-row{ flex-direction:column; align-items:stretch; gap:8px; }
-    .sticky-actions .actions{ grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px; }
-    .sticky-actions .actions .action{ width:100%; }
-    .sticky-actions .bar-meta{ flex-direction:row; align-items:center; justify-content:space-between; text-align:left; min-width:0; }
+    .sticky-actions .bar-meta{ flex-direction:row; align-items:center; justify-content:space-between; text-align:left; min-width:0; order:-1; }
     .sticky-actions .bar-meta > div{ white-space:nowrap; }
+    .sticky-actions .actions{ order:0; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px; }
+    .sticky-actions .actions .action{ width:100%; }
   }
-
   /* Advice highlight glow for recommended action */
   .adv-glow{ position:relative; z-index:2; border-color: rgba(255,255,255,.75) !important; }
   .adv-glow{ box-shadow: 0 0 0 2px var(--glow,#35c48d), 0 0 14px var(--glow,#35c48d); animation: advPulse 1.2s ease-in-out infinite alternate; }
@@ -309,7 +314,7 @@
   /* Responsive tweaks for very narrow screens */
   @media(max-width:875px){
     /* Make table ~50% taller for more vertical room */
-    #table{ height: calc(462px * 1.25); min-height: calc(418px * 1.25); }
+    #table{ height: calc(462px * 0.8); min-height: calc(418px * 0.8); }
     /* Shrink cards ~25% via variables so layout adapts */
     #table{ --card-w: calc(84px * .75); --card-h: calc(114px * .75); --card-br: calc(10px * .75);}
     /* Shrink indices and suits ~25% */
@@ -330,9 +335,9 @@
   }
 
     /* Responsive tweaks for very very narrow screens */
-  @media(max-width:410px){
+  @media(max-width:640px){
     /* Make table ~50% taller for more vertical room */
-    #table{ height: calc(462px * 1.05); min-height: calc(418px * 1.05); }
+    #table{ height: calc(462px * 0.85); min-height: calc(418px * 0.85); }
     /* Shrink cards ~50% via variables so layout adapts */
     #table{ --card-w: calc(84px * .65); --card-h: calc(114px * .65);  --card-br: calc(10px * .65);}
     /* Shrink indices and suits ~25% */
@@ -403,7 +408,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 1.0</div>
+    <div class="splash-version">Version 1.1</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowWoo">Wizard of Odds Strategy</button>
@@ -713,7 +718,7 @@
     </div>
     <div class="bar-meta">
       <div>Bank: $<span id="bankVal" class="money"></span></div>
-      <div>Hands Played: <span id="handCount">0</span></div>
+      <div>Hands: <span id="handCount">0</span></div>
     </div>
   </div>
   <div class="muted" style="margin-top:6px;font-size:13px;">
@@ -1750,7 +1755,7 @@ function drawChartCore(canvas, mini){
   for(let i=0;i<=steps;i++){ const gx = leftPad + (cw*i/steps); ctx.beginPath(); ctx.moveTo(gx, topPad); ctx.lineTo(gx, topPad+ch); ctx.stroke(); }
 
   // Starting bankroll baseline (mini chart only)
-  if(mini && banks && banks.length){
+  if(banks && banks.length){
     const yStart = y1(banks[0]);
     ctx.save(); ctx.setLineDash([6,4]);
     ctx.strokeStyle = 'rgba(237,220,255,0.45)'; ctx.lineWidth = 1;
@@ -2067,6 +2072,13 @@ function showReport(){
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
