@@ -163,18 +163,18 @@
   /* Corner index: stack suit below rank */
   .index{ display:flex; flex-direction:column; align-items:center; line-height:1; }
   .index .rank{ line-height:1; }
-  .index .suit{ line-height:1; margin-top:1px; font-size:18px; }
-  .index.wide .rank{ font-size:18px; }
-  .index.wide .suit{ font-size:18px; }
+  .index .suit{ line-height:1; margin-top:1px; font-size:20px; }
+  .index.wide .rank{ font-size:20px; }
+  .index.wide .suit{ font-size:20px; }
 
-  .pips{ position:absolute; left:25%; top:15%; transform:translate(0%,0%); width:50%; height:70%; display:grid; grid-template-rows: repeat(5, 1fr); grid-template-columns: repeat(3, 1fr); }
+  .pips{ position:absolute; left:30%; top:20%; transform:translate(0%,0%); width:40%; height:60%; display:grid; grid-template-rows: repeat(5, 1fr); grid-template-columns: repeat(3, 1fr); }
   .pips.p4{ grid-template-columns: repeat(4, 1fr); }
-  .pip{ display:flex; align-items:center; justify-content:center; font-size:11px; }
+  .pip{ display:flex; align-items:center; justify-content:center; font-size:9px; }
   .pip.red{ color:#c62828; }
-  .pips.rank-9 .pip{ font-size:11px; }
-  .pips.rank-10 .pip{ font-size:11px; }
+  .pips.rank-9 .pip{ font-size:9px; }
+  .pips.rank-10 .pip{ font-size:9px; }
 
-  .face-svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:50%; height:auto; opacity:.9; }
+  .face-svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:40%; height:auto; opacity:.9; }
   .face-svg.red path{ fill:#c62828; }
   .face-svg.black path{ fill:#111; }
 
@@ -257,7 +257,18 @@
   .mini-chart canvas{ display:block; width:100%; height:162px; }
   /* Chart modal */
   #chartModal{ display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1400; }
-  #chartModal .inner{ position:absolute; inset:24px; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px; }
+  /* Limit modal content height to viewport width (minus insets) */
+  #chartModal .inner{
+    position:absolute;
+    inset:24px;
+    /* Override bottom so max-height/height can clamp properly */
+    bottom:auto;
+    /* Cap overall modal height to screen width while respecting viewport height */
+    max-height: min(calc(100vh - 48px), 100vw);
+    height: min(calc(100vh - 48px), 100vw);
+    overflow:auto;
+    border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;
+  }
   #chartModal .head{ display:flex; justify-content:space-between; align-items:center; }
   #chartModal .title{ font-size:18px; font-weight:800; color:#d9e6ff; }
   #chartLarge{ width:100%; height:540px; display:block; }
@@ -317,18 +328,19 @@
     #table{ height: calc(462px * 0.8); min-height: calc(418px * 0.8); }
     /* Shrink cards ~25% via variables so layout adapts */
     #table{ --card-w: calc(84px * .75); --card-h: calc(114px * .75); --card-br: calc(10px * .75);}
+    .grid{row-gap: calc(12px * .75);}
     /* Shrink indices and suits ~25% */
-    .card .index{ font-size: calc(18px * .75); }
-    .card .index.tl{ left:4px; top:3px; }
-    .card .index.br{ right:4px; bottom:3px; }
-    .card .index.wide{ font-size: calc(18px * .75); }
-    .card .index .suit{ font-size: calc(18px * .75); }
-    .card .index.wide .suit{ font-size: calc(18px * .75); }
-    .card .index.wide .rank{ font-size: calc(18px * .75); }
+    .card .index{ font-size: calc(20px * .9); }
+    .card .index.tl{ left:3px; top:2px; }
+    .card .index.br{ right:3px; bottom:2px; }
+    .card .index.wide{ font-size: calc(20px * .9); }
+    .card .index .suit{ font-size: calc(20x * .9); }
+    .card .index.wide .suit{ font-size: calc(20px * .9); }
+    .card .index.wide .rank{ font-size: calc(20px * .9); }
     /* Ensure pip symbols also scale down */
-    .card .pip{ font-size: 9px; }
-    .card .pips.rank-9 .pip{ font-size:9px; }
-    .card .pips.rank-10 .pip{ font-size:9px; }
+    .card .pip{ font-size: calc(9px * .75); }
+    .card .pips.rank-9 .pip{ font-size:calc(9px * .75); }
+    .card .pips.rank-10 .pip{ font-size:calc(9px * .75); }
     /* Scale down paytables and bet circles ~25% while keeping them anchored to bottom */
     .felt-left{ transform-origin: left bottom; transform: scale(.75); }
     .bet-circles{ transform-origin: right bottom; transform: scale(.75); }
@@ -340,18 +352,19 @@
     #table{ height: calc(462px * 0.85); min-height: calc(418px * 0.85); }
     /* Shrink cards ~50% via variables so layout adapts */
     #table{ --card-w: calc(84px * .65); --card-h: calc(114px * .65);  --card-br: calc(10px * .65);}
+    .grid{row-gap: calc(12px * .65);}
     /* Shrink indices and suits ~25% */
-    .card .index{ font-size: calc(18px * .65); }
-    .card .index.tl{ left:3px; top:2px; }
-    .card .index.br{ right:3px; bottom:2px; }
-    .card .index.wide{ font-size: calc(18px * .65); }
-    .card .index .suit{ font-size: calc(18px * .65); }
-    .card .index.wide .suit{ font-size: calc(18px * .65); }
-    .card .index.wide .rank{ font-size: calc(18px * .65); }
+    .card .index{ font-size: calc(20px * .8); }
+    .card .index.tl{ left:2px; top:1px; }
+    .card .index.br{ right:2px; bottom:1px; }
+    .card .index.wide{ font-size: calc(20px * .8); }
+    .card .index .suit{ font-size: calc(20px * .8); }
+    .card .index.wide .suit{ font-size: calc(20px * .8); }
+    .card .index.wide .rank{ font-size: calc(20px * .8); }
     /* Ensure pip symbols also scale down */
-    .card .pip{ font-size: 8px; }
-    .card .pips.rank-9 .pip{ font-size:8px; }
-    .card .pips.rank-10 .pip{ font-size:8px; }
+    .card .pip{ font-size: calc(9px * .75); }
+    .card .pips.rank-9 .pip{ font-size:calc(9px * .75); }
+    .card .pips.rank-10 .pip{ font-size:calc(9px * .75); }
     /* Scale down paytables and bet circles ~25% while keeping them anchored to bottom */
     .felt-left{ transform-origin: left bottom; transform: scale(.65); }
     .bet-circles{ transform-origin: right bottom; transform: scale(.65); }
@@ -408,10 +421,11 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 1.1</div>
+    <div class="splash-version">Version 1.2</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowWoo">Wizard of Odds Strategy</button>
+      <button id="splashShowRules">How to Play / Rules</button>
     </div>
     <div class="splash-install">iOS: tap the Share button, then <b>Add to Home Screen</b> to install.<br/>(This will enable offline use.)</div>
   </div>
@@ -444,6 +458,37 @@
     </div>
   </div>
 </div>
+
+<!-- Rules Modal -->
+<div id="rulesModal" class="modal-woo" role="dialog" aria-modal="true" aria-labelledby="rulesTitle" style="display:none;">
+  <div class="woo-box">
+    <div class="close-row"><button id="rulesClose">Close</button></div>
+    <h3 id="rulesTitle">Heads Up Hold 'Em — How to Play</h3>
+    <div class="woo-content">
+      <p><b>Objective</b>: Make the best 5-card poker hand and beat the dealer.</p>
+      <p><b>Initial Bets</b>: Place <b>Ante</b> and <b>Odds</b> (Blind). Optional side bets: <b>Trips Plus</b> and <b>Pocket Bonus</b>.</p>
+      <p><b>Play Decisions</b> (three chances):</p>
+      <ul>
+        <li><b>Preflop</b>: After receiving 2 cards, either <b>Raise 3x</b> your Ante or <b>Check</b>.</li>
+        <li><b>Flop</b>: After 3 community cards, either <b>Raise 2x</b> your Ante or <b>Check</b>.</li>
+        <li><b>River</b>: After all 5 community cards, either <b>Call 1x</b> your Ante or <b>Fold</b>.</li>
+      </ul>
+      <p><b>Showdown & Dealer Qualifying</b>:</p>
+      <ul>
+        <li>The dealer <b>qualifies</b> with a pair or better. If the dealer does not qualify and you win, your <b>Ante pushes</b> (returns) and <b>Play</b> pays even money.</li>
+        <li>If you win and the dealer qualifies: <b>Ante</b> and <b>Play</b> pay 1:1, and <b>Odds</b> pays per the felt paytable.</li>
+        <li>If you lose, the <b>Odds</b> bet may earn a <b>Bad Beat</b> payout for strong hands (see felt paytable).</li>
+        <li>If you <b>fold</b> on the river, you forfeit Ante, Odds, and any side bets.</li>
+      </ul>
+      <p><b>Side Bets</b>:</p>
+      <ul>
+        <li><b>Trips Plus</b>: Pays on your final 5-card hand, regardless of dealer outcome.</li>
+        <li><b>Pocket Bonus</b>: Pays based on your 2 starting cards (e.g., AA, A+Face suited/off, other pairs).</li>
+      </ul>
+      <p class="muted">Tip: The in‑app “Wizard of Odds Strategy” provides recommended raises/calls.</p>
+    </div>
+  </div>
+  </div>
 
 <!-- Hamburger toggle for sidebar on small screens -->
 <button id="menuToggle" class="menu-toggle" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
@@ -641,7 +686,6 @@
     <div id="bankrollBelowTable" style="margin-top:4px;">
       <div class="chart-row">
         <div id="chartMiniWrap" class="mini-chart" title="Click to expand">
-          <div class="chart-title">Bankroll Act vs Hypo (Using WoO Strat) and W/L per Hand</div>
           <canvas id="chartMini"></canvas>
         </div>
         <div id="chartLegendMini" class="chart-legend right" aria-hidden="true">
@@ -662,7 +706,7 @@
 
 <!-- Session Report Modal -->
 <div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1000;">
-  <div style="position:absolute; inset:24px; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
+  <div style="position:absolute; inset:24px; bottom:auto; max-height:min(calc(90vh - 48px), 100vw); height:min(calc(90vh - 48px), 100vw); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Session Report</div>
       <button id="reportClose" style="background:#22314f; border-color:#2e4470;">Close</button>
@@ -721,7 +765,7 @@
       <div>Hands: <span id="handCount">0</span></div>
     </div>
   </div>
-  <div class="muted" style="margin-top:6px;font-size:13px;">
+  <div class="muted" style="margin-top:6px;font-size:10px;">
     Wagers &mdash; Ante $<span id="anteVal"></span>, Odds $<span id="blindVal"></span>, Play $<span id="playVal"></span>, Trips $<span id="tripsVal"></span>, Pocket $<span id="pocketVal"></span>
   </div>
 </div>
@@ -1066,7 +1110,7 @@ function enableButtons(){
 }
 
 const DENOMS=[500,100,25,5,1];
-function makeChip(d){ const div=document.createElement('div'); div.className='chip denom-'+d; div.textContent='$'+d; return div; }
+function makeChip(d){ const div=document.createElement('div'); div.className='chip denom-'+d; div.textContent=+d; return div; }
 function breakdown(amount){ const out=[]; let rem=Math.abs(amount); for(const d of DENOMS){ while(rem>=d && out.length<12){ out.push(d); rem-=d; } } if(rem>0) out.push(1); return out; }
 // options: { stay: boolean, store: array }
 function animateChips(fromEl, toEl, amount, options={stay:false, store:null}){
@@ -1711,7 +1755,28 @@ function drawMiniChart(){
 }
 function drawLargeChart(){
   const c = document.getElementById('chartLarge'); if(!c) return;
-  const wrap = c.parentElement; const w = Math.max(300, wrap.clientWidth-0); const h = 540;
+  const wrap = c.parentElement;
+  const w = Math.max(300, wrap.clientWidth - 0);
+  // Limit large chart height to the viewport width (minus modal insets and header/title)
+  const vpW = (window.innerWidth || (document.documentElement && document.documentElement.clientWidth) || 800);
+  const vpH = (window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 800);
+  // Modal insets are 24px top + 24px bottom
+  const maxInnerH = Math.max(200, Math.min(vpH - 48, vpW));
+  let padV = 0, headH = 0, titleH = 0;
+  try{
+    const inner = document.querySelector('#chartModal .inner');
+    if(inner){
+      const cs = getComputedStyle(inner);
+      padV = (parseFloat(cs.paddingTop||'0')||0) + (parseFloat(cs.paddingBottom||'0')||0);
+      const head = inner.querySelector('.head');
+      if(head){ headH = Math.round(head.getBoundingClientRect().height||0); }
+      const title = inner.querySelector('.chart-title');
+      if(title){ titleH = Math.round(title.getBoundingClientRect().height||0); }
+    }
+  }catch(e){}
+  // Target height: fit within inner's capped height; also cap to 540px baseline
+  let h = Math.min(540, Math.floor(maxInnerH - padV - headH - titleH - 8));
+  if(!isFinite(h) || h < 80) h = 80; // ensure sensible minimum without forcing overflow
   sizeCanvas(c, w, h);
   drawChartCore(c, false);
 }
@@ -2054,13 +2119,18 @@ function showReport(){
   const splash = document.getElementById("splashOverlay");
   const splashClose = document.getElementById("splashClose");
   const splashShowWoo = document.getElementById("splashShowWoo");
+  const splashShowRules = document.getElementById("splashShowRules");
   const woo = document.getElementById("wooModal");
   const wooClose = document.getElementById("wooClose");
+  const rules = document.getElementById("rulesModal");
+  const rulesClose = document.getElementById("rulesClose");
 
   function openSplash(){ if(splash){ splash.style.display="flex"; body.classList.add("splash-open"); } }
   function closeSplash(){ if(splash){ splash.style.display="none"; body.classList.remove("splash-open"); } }
   function openWoo(){ if(woo){ woo.style.display="block"; } }
   function closeWoo(){ if(woo){ woo.style.display="none"; } }
+  function openRules(){ if(rules){ rules.style.display="block"; } }
+  function closeRules(){ if(rules){ rules.style.display="none"; } }
 
   if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", openSplash); } else { openSplash(); }
 
@@ -2068,6 +2138,9 @@ function showReport(){
   if(splashShowWoo) splashShowWoo.addEventListener("click", function(){ openWoo(); });
   if(wooClose) wooClose.addEventListener("click", closeWoo);
   if(woo) woo.addEventListener("click", function(e){ if(e.target === woo) closeWoo(); });
+  if(splashShowRules) splashShowRules.addEventListener("click", function(){ openRules(); });
+  if(rulesClose) rulesClose.addEventListener("click", closeRules);
+  if(rules) rules.addEventListener("click", function(e){ if(e.target === rules) closeRules(); });
 })();
 </script>
 </body>
