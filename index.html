@@ -253,7 +253,7 @@
   .result-popup .sub{ display:block; font-size:12px; font-weight:600; opacity:.8; margin-top:4px; }
 
   /* Mini bankroll chart */
-  .mini-chart{ border:1px solid #24365d; border-radius:10px; padding:6px; background:#0c172a; cursor:pointer; overflow:hidden; transition:width .3s ease; margin:8px auto 0; }
+  .mini-chart{ border:1px solid #24365d; border-radius:10px; padding:6px; background:#0c172a; cursor:pointer; overflow-x:auto; overflow-y:hidden; transition:width .3s ease; margin:8px auto 0; }
   .mini-chart canvas{ display:block; width:100%; height:162px; }
   /* Chart modal */
   #chartModal{ display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1400; }
@@ -348,11 +348,12 @@
 
     /* Responsive tweaks for very very narrow screens */
   @media(max-width:640px){
+    main{ padding: 8px;}
     /* Make table ~50% taller for more vertical room */
-    #table{ height: calc(462px * 0.85); min-height: calc(418px * 0.85); }
+    #table{ height: calc(462px * 0.78); min-height: calc(418px * 0.78); }
     /* Shrink cards ~50% via variables so layout adapts */
     #table{ --card-w: calc(84px * .65); --card-h: calc(114px * .65);  --card-br: calc(10px * .65);}
-    .grid{row-gap: calc(12px * .65);}
+    .grid{top: 6px; row-gap: calc(12px * .65);}
     /* Shrink indices and suits ~25% */
     .card .index{ font-size: calc(20px * .8); }
     .card .index.tl{ left:2px; top:1px; }
@@ -421,7 +422,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 1.2</div>
+    <div class="splash-version">Version 1.3</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowWoo">Wizard of Odds Strategy</button>
@@ -1693,32 +1694,26 @@ function getCssColor(varName, fallback){
 function drawMiniChart(){
   const c = document.getElementById('chartMini'); if(!c) return;
   const wrap = c.parentElement; if(!wrap) return;
-  // Determine max width from the visible container (row), not the table size
+  // Prefer matching the actual table width
   const rowEl = wrap.parentElement; // .chart-row
   const legendEl = document.getElementById('chartLegendMini');
+  const tableEl = document.getElementById('table');
+  const tableW = tableEl && tableEl.getBoundingClientRect ? Math.round(tableEl.getBoundingClientRect().width || 0) : 0;
   const rowW = (rowEl && rowEl.clientWidth) ? rowEl.clientWidth : (wrap.clientWidth || 300);
-  let maxW = rowW;
-  // If legend is on the same row, reserve its width (+gap) so the chart stays fully visible
-  try{
-    const gap = 12; // matches .chart-row gap
-    const legendW = legendEl ? (legendEl.getBoundingClientRect().width || 0) : 0;
-    const availSideBySide = rowW - legendW - gap;
-    if(availSideBySide >= 220){ // keep legend alongside when reasonable
-      maxW = availSideBySide;
-    }
-  }catch(e){}
-  maxW = Math.max(200, maxW);
+  let maxW = Math.max(200, tableW || rowW);
   // Start small and grow with hands played (bankHistory excludes starting point)
   const handsPlayed = Math.max(0, ((state.bankHistory||[]).length - 1));
   const FULL_AT = 30; // reach full width by this many hands
   const minW = Math.min(maxW, Math.max(180, Math.round(maxW * 0.35))); // at least 180px or ~35% of table
   const t = Math.min(1, handsPlayed / FULL_AT);
-  const w = Math.round(minW + (maxW - minW) * t);
-  // Apply wrapper width and center it
-  wrap.style.width = w + 'px';
+  const wWrap = Math.round(minW + (maxW - minW) * t);
+  // Apply wrapper width to match (and cap at) table width
+  wrap.style.width = wWrap + 'px';
   wrap.style.maxWidth = maxW + 'px';
   wrap.style.marginLeft = 'auto';
   wrap.style.marginRight = 'auto';
+  wrap.style.overflowX = 'auto';
+  wrap.style.overflowY = 'hidden';
   // Compute available vertical space between this chart container and the sticky actions bar
   let availH = 0;
   try{
@@ -1750,7 +1745,23 @@ function drawMiniChart(){
     availH = Math.max(120, availH - padV - titleH);
   }catch(e){ availH = Number(c.dataset.h0)||162; }
   const h = availH || (Number(c.dataset.h0)||162);
-  sizeCanvas(c, w, h);
+
+  // Determine when to enable horizontal scrolling by letting canvas exceed wrapper
+  const profitsCount = Math.max(0, (state.handProfits||[]).length);
+  const vw = window.innerWidth || maxW || 1024;
+  const overflowAt = vw < 640 ? 75 : (vw < 875 ? 100 : 150);
+  const pxPerHand = vw < 640 ? 10 : (vw < 875 ? 12 : 14);
+  // Include padding used in drawChartCore
+  const L_PAD = 38, R_PAD = 48;
+  let wCanvas = wWrap;
+  if(profitsCount > overflowAt){
+    const desired = L_PAD + R_PAD + Math.round(pxPerHand * Math.max(1, profitsCount));
+    wCanvas = Math.max(wWrap, desired);
+  }
+
+  sizeCanvas(c, wCanvas, h);
+  // Keep the newest games in view by default
+  try{ if(wCanvas > wWrap){ wrap.scrollLeft = wrap.scrollWidth; } }catch(e){}
   drawChartCore(c, true);
 }
 function drawLargeChart(){
