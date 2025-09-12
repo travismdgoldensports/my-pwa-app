@@ -13,6 +13,12 @@
   <!-- Manifest -->
   <link rel="manifest" href="manifest.webmanifest">
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=1">
+  <!-- Optional PNG fallbacks if you add them later
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=1">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png?v=1"> -->
+  
 <style>
   :root {
     --bg:#0b1320; --felt:#4a1a76; --felt2:#7a2fb6; --edge:#2a0d45;
@@ -152,10 +158,10 @@
       linear-gradient(45deg, rgba(0,0,0,.04) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.04) 75%);
     background-size:6px 6px; background-position:0 0, 3px 3px; opacity:.35; pointer-events:none;
   }
-  .index{ position:absolute; font-weight:900; font-family: "Segoe UI", Arial, sans-serif; font-size:17px; }
+  .index{ position:absolute; font-weight:400; font-family: "Segoe UI", Arial, sans-serif; font-size:24px; }
   .index.wide{ font-size:18px; }
-  .index.tl{ left:6px; top:4px; }
-  .index.br{ right:6px; bottom:4px; transform: rotate(180deg); }
+  .index.tl{ left:1px; top:1px; }
+  .index.br{ right:1px; bottom:1px; transform: rotate(180deg); }
   .red{ color:#c62828; }
   .back{ background:repeating-linear-gradient(45deg, #1b2a4a, #1b2a4a 6px, #0f1c34 6px, #0f1c34 12px); }
   .back::before{ display:none; }
@@ -163,9 +169,9 @@
   /* Corner index: stack suit below rank */
   .index{ display:flex; flex-direction:column; align-items:center; line-height:1; }
   .index .rank{ line-height:1; }
-  .index .suit{ line-height:1; margin-top:1px; font-size:20px; }
-  .index.wide .rank{ font-size:20px; }
-  .index.wide .suit{ font-size:20px; }
+  .index .suit{ line-height:1; margin-top:1px; font-size:24px; }
+  .index.wide .rank{ font-size:24px; }
+  .index.wide .suit{ font-size:24px; }
 
   .pips{ position:absolute; left:30%; top:20%; transform:translate(0%,0%); width:40%; height:60%; display:grid; grid-template-rows: repeat(5, 1fr); grid-template-columns: repeat(3, 1fr); }
   .pips.p4{ grid-template-columns: repeat(4, 1fr); }
@@ -208,8 +214,8 @@
   /* Small helper text under a bet circle */
   .bet-note{ font-size:10px; line-height:1.2; opacity:.8; text-align:center; }
 
-  .sticky-actions{position:fixed;left:232px;right:auto;width:min(920px, calc(100vw - 232px - 24px));bottom:env(safe-area-inset-bottom);z-index:1200;background:#0a1528cc;border:1px solid #203355;border-radius:14px;padding:10px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-  .actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+  .sticky-actions{position:fixed;left:232px;right:auto;width:min(920px, calc(100vw - 232px - 24px));bottom:env(safe-area-inset-bottom);z-index:1200;background:#0a1528cc;border:1px solid #203355;border-radius:14px;padding:8px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
   .actions button{width:100%}
   .bar-row{ display:flex; align-items:stretch; gap:10px; }
   .sticky-actions .actions{ flex:1 1 auto; }
@@ -218,7 +224,7 @@
   /* Keep table and actions compact on narrow screens */
   @media(max-width:1000px){
     #tableWrap{ max-width:100%; justify-self:stretch }
-    .sticky-actions{ left:12px; width: calc(100vw - 48px); }
+    .sticky-actions{ left:12px; width: calc(100vw - 60px); }
   }
 
   /* Between 725px and 501px: move stats below buttons, keep buttons in one row */
@@ -253,7 +259,7 @@
   .result-popup .sub{ display:block; font-size:12px; font-weight:600; opacity:.8; margin-top:4px; }
 
   /* Mini bankroll chart */
-  .mini-chart{ border:1px solid #24365d; border-radius:10px; padding:6px; background:#0c172a; cursor:pointer; overflow-x:auto; overflow-y:hidden; transition:width .3s ease; margin:8px auto 0; }
+  .mini-chart{ border:1px solid #24365d; border-radius:10px; padding:6px; background:#0c172a; cursor:pointer; overflow-x:auto; overflow-y:hidden; transition:width .3s ease; margin:2px auto 0; }
   .mini-chart canvas{ display:block; width:100%; height:162px; }
   /* Chart modal */
   #chartModal{ display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1400; }
@@ -330,13 +336,11 @@
     #table{ --card-w: calc(84px * .75); --card-h: calc(114px * .75); --card-br: calc(10px * .75);}
     .grid{row-gap: calc(12px * .75);}
     /* Shrink indices and suits ~25% */
-    .card .index{ font-size: calc(20px * .9); }
-    .card .index.tl{ left:3px; top:2px; }
-    .card .index.br{ right:3px; bottom:2px; }
-    .card .index.wide{ font-size: calc(20px * .9); }
-    .card .index .suit{ font-size: calc(20x * .9); }
-    .card .index.wide .suit{ font-size: calc(20px * .9); }
-    .card .index.wide .rank{ font-size: calc(20px * .9); }
+    .card .index{ font-size: calc(24px * .9); }
+    .card .index.wide{ font-size: calc(24px * .9); }
+    .card .index .suit{ font-size: calc(24x * .9); }
+    .card .index.wide .suit{ font-size: calc(24px * .9); }
+    .card .index.wide .rank{ font-size: calc(24px * .9); }
     /* Ensure pip symbols also scale down */
     .card .pip{ font-size: calc(9px * .75); }
     .card .pips.rank-9 .pip{ font-size:calc(9px * .75); }
@@ -355,13 +359,11 @@
     #table{ --card-w: calc(84px * .65); --card-h: calc(114px * .65);  --card-br: calc(10px * .65);}
     .grid{top: 6px; row-gap: calc(12px * .65);}
     /* Shrink indices and suits ~25% */
-    .card .index{ font-size: calc(20px * .8); }
-    .card .index.tl{ left:2px; top:1px; }
-    .card .index.br{ right:2px; bottom:1px; }
-    .card .index.wide{ font-size: calc(20px * .8); }
-    .card .index .suit{ font-size: calc(20px * .8); }
-    .card .index.wide .suit{ font-size: calc(20px * .8); }
-    .card .index.wide .rank{ font-size: calc(20px * .8); }
+    .card .index{ font-size: calc(24px * .8); }
+    .card .index.wide{ font-size: calc(24px * .8); }
+    .card .index .suit{ font-size: calc(24px * .8); }
+    .card .index.wide .suit{ font-size: calc(24px * .8); }
+    .card .index.wide .rank{ font-size: calc(24px * .8); }
     /* Ensure pip symbols also scale down */
     .card .pip{ font-size: calc(9px * .75); }
     .card .pips.rank-9 .pip{ font-size:calc(9px * .75); }
@@ -422,11 +424,12 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 1.3</div>
+    <div class="splash-version">Version 2.0</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
-      <button id="splashShowWoo">Wizard of Odds Strategy</button>
       <button id="splashShowRules">How to Play / Rules</button>
+      <button id="splashShowWoo">Wizard of Odds Strategy</button>
+      <button id="splashShowVersion" style="font-size:11px; padding:6px 8px; opacity:.9;">Version Info</button>
     </div>
     <div class="splash-install">iOS: tap the Share button, then <b>Add to Home Screen</b> to install.<br/>(This will enable offline use.)</div>
   </div>
@@ -507,17 +510,23 @@
     <div class="row"><label>Trips Plus (opt)</label><input id="trips" type="number" value="0" min="0" step="1"></div>
     <div class="row"><label>Pocket Bonus (opt)</label><input id="pocket" type="number" value="0" min="0" step="1"></div>
     <div class="row" style="margin-top:8px;"><button id="newHand">➕ New Hand</button><button id="reset">View Log / Restart</button></div>
+    <div class="row" style="margin-top:6px;"><button id="viewStats">View Player Stats</button></div>
     <div class="row" style="margin-top:12px; margin-bottom: 12px; justify-content:space-between; display:none;"></div>
     <div style="margin-top:12px;"><h2>Status</h2><div class="row"><span class="pill">Stage: <span id="stage">Waiting</span></span><span class="pill">Outcome: <span id="outcome">—</span></span></div></div>
       <h2>Strategy</h2>
       <div class="row">
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-          <input id="toggleAdvice" type="checkbox"> Show Wizard of Odds advice
+          <input id="togglePlayerHand" type="checkbox"> Show Hand Ranking During Play
         </label>
       </div>
       <div class="row">
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-          <input id="togglePlayerHand" type="checkbox"> Show Hand Ranking During Play
+          <input id="toggleAdvice" type="checkbox"> Show Play Advice (live)
+        </label>
+      </div>
+      <div class="row">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+          <input id="toggleCorrectMistakes" type="checkbox"> Correct Strategy Mistakes
         </label>
       </div>
       <div id="adviceWrap" style="display:none; margin-top:6px;">
@@ -706,13 +715,13 @@
 <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
 <!-- Session Report Modal -->
-<div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1000;">
-  <div style="position:absolute; inset:24px; bottom:auto; max-height:min(calc(90vh - 48px), 100vw); height:min(calc(90vh - 48px), 100vw); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
+<div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1400;">
+  <div style="position:absolute; inset:24px; bottom:auto; max-height:calc(90vh - 48px); height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Session Report</div>
       <button id="reportClose" style="background:#22314f; border-color:#2e4470;">Close</button>
     </div>
-    <div id="reportSummary" style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; font-size:13px; color:#b6c6ea;"></div>
+    <div id="reportSummary" style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; font-size:10px; color:#b6c6ea;"></div>
     <div style="flex:1; min-height:0; display:grid; grid-template-columns:1fr; gap:10px;">
       <div style="border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; overflow:auto;">
         <div style="font-weight:700; color:#d9e6ff; margin-bottom:6px;">Hand Log</div>
@@ -720,11 +729,88 @@
       </div>
     </div>
     <div style="display:flex; gap:8px; justify-content:flex-end;">
-      <button id="reportCopy" style="background:#1f3b2e; border-color:#2f5a46;">Copy Log</button>
-      <button id="reportEnd" style="background:#3a1a1a; border-color:#5c2a2a;">End Session & Reset Bank</button>
+      <button id="reportEnd" style="background:#3a1a1a; border-color:#5c2a2a;">End and Log Session & Reset Bank</button>
     </div>
   </div>
 
+</div>
+
+<!-- Version Info Modal -->
+<div id="versionModal" class="modal-woo" role="dialog" aria-modal="true" aria-labelledby="versionTitle" style="display:none;">
+  <div class="woo-box">
+    <div class="close-row"><button id="versionClose">Close</button></div>
+    <h3 id="versionTitle">Version Info</h3>
+    <div class="woo-content" id="versionContent">
+      <p class="muted"><b>Version 2.0</b></br>-Now tracks sessions and stats by player, on the local device only.  Note, you must end/restart the session in order to save it.</br>-Added a Strategy option: Correct Strategy Mistakes.  This allows the player to play without guidance, but will advise upon a strategy mistake and provide an option to correct the play.</br>-Now tracks more stats each session.</br>-Improved viewability, primarily through easier-to-read card ranks and suits.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Strategy Reminder Modal -->
+<div id="strategyModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1500;">
+  <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(250px, calc(100vw - 48px)); border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:16px; display:flex; flex-direction:column; gap:10px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+      <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Strategy Reminder</div>
+    </div>
+    <div id="strategyText" style="font-size:13px; color:#b6c6ea; line-height:1.45;"></div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button id="strategyIgnore" style="background:#3a1a1a; border-color:#5c2a2a;">Ignore</button>
+      <button id="strategyRevise" style="background:#22314f; border-color:#2e4470;">Revise</button>
+    </div>
+  </div>
+</div>
+
+<!-- Player Stats Modal -->
+<div id="statsModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1450;">
+  <div style="position:absolute; inset:24px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Player Sessions</div>
+      <button id="statsClose" style="background:#22314f; border-color:#2e4470;">Close</button>
+    </div>
+    <div id="statsMeta" class="muted" style="font-size:12px;"></div>
+    <div style="border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; overflow:auto;">
+      <table id="statsTable" style="width:100%; font-size:12px; border-collapse:collapse; color:#d9e6ff;">
+        <thead>
+          <tr style="text-align:left; color:#b6c6ea;">
+            <th style="padding:6px; border-bottom:1px solid #24365d;">#</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Start</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">End</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Start Bank</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">End Bank</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Hands</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Profit</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Followed</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Hypo Profit</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Best Hand</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="statsEmpty" class="muted" style="display:none; padding:12px;">No sessions found for this player yet.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Player Name Modal -->
+<div id="playerModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:3000;">
+  <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(420px, 92vw); border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:16px; display:flex; flex-direction:column; gap:10px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+      <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Select Player</div>
+      <button id="playerCancel" style="background:#22314f; border-color:#2e4470;">Cancel</button>
+    </div>
+    <div class="muted" style="font-size:12px;">Choose an existing name or enter a new one.</div>
+    <label style="font-size:12px; color:#b6c6ea;">Existing Players</label>
+    <select id="playerNameSelect" style="padding:8px; background:#0c172a; border:1px solid #2a3f66; border-radius:10px; color:#d9e6ff;">
+      <option value="">-- none --</option>
+    </select>
+    <div style="text-align:center; font-size:11px; color:#8ea2c8;">or</div>
+    <label style="font-size:12px; color:#b6c6ea;">New Player Name</label>
+    <input id="playerNameInput" type="text" placeholder="Enter name" style="padding:8px; background:#0c172a; border:1px solid #2a3f66; border-radius:10px; color:#d9e6ff;" />
+    <div id="playerErr" class="muted" style="min-height:16px; color:#ff6b6b; font-size:12px;"></div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button id="playerContinue" style="background:#1f3b2e; border-color:#2f5a46;">Continue</button>
+    </div>
+  </div>
 </div>
 
 <!-- Bankroll Chart Modal -->
@@ -905,13 +991,17 @@ const state={
   stage:'waiting',playMult:0,wagers:{Ante:0,Blind:0,Play:0,Trips:0,Pocket:0},
   lastStage:'waiting',actions:{preflop:null,flop:null,river:null},
   sessionStartBank:1000,
+  sessionStartTs: Date.now(),
+  playerName:'-',
   metrics:{followed:0,deviated:0,totalDelta:0,totalProfit:0},
   showAdvice:false,
   showPlayerHand:false,
+  correctMistakes:false,
   bankHistory:[],   // bankroll after each hand (includes starting point)
   handProfits:[],   // per-hand profit values
   handFollowed:[],  // per-hand WoO adherence (true=followed, false=deviated)
-  handHypProfits:[] // per-hand hypothetical profit if WoO followed
+  handHypProfits:[], // per-hand hypothetical profit if WoO followed
+  handClasses:[]     // per-hand player's final hand class
 };
 
 function updateBank(){el('bankVal').textContent=state.bank.toFixed(0)}
@@ -1047,6 +1137,46 @@ function computeAdvice(){
   return {stage: st[0].toUpperCase()+st.slice(1), action:'—', why:'No advice (already raised or not applicable)'};
 }
 
+// Map advice action text to internal action id
+function _mapAdviceTextToId(txt){
+  const t=(String(txt||'').trim().toLowerCase());
+  if(t.startsWith('raise 3')) return 'raise3';
+  if(t.startsWith('raise 2')) return 'raise2';
+  if(t.startsWith('call 1')) return 'call1';
+  if(t==='check') return 'check';
+  if(t==='fold') return 'fold';
+  return '';
+}
+// One-shot suppressor to avoid re-prompt loop when user chooses Ignore
+let _suppressMistakePromptOnce=false;
+// Show modal if selected action deviates from advice; return true if modal shown (caller should return early)
+function maybePromptStrategyDeviation(selectedId){
+  try{
+    if(!state.correctMistakes) return false;
+    if(_suppressMistakePromptOnce){ _suppressMistakePromptOnce=false; return false; }
+    // Do not prompt when no meaningful advice for current stage
+    const adv=computeAdvice();
+    const recId=_mapAdviceTextToId(adv && adv.action);
+    if(!recId || recId===selectedId) return false;
+    const modal=el('strategyModal'); const textEl=el('strategyText');
+    const ignoreBtn=el('strategyIgnore'); const reviseBtn=el('strategyRevise');
+    if(!modal||!textEl||!ignoreBtn||!reviseBtn) return false;
+    const stageLabel = adv && adv.stage ? adv.stage : '';
+    const why = adv && adv.why ? adv.why : '';
+    textEl.innerHTML = `Advised: <b>${adv.action}</b> <span class="muted">(${stageLabel})</span><br/>Why: ${why}`;
+    // Wire buttons
+    ignoreBtn.onclick = ()=>{
+      modal.style.display='none';
+      // proceed with originally selected action
+      _suppressMistakePromptOnce=true;
+      try{ const fn = window && window[selectedId]; if(typeof fn==='function') fn(); }catch(e){}
+    };
+    reviseBtn.onclick = ()=>{ modal.style.display='none'; };
+    modal.style.display='block';
+    return true;
+  }catch(e){ return false; }
+}
+
 function renderAdvice(){
   const wrap=el('adviceWrap'); if(!wrap) return;
   if(!state.showAdvice){ wrap.style.display='none'; return; }
@@ -1156,7 +1286,7 @@ function clearBetChips(){ Object.values(betChips).forEach(arr=>{ arr.forEach(el=
 function newHand(){
   state.ante=Number(el('ante').value)||0; state.trips=Number(el('trips').value)||0; state.pocket=Number(el('pocket').value)||0;
   const needed=state.ante*2+state.trips+state.pocket; if(state.bank<needed){alert("Not enough bank for Ante+Blind+Trips+Pocket.");return;}
-  if(state.hands===0){ state.sessionStartBank = state.bank; }
+  if(state.hands===0){ state.sessionStartBank = state.bank; if(!state.sessionStartTs) state.sessionStartTs=Date.now(); }
   state.deck=dealDeck(); state.player=state.deck.slice(0,2); state.dealer=state.deck.slice(2,4); state.board=state.deck.slice(4,9);
   state.playMult=0; state.wagers={Ante:state.ante,Blind:state.ante,Play:0,Trips:state.trips,Pocket:state.pocket}; state.actions={preflop:'check',flop:'check',river:null};
   state.bank-=needed; state.hands+=1; el('handCount').textContent=state.hands; el('outcome').textContent=''; clearLabels();
@@ -1187,12 +1317,12 @@ function showdown(){
   // Hand over: clear betting-circle chips after payout animation
   setTimeout(clearBetChips, 800);
   // Update bankroll graph
-  try{ recordHand(res.profit, res.strategy?!!res.strategy.followed:null, res.strategy?Number(res.strategy.hypProfit):null); }catch(e){}
+  try{ recordHand(res.profit, res.strategy?!!res.strategy.followed:null, res.strategy?Number(res.strategy.hypProfit):null, res.pClass); }catch(e){}
   // Big result popup
   if(typeof res.profit==='number') showBigResult(res.profit);
 }
 
-function raise3(){ if(state.stage!=='preflop'||state.playMult!==0) return;
+function raise3(){ if(state.stage!=='preflop'||state.playMult!==0) return; if(maybePromptStrategyDeviation('raise3')) return;
   const amt=state.ante*3; if(state.bank<amt){alert("Not enough bank for 3x raise.");return;}
   state.bank-=amt; state.playMult=3; state.wagers.Play=amt; state.actions.preflop='raise3'; updateBank(); animateChips(el('potPlayer'), el('circlePlay'), amt, {stay:true, store:betChips.play});
   // Append Play bet amount to the most recent log line (Hand #x Bets)
@@ -1201,22 +1331,22 @@ function raise3(){ if(state.stage!=='preflop'||state.playMult!==0) return;
   goFlop();
   setTimeout(()=>{ goRiver(); setTimeout(showdown,1000); }, 1000);
 }
-function raise2(){ if(state.stage!=='flop'||state.playMult!==0) return;
+function raise2(){ if(state.stage!=='flop'||state.playMult!==0) return; if(maybePromptStrategyDeviation('raise2')) return;
   const amt=state.ante*2; if(state.bank<amt){alert("Not enough bank for 2x raise.");return;}
   state.bank-=amt; state.playMult=2; state.wagers.Play=amt; state.actions.flop='raise2'; updateBank(); animateChips(el('potPlayer'), el('circlePlay'), amt, {stay:true, store:betChips.play});
   // Append Play bet amount to the most recent log line (Hand #x Bets)
   { const L=el('log'); if(L && L.firstElementChild){ L.firstElementChild.innerHTML += `, Play $${amt}`; } }
   goRiver(); setTimeout(showdown,1000);
 }
-function call1(){ if(state.stage!=='river'||state.playMult!==0) return;
+function call1(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybePromptStrategyDeviation('call1')) return;
   const amt=state.ante*1; if(state.bank<amt){alert("Not enough bank for 1x call.");return;}
   state.bank-=amt; state.playMult=1; state.wagers.Play=amt; state.actions.river='call1'; updateBank(); animateChips(el('potPlayer'), el('circlePlay'), amt, {stay:true, store:betChips.play});
   // Append Play bet amount to the most recent log line (Hand #x Bets)
   { const L=el('log'); if(L && L.firstElementChild){ L.firstElementChild.innerHTML += `, Play $${amt}`; } }
   setTimeout(showdown,1000);
 }
-function check(){ if(state.stage==='preflop'){ state.actions.preflop='check'; return goFlop(); } if(state.stage==='flop'){ state.actions.flop='check'; return goRiver(); } }
-function fold(){ if(state.stage!=='river'||state.playMult!==0) return;
+function check(){ if(!(state.stage==='preflop'||state.stage==='flop')) return; if(maybePromptStrategyDeviation('check')) return; if(state.stage==='preflop'){ state.actions.preflop='check'; return goFlop(); } if(state.stage==='flop'){ state.actions.flop='check'; return goRiver(); } }
+function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybePromptStrategyDeviation('fold')) return;
   state.actions.river='fold';
   // Move to showdown visuals
   setStage('showdown'); renderAll(); enableButtons(); el('outcome').innerHTML=`<span class="loss">fold</span>`;
@@ -1257,7 +1387,7 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return;
   animateChips(el('pot'), el('potDealer'), 10);
   setTimeout(clearBetChips, 800);
   // Update bankroll graph
-  try{ recordHand(Profit, !!followed, Number(hyp.ProfitH)); }catch(e){}
+  try{ recordHand(Profit, !!followed, Number(hyp.ProfitH), pe.cls); }catch(e){}
 }
 
 function handEval(cards){ const r=handRank7(cards); return {rank:r[0], tie:r[1], cls: classify(r[0], r[1])}; }
@@ -1631,7 +1761,7 @@ function settleAll(){
     ((rec.preflop==='raise3') || (state.actions.flop===rec.flop)) &&
     ((rec.preflop==='raise3'||rec.flop==='raise2') || (state.actions.river===rec.river))
   );
-  const strategyNote = `WoO Chart — ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (Î” ${fmt(hyp.ProfitH-Profit)})`;
+  const strategyNote = `WoO Chart — ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (Δ ${fmt(hyp.ProfitH-Profit)})`;
   const ocClass=cmp>0?"win":(cmp<0?"loss":"push");
   const outcomeHtml=`<span class="${ocClass}">${cmp>0?"player win":(cmp<0?"dealer win":"push")}</span>`;
   const detail=`Ante ${fmt(Ante)}, Odds ${fmt(Blind)}, Play ${fmt(Play)}, Trips ${fmt(tripsPay)}, Pocket ${fmt(pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
@@ -1677,11 +1807,12 @@ function isChartOpen(){ const m=document.getElementById('chartModal'); return m 
 function openChartModal(){ const m=document.getElementById('chartModal'); if(!m) return; m.style.display='block'; drawLargeChart(); }
 function closeChartModal(){ const m=document.getElementById('chartModal'); if(!m) return; m.style.display='none'; }
 
-function recordHand(profit, followed, hypProfit){
+function recordHand(profit, followed, hypProfit, pClass){
   // Append profit and resulting bank to histories
   state.handProfits.push(Number(profit)||0);
   if(Array.isArray(state.handFollowed)) state.handFollowed.push(typeof followed==='boolean'?followed:null);
   if(Array.isArray(state.handHypProfits)) state.handHypProfits.push((hypProfit!==undefined&&hypProfit!==null)?Number(hypProfit):null);
+  if(Array.isArray(state.handClasses)) state.handClasses.push(pClass||null);
   state.bankHistory.push(state.bank);
   drawMiniChart(); if(isChartOpen()) drawLargeChart();
 }
@@ -1749,7 +1880,7 @@ function drawMiniChart(){
   // Determine when to enable horizontal scrolling by letting canvas exceed wrapper
   const profitsCount = Math.max(0, (state.handProfits||[]).length);
   const vw = window.innerWidth || maxW || 1024;
-  const overflowAt = vw < 640 ? 75 : (vw < 875 ? 100 : 150);
+  const overflowAt = vw < 640 ? 50 : (vw < 875 ? 75 : 100);
   const pxPerHand = vw < 640 ? 10 : (vw < 875 ? 12 : 14);
   // Include padding used in drawChartCore
   const L_PAD = 38, R_PAD = 48;
@@ -1889,6 +2020,143 @@ function drawChartCore(canvas, mini){
   }
 }
 
+// IndexedDB helpers for persisting session summaries
+async function _openSessionDB(){
+  return new Promise((resolve, reject)=>{
+    try{
+      const req = window.indexedDB.open('HeadsUpHoldEmDB', 1);
+      req.onupgradeneeded = (e)=>{
+        const db = req.result;
+        if(!db.objectStoreNames.contains('sessions')){
+          const store = db.createObjectStore('sessions', { keyPath: 'id' });
+          store.createIndex('byPlayer', 'player', { unique:false });
+        }
+      };
+      req.onsuccess = ()=> resolve(req.result);
+      req.onerror = ()=> reject(req.error||new Error('indexedDB open failed'));
+    }catch(err){ reject(err); }
+  });
+}
+async function _nextSessionNo(player){
+  const db = await _openSessionDB();
+  return new Promise((resolve, reject)=>{
+    try{
+      const tx = db.transaction('sessions','readonly');
+      const store = tx.objectStore('sessions');
+      const idx = store.index('byPlayer');
+      const req = idx.openCursor(IDBKeyRange.only(player));
+      let maxNo = 0;
+      req.onsuccess = (e)=>{
+        const cur = e.target.result;
+        if(cur){
+          const v = cur.value && typeof cur.value.sessionNo==='number' ? cur.value.sessionNo : 0;
+          if(v>maxNo) maxNo=v; cur.continue();
+        }else{ resolve(maxNo+1); }
+      };
+      req.onerror = ()=> reject(req.error||new Error('cursor failed'));
+    }catch(err){ reject(err); }
+  });
+}
+async function saveSessionSummary(summary){
+  const player = summary.player || '-';
+  if(!summary.sessionNo || !(summary.sessionNo>0)){
+    try{ summary.sessionNo = await _nextSessionNo(player); }catch(e){ summary.sessionNo = 1; }
+  }
+  summary.id = `${player}::${String(summary.sessionNo).padStart(6,'0')}`;
+  const db = await _openSessionDB();
+  return new Promise((resolve, reject)=>{
+    try{
+      const tx = db.transaction('sessions','readwrite');
+      tx.oncomplete = ()=> resolve(summary);
+      tx.onerror = ()=> reject(tx.error||new Error('tx failed'));
+      tx.objectStore('sessions').put(summary);
+    }catch(err){ reject(err); }
+  });
+}
+
+// List unique players from DB
+async function listPlayers(){
+  try{
+    const db = await _openSessionDB();
+    return new Promise((resolve, reject)=>{
+      try{
+        const tx = db.transaction('sessions','readonly');
+        const idx = tx.objectStore('sessions').index('byPlayer');
+        const out = [];
+        const req = idx.openKeyCursor(null, 'nextunique');
+        req.onsuccess = (e)=>{
+          const cur = e.target.result;
+          if(cur){ out.push(cur.key); cur.continue(); }
+          else resolve(out);
+        };
+        req.onerror = ()=> reject(req.error||new Error('listPlayers failed'));
+      }catch(err){ resolve([]); }
+    });
+  }catch(e){ return []; }
+}
+
+// Get all sessions for a player
+async function getSessions(player){
+  const db = await _openSessionDB();
+  return new Promise((resolve, reject)=>{
+    try{
+      const tx = db.transaction('sessions','readonly');
+      const idx = tx.objectStore('sessions').index('byPlayer');
+      const req = idx.getAll(player);
+      req.onsuccess = ()=>{
+        const arr = Array.isArray(req.result)?req.result:[];
+        arr.sort((a,b)=> (a.sessionNo||0) - (b.sessionNo||0));
+        resolve(arr);
+      };
+      req.onerror = ()=> reject(req.error||new Error('getAll failed'));
+    }catch(err){ resolve([]); }
+  });
+}
+
+// Open Player Stats modal for current player
+async function openStatsModal(){
+  const modal = document.getElementById('statsModal');
+  const tbody = document.querySelector('#statsTable tbody');
+  const empty = document.getElementById('statsEmpty');
+  const meta = document.getElementById('statsMeta');
+  const name = (state.playerName || localStorage.getItem('huhe.playerName') || '-');
+  if(meta) meta.textContent = `Player: ${name}`;
+  if(tbody) tbody.innerHTML = '';
+  if(empty) empty.style.display = 'none';
+  try{
+    const rows = await getSessions(name);
+    if(!rows || rows.length===0){
+      if(empty) empty.style.display='block';
+    }else{
+      const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(); }catch(e){ return '-'; } };
+      const frag = document.createDocumentFragment();
+      rows.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${r.sessionNo||'-'}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionStart)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionEnd)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.startBank||0}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.endBank||0}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${r.hands||0}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(r.profit||0)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.wooFollowed||0)} / ${(r.hands||0)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(r.hypoProfit||0)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.bestHandLabel||'-')} ${r.bestHandCount?('× '+r.bestHandCount):''}</td>`;
+        frag.appendChild(tr);
+      });
+      if(tbody) tbody.appendChild(frag);
+    }
+  }catch(e){ if(empty) empty.style.display='block'; }
+  if(modal){ modal.style.display='block'; }
+  const closeBtn = document.getElementById('statsClose');
+  if(closeBtn){ closeBtn.onclick = ()=>{ if(modal) modal.style.display='none'; }; }
+  if(modal){
+    const handler = (e)=>{ if(e.target===modal){ modal.style.display='none'; modal.removeEventListener('click', handler, true);} };
+    modal.addEventListener('click', handler, true);
+  }
+}
+
 // Big result popup helper
 function showBigResult(amount){
   try{
@@ -1908,6 +2176,8 @@ function showBigResult(amount){
 
 document.getElementById('newHand').addEventListener('click',newHand);
 document.getElementById('reset').addEventListener('click',()=>{ showReport(); });
+const _viewStatsBtn = document.getElementById('viewStats');
+if(_viewStatsBtn){ _viewStatsBtn.addEventListener('click', ()=>{ openStatsModal(); }); }
 
 // Build single primary action button and hide the old four
 (function setupPrimaryAction(){
@@ -1957,6 +2227,12 @@ if(_rankToggle){
   _rankToggle.addEventListener('change', (e)=>{ state.showPlayerHand = !!e.target.checked; renderCards(); });
 }
 
+// Correct Strategy Mistakes toggle
+const _correctToggle = document.getElementById('toggleCorrectMistakes');
+if(_correctToggle){
+  _correctToggle.addEventListener('change', (e)=>{ state.correctMistakes = !!e.target.checked; });
+}
+
 document.getElementById('call1').addEventListener('click',call1);
 document.getElementById('check').addEventListener('click',check);
 document.getElementById('fold').addEventListener('click',fold);
@@ -1983,7 +2259,7 @@ document.getElementById('fold').addEventListener('click',fold);
 
 state.bank=Number(document.getElementById('bankroll').value)||1000; state.sessionStartBank=state.bank; updateBank(); setStage('waiting'); renderAll(); enableButtons();
 /// Initialize chart data and hooks
-try{ state.bankHistory=[state.bank]; state.handProfits=[]; state.handFollowed=[]; state.handHypProfits=[]; setupCharts(); }catch(e){}
+try{ state.sessionStartTs = Date.now(); state.bankHistory=[state.bank]; state.handProfits=[]; state.handFollowed=[]; state.handHypProfits=[]; state.handClasses=[]; setupCharts(); }catch(e){}
 // Allow changing starting bankroll before first bet only
 try{
   const _bankInp = document.getElementById('bankroll');
@@ -1993,13 +2269,14 @@ try{
       const v = Number(_bankInp.value);
       if(!isFinite(v)) return;
       state.bank = Math.max(0, Math.floor(v));
-      state.sessionStartBank = state.bank;
+      state.sessionStartBank = state.bank; state.sessionStartTs = Date.now();
       updateBank();
       // Reset chart baseline to new starting bank
       state.bankHistory = [state.bank];
       state.handProfits = [];
       state.handFollowed = [];
       state.handHypProfits = [];
+      state.handClasses = [];
       try{ drawMiniChart(); if(isChartOpen()) drawLargeChart(); }catch(e){}
     });
   }
@@ -2024,24 +2301,119 @@ function showReport(){
       panels[3].innerHTML = `Hypo Profit (Using WoO Strategy)<br/><span class="money" style="font-size:18px;">${fmt(profit + delta)}</span>`;
     }
   }catch(e){}
+  // Append additional session stats
+  try{
+    const startTs = state.sessionStartTs || Date.now();
+    const endTs = Date.now();
+    const profits = Array.isArray(state.handProfits) ? state.handProfits.slice() : [];
+    const maxWin = profits.length ? Math.max.apply(null, profits) : 0;
+    const maxLoss = profits.length ? Math.min.apply(null, profits) : 0;
+    const bh = Array.isArray(state.bankHistory) ? state.bankHistory.slice() : [];
+    const startBank = start;
+    const endBank = end;
+    const maxBank = bh.length ? Math.max.apply(null, bh) : endBank;
+    const minBank = bh.length ? Math.min.apply(null, bh) : endBank;
+    const maxTotalProfit = (maxBank - startBank);
+    const maxTotalLoss = (minBank - startBank);
+    const classOrder = {royal_flush:9, straight_flush:8, four_kind:7, full_house:6, flush:5, straight:4, three_kind:3, two_pair:2, one_pair:1, high_card:0};
+    const classes = Array.isArray(state.handClasses) ? state.handClasses : [];
+    let bestIdx = -1, bestScore = -1;
+    for(let i=0;i<classes.length;i++){
+      const c = classes[i]; const sc = (c && classOrder[c]!==undefined) ? classOrder[c] : -1;
+      if(sc>bestScore){ bestScore=sc; bestIdx=i; }
+    }
+    const bestClass = (bestIdx>=0) ? classes[bestIdx] : null;
+    const bestLabel = bestClass ? labelTextFromClass(bestClass) : '-';
+    const bestCount = bestClass ? classes.filter(c=>c===bestClass).length : 0;
+    let winStreak=0, lossStreak=0, maxWinStreak=0, maxLossStreak=0;
+    for(const v of profits){
+      if(v>0){ winStreak++; lossStreak=0; if(winStreak>maxWinStreak) maxWinStreak=winStreak; }
+      else if(v<0){ lossStreak++; winStreak=0; if(lossStreak>maxLossStreak) maxLossStreak=lossStreak; }
+      else { winStreak=0; lossStreak=0; }
+    }
+    const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(); }catch(e){ return '-'; } };
+    sum.innerHTML += `
+      <div class="panel" style="padding:10px;">Session Start<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(startTs)}</span></div>
+      <div class="panel" style="padding:10px;">Session End<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(endTs)}</span></div>
+      <div class="panel" style="padding:10px;">Starting Bankroll<br/><span class="money" style="font-size:18px;">$${startBank}</span></div>
+      <div class="panel" style="padding:10px;">Ending Bankroll<br/><span class="money" style="font-size:18px;">$${endBank}</span></div>
+      <div class="panel" style="padding:10px;">Greatest Total Profit<br/><span class="money" style="font-size:18px;">${fmt(maxTotalProfit)}</span></div>
+      <div class="panel" style="padding:10px;">Greatest Total Loss<br/><span class="money" style="font-size:18px;">${fmt(maxTotalLoss)}</span></div>
+      <div class="panel" style="padding:10px;">Best Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(maxWin)}</span></div>
+      <div class="panel" style="padding:10px;">Worst Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(maxLoss)}</span></div>
+      <div class="panel" style="padding:10px;">Most Consecutive Wins<br/><span class="money" style="font-size:18px;">${maxWinStreak}</span></div>
+      <div class="panel" style="padding:10px;">Most Consecutive Losses<br/><span class="money" style="font-size:18px;">${maxLossStreak}</span></div>
+      <div class="panel" style="padding:10px;">Best Hand<br/><span style="font-size:12px; color:#b6c6ea;">${bestLabel}${bestCount>0?` \u00D7 ${bestCount}`:''}</span></div>`;
+    // Reorder summary exactly as requested
+    const playerName = state.playerName || '-';
+    sum.innerHTML = `
+      <div class="panel" style="padding:10px; grid-column:1 / -1;">Player Name<br/><span style="font-size:12px; color:#b6c6ea;">${playerName}</span></div>
+      <div class="panel" style="padding:10px;">Session Start<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(startTs)}</span></div>
+      <div class="panel" style="padding:10px;">Session End<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(endTs)}</span></div>
+      <div class="panel" style="padding:10px;">Starting Bankroll<br/><span class="money" style="font-size:18px;">$${startBank}</span></div>
+      <div class="panel" style="padding:10px;">Ending Bankroll<br/><span class="money" style="font-size:18px;">$${endBank}</span></div>
+      <div class="panel" style="padding:10px;">Hands Played<br/><span class="money" style="font-size:18px;">${tot}</span></div>
+      <div class="panel" style="padding:10px;">Total Profit<br/><span class="money" style="font-size:18px;">${fmt(profit)}</span></div>
+      <div class="panel" style="padding:10px;">Strategy Followed<br/><span class="money" style="font-size:18px;">${f} / ${tot}</span></div>
+      <div class="panel" style="padding:10px;">Hypo Profit (Using Strategy)<br/><span class="money" style="font-size:18px;">${fmt(profitIfWOO)}</span></div>
+      <div class="panel" style="padding:10px;">Greatest Total Profit<br/><span class="money" style="font-size:18px;">${fmt(maxTotalProfit)}</span></div>
+      <div class="panel" style="padding:10px;">Greatest Total Loss<br/><span class="money" style="font-size:18px;">${fmt(maxTotalLoss)}</span></div>
+      <div class="panel" style="padding:10px;">Best Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(maxWin)}</span></div>
+      <div class="panel" style="padding:10px;">Worst Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(maxLoss)}</span></div>
+      <div class="panel" style="padding:10px;">Most Consec Wins<br/><span class="money" style="font-size:18px;">${maxWinStreak}</span></div>
+      <div class="panel" style="padding:10px;">Most Consec Losses<br/><span class="money" style="font-size:18px;">${maxLossStreak}</span></div>
+      <div class="panel" style="padding:10px;">Best Hand<br/><span style="font-size:12px; color:#b6c6ea;">${bestLabel}${bestCount>0?` \u00D7 ${bestCount}`:''}</span></div>`;
+    // Capture summary for persistence
+    state._lastSummary = {
+      player: state.playerName || '-',
+      sessionNo: null,
+      sessionStart: startTs,
+      sessionEnd: endTs,
+      startBank: startBank,
+      endBank: endBank,
+      hands: tot,
+      profit: profit,
+      wooFollowed: f,
+      hypoProfit: profitIfWOO,
+      greatestTotalProfit: maxTotalProfit,
+      greatestTotalLoss: maxTotalLoss,
+      bestProfitHand: maxWin,
+      worstProfitHand: maxLoss,
+      mostConsecutiveWins: maxWinStreak,
+      mostConsecutiveLosses: maxLossStreak,
+      bestHandLabel: bestLabel,
+      bestHandCount: bestCount,
+      createdAt: new Date().toISOString()
+    };
+  }catch(e){}
   // Copy current log HTML
   logCont.innerHTML = el('log').innerHTML;
   modal.style.display='block';
   // Wire buttons
   el('reportClose').onclick=()=>{ modal.style.display='none'; };
-  el('reportCopy').onclick=()=>{
-    const text = logCont.innerText; const ta=el('_copyBuf'); ta.value=text; ta.select(); document.execCommand('copy');
-  };
-  el('reportEnd').onclick=()=>{
+  el('reportEnd').onclick=async ()=>{
     modal.style.display='none';
+    // Persist session summary to IndexedDB
+    try{
+      const prev = state._lastSummary || {};
+      const payload = {
+        ...prev,
+        player: state.playerName || prev.player || '-',
+        sessionEnd: Date.now(),
+        endBank: state.bank,
+        profit: (state.bank - state.sessionStartBank)
+      };
+      await saveSessionSummary(payload);
+    }catch(e){}
     // Reset bank and session
     state.bank=Number(document.getElementById('bankroll').value)||0; updateBank();
     // Reset session start and clear chart data
-    state.sessionStartBank = state.bank;
+    state.sessionStartBank = state.bank; state.sessionStartTs = Date.now();
     state.bankHistory = [state.bank];
     state.handProfits = [];
     state.handFollowed = [];
     state.handHypProfits = [];
+    state.handClasses = [];
     state.handFollowed = [];
     state.hands=0; el('handCount').textContent='0';
     // Re-enable editing starting bankroll for next session
@@ -2131,27 +2503,108 @@ function showReport(){
   const splashClose = document.getElementById("splashClose");
   const splashShowWoo = document.getElementById("splashShowWoo");
   const splashShowRules = document.getElementById("splashShowRules");
+  const splashShowVersion = document.getElementById("splashShowVersion");
+  const playerModal = document.getElementById('playerModal');
+  const playerSel = document.getElementById('playerNameSelect');
+  const playerInp = document.getElementById('playerNameInput');
+  const playerErr = document.getElementById('playerErr');
+  const playerCancel = document.getElementById('playerCancel');
+  const playerContinue = document.getElementById('playerContinue');
   const woo = document.getElementById("wooModal");
   const wooClose = document.getElementById("wooClose");
   const rules = document.getElementById("rulesModal");
   const rulesClose = document.getElementById("rulesClose");
+  const version = document.getElementById("versionModal");
+  const versionClose = document.getElementById("versionClose");
 
   function openSplash(){ if(splash){ splash.style.display="flex"; body.classList.add("splash-open"); } }
   function closeSplash(){ if(splash){ splash.style.display="none"; body.classList.remove("splash-open"); } }
+  function openPlayer(){ if(playerModal){ playerModal.style.display='block'; populatePlayers(); setTimeout(()=>{ try{ if(playerInp) playerInp.focus(); }catch(e){} }, 0); } }
+  function closePlayer(){ if(playerModal){ playerModal.style.display='none'; } }
+  async function populatePlayers(){
+    try{
+      if(!playerSel) return;
+      const names = await listPlayers();
+      const chosen = (localStorage.getItem('huhe.playerName')||'').trim();
+      playerSel.innerHTML = '<option value="">-- none --</option>' +
+        (names||[]).map(n=>`<option value="${String(n).replace(/"/g,'&quot;')}">${n}</option>`).join('');
+      if(chosen){
+        const opt = Array.from(playerSel.options).find(o=>o.value===chosen);
+        if(opt) playerSel.value = chosen;
+        if(playerInp) playerInp.value = chosen;
+      }
+    }catch(e){}
+  }
   function openWoo(){ if(woo){ woo.style.display="block"; } }
   function closeWoo(){ if(woo){ woo.style.display="none"; } }
   function openRules(){ if(rules){ rules.style.display="block"; } }
   function closeRules(){ if(rules){ rules.style.display="none"; } }
+  function openVersion(){ if(version){ version.style.display="block"; } }
+  function closeVersion(){ if(version){ version.style.display="none"; } }
+  async function _openStatsModal_local(){
+    const modal = document.getElementById('statsModal');
+    const tbody = document.querySelector('#statsTable tbody');
+    const empty = document.getElementById('statsEmpty');
+    const meta = document.getElementById('statsMeta');
+    const name = (state.playerName || localStorage.getItem('huhe.playerName') || '-');
+    if(meta) meta.textContent = `Player: ${name}`;
+    if(tbody) tbody.innerHTML = '';
+    if(empty) empty.style.display = 'none';
+    try{
+      const rows = await getSessions(name);
+      if(!rows || rows.length===0){
+        if(empty) empty.style.display='block';
+      }else{
+        const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(); }catch(e){ return '-'; } };
+        const frag = document.createDocumentFragment();
+        rows.forEach(r=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="padding:6px; border-bottom:1px solid #24365d;">${r.sessionNo||'-'}</td>
+            <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionStart)}</td>
+            <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionEnd)}</td>
+            <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.startBank||0}</td>
+            <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.endBank||0}</td>
+            <td style="padding:6px; border-bottom:1px solid #24365d;">${r.hands||0}</td>
+            <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(r.profit||0)}</td>
+            <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.wooFollowed||0)} / ${(r.hands||0)}</td>
+            <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(r.hypoProfit||0)}</td>
+            <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.bestHandLabel||'-')} ${r.bestHandCount?('× '+r.bestHandCount):''}</td>`;
+          frag.appendChild(tr);
+        });
+        if(tbody) tbody.appendChild(frag);
+      }
+    }catch(e){ if(empty) empty.style.display='block'; }
+    if(modal){ modal.style.display='block'; }
+    const closeBtn = document.getElementById('statsClose');
+    if(closeBtn){ closeBtn.onclick = ()=>{ if(modal) modal.style.display='none'; }; }
+  }
 
   if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", openSplash); } else { openSplash(); }
 
-  if(splashClose) splashClose.addEventListener("click", closeSplash);
+  if(splashClose) splashClose.addEventListener("click", function(){ openPlayer(); });
   if(splashShowWoo) splashShowWoo.addEventListener("click", function(){ openWoo(); });
+  if(splashShowVersion) splashShowVersion.addEventListener("click", function(){ openVersion(); });
   if(wooClose) wooClose.addEventListener("click", closeWoo);
   if(woo) woo.addEventListener("click", function(e){ if(e.target === woo) closeWoo(); });
   if(splashShowRules) splashShowRules.addEventListener("click", function(){ openRules(); });
   if(rulesClose) rulesClose.addEventListener("click", closeRules);
   if(rules) rules.addEventListener("click", function(e){ if(e.target === rules) closeRules(); });
+  if(versionClose) versionClose.addEventListener("click", closeVersion);
+  if(version) version.addEventListener("click", function(e){ if(e.target === version) closeVersion(); });
+
+  if(playerCancel) playerCancel.addEventListener('click', function(){ closePlayer(); });
+  if(playerModal) playerModal.addEventListener('click', function(e){ if(e.target===playerModal) closePlayer(); });
+  if(playerContinue) playerContinue.addEventListener('click', async function(){
+    try{
+      const name = (playerInp && playerInp.value ? playerInp.value : playerSel && playerSel.value ? playerSel.value : '').trim();
+      if(!name){ if(playerErr){ playerErr.textContent='Please enter or select a player name.'; } return; }
+      state.playerName = name;
+      try{ localStorage.setItem('huhe.playerName', name); }catch(e){}
+      closePlayer();
+      closeSplash();
+    }catch(e){}
+  });
 })();
 </script>
 </body>
