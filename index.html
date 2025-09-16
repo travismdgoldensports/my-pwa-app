@@ -57,7 +57,7 @@
   h2{font-size:14px;margin:0 0 6px 0;color:#d9e6ff}
   label{display:block;font-size:12px;color:var(--muted);margin:4px 0 2px}
   input[type=number]{width:100%;padding:8px;background:#0c172a;border:1px solid #2a3f66;border-radius:10px;color:var(--text);font-size:14px}
-  input[type=number][disabled]{ opacity:.55; cursor:not-allowed; }
+  input[disabled]{ opacity:.55; cursor:not-allowed; }
   /* Keep sidebar label and input on one line */
   #sidebar .row label{ flex: 1 1 auto; margin-right:6px; }
   #sidebar .row input[type=number]{ flex: 0 0 65px; max-width:96px; }
@@ -66,6 +66,9 @@
   .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
   .money{font-variant-numeric:tabular-nums}
   .log{overflow:auto;background:#0e1930;border:1px solid #24365d;border-radius:10px;padding:8px;font-size:11px;line-height:1.3;max-height:13em}
+  .sidebar-message{margin-top:6px;font-size:11px;color:#e9f0ff;background:rgba(53,196,141,0.12);border:1px solid rgba(53,196,141,0.35);border-radius:8px;padding:6px 8px;display:none;}
+  .pulse-soft{animation:pulseSoft 2s ease-in-out infinite;}
+  @keyframes pulseSoft{0%,100%{opacity:0.65;}50%{opacity:1;}}
   /* Compact inline-spaced blocks in sidebar */
   #sidebar > div[style*="margin-top:12px"]{ margin-top:6px !important; }
   #sidebar > div[style*="margin-top:8px"]{ margin-top:6px !important; }
@@ -261,6 +264,35 @@
   /* Mini bankroll chart */
   .mini-chart{ border:1px solid #24365d; border-radius:10px; padding:6px; background:#0c172a; cursor:pointer; overflow-x:auto; overflow-y:hidden; transition:width .3s ease; margin:2px auto 0; }
   .mini-chart canvas{ display:block; width:100%; height:162px; }
+  #bankrollBelowTable{ position:relative; margin-top:4px; }
+  #bankrollBelowTable .mini-area-controls{ position:absolute; top:-10px; left:0; display:none; z-index:5; }
+  #miniSwapToggle{ display:none; align-items:center; justify-content:center; background:#22314f; border:1px solid #2e4470; color:#d9e6ff; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,0.35); }
+  #miniSwapToggle:hover{ background:#2b3f63; }
+  #miniSwapToggle:focus{ outline:2px solid #35c48d; outline-offset:2px; }
+  .mini-panels{ display:flex; gap:12px; align-items:stretch; }
+  .mini-panel{ flex:1 1 0; display:flex; flex-direction:column; gap:8px; }
+  #miniStatPanel{ border:1px solid #24365d; border-radius:10px; background:#111a2b; padding:10px; min-width:0; }
+  .mini-stat-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:10px; }
+  .mini-stat-item{ background:rgba(36,52,93,0.55); border:1px solid rgba(52,92,155,0.55); border-radius:8px; padding:8px; }
+  .mini-stat-label{ font-size:11px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+  .mini-stat-value{ font-size:18px; font-weight:700; color:#e9f0ff; }
+  .chart-panel{ border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; }
+  .chart-panel > .mini-chart{ margin:0; border:1px solid #24365d; }
+  .chart-panel > #chartLegendMini{ margin-top:8px; }
+  @media(min-width:1100px){
+    #bankrollBelowTable{ display:flex; flex-direction:column; gap:10px; }
+    #bankrollBelowTable .mini-panels{ display:grid; grid-template-columns:260px 1fr; gap:12px; align-items:stretch; }
+    #bankrollBelowTable .mini-area-controls{ display:none !important; }
+    #miniStatPanel, .chart-panel{ display:flex; }
+  }
+  @media(max-width:1099px){
+    #bankrollBelowTable .mini-area-controls{ display:block; }
+    #miniSwapToggle{ display:inline-flex; }
+    #bankrollBelowTable .mini-panels{ flex-direction:column; }
+    #bankrollBelowTable .mini-panel{ display:none; }
+    #bankrollBelowTable.show-stats #miniStatPanel{ display:flex; }
+    #bankrollBelowTable.show-chart .chart-panel{ display:flex; }
+  }
   /* Chart modal */
   #chartModal{ display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1400; }
   /* Limit modal content height to viewport width (minus insets) */
@@ -424,7 +456,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.0</div>
+    <div class="splash-version">Version 2.1</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -504,13 +536,18 @@
     <div class="sidebar-top">
       <button id="sidebarClose" class="sidebar-close" aria-label="Close menu">Close ✕</button>
     </div>
-    <h2>Table Settings</h2>
+    <h2>Table Settings & Bets</h2>
+    <div id="newHandPrompt" class="sidebar-message pulse-soft" aria-hidden="true">Click on New Hand to begin play.</div>
     <div class="row"><label>Starting Bankroll</label><input id="bankroll" type="number" value="500" min="0" step="1"></div>
     <div class="row"><label>Ante / Odds (each)</label><input id="ante" type="number" value="10" min="1" step="1"></div>
     <div class="row"><label>Trips Plus (opt)</label><input id="trips" type="number" value="0" min="0" step="1"></div>
     <div class="row"><label>Pocket Bonus (opt)</label><input id="pocket" type="number" value="0" min="0" step="1"></div>
-    <div class="row" style="margin-top:8px;"><button id="newHand">➕ New Hand</button><button id="reset">View Log / Restart</button></div>
-    <div class="row" style="margin-top:6px;"><button id="viewStats">View Player Stats</button></div>
+    <h2>Game Controls</h2> 
+    <div class="row" style="margin-top:6px;"><button id="newHand">➕ New Hand</button>
+    <div class="row" style="margin-top:6px;"><button id="startNewGame">Start New Session</button><button id="endGameExit">End Session and Exit</button></div>
+    <h2>View Stats</h2>
+    <div class="row" style="margin-top:6px;"></div><button id="viewSessionStats">Session</button></div>
+    <div class="row" style="margin-top:6px;"><button id="viewStats">Player</button></div>
     <div class="row" style="margin-top:12px; margin-bottom: 12px; justify-content:space-between; display:none;"></div>
     <div style="margin-top:12px;"><h2>Status</h2><div class="row"><span class="pill">Stage: <span id="stage">Waiting</span></span><span class="pill">Outcome: <span id="outcome">—</span></span></div></div>
       <h2>Strategy</h2>
@@ -693,18 +730,51 @@
       </div>
     </div>
     <!-- Bankroll chart moved beneath the table -->
-    <div id="bankrollBelowTable" style="margin-top:4px;">
-      <div class="chart-row">
-        <div id="chartMiniWrap" class="mini-chart" title="Click to expand">
-          <canvas id="chartMini"></canvas>
+    <div id="bankrollBelowTable" class="mini-area show-stats">
+      <div class="mini-area-controls">
+        <button id="miniSwapToggle" type="button" aria-label="Show chart" title="Show chart"><span aria-hidden="true">↻</span></button>
+      </div>
+      <div class="mini-panels">
+        <div id="miniStatPanel" class="mini-panel stats-panel">
+          <div class="mini-stat-grid">
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Total Profit</div>
+              <div class="mini-stat-value" id="miniStatTotal">+$0</div>
+            </div>
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Trips Plus Profit</div>
+              <div class="mini-stat-value" id="miniStatTrips">+$0</div>
+            </div>
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Pocket Bonus Profit</div>
+              <div class="mini-stat-value" id="miniStatPocket">+$0</div>
+            </div>
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Record</div>
+              <div class="mini-stat-value" id="miniStatRecord">0-0-0</div>
+            </div>
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Strategy Followed</div>
+              <div class="mini-stat-value" id="miniStatFollow">0/0</div>
+            </div>
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Best Hand</div>
+              <div class="mini-stat-value" id="miniStatBest">-</div>
+            </div>
+          </div>
         </div>
-        <div id="chartLegendMini" class="chart-legend right" aria-hidden="true">
-          <div class="item"><span class="swatch line-actual"></span> Bankroll</div>
-          <div class="item"><span class="swatch line-hypo"></span> Hypo (WoO)</div>
-          <div class="item"><span class="swatch win"></span> Win (followed)</div>
-          <div class="item"><span class="swatch lose"></span> Loss (followed)</div>
-          <div class="item"><span class="swatch dev-win"></span> Win (deviated)</div>
-          <div class="item"><span class="swatch dev-lose"></span> Loss (deviated)</div>
+        <div class="mini-panel chart-panel">
+          <div id="chartMiniWrap" class="mini-chart" title="Click to expand">
+            <canvas id="chartMini"></canvas>
+          </div>
+          <div id="chartLegendMini" class="chart-legend right" aria-hidden="true">
+            <div class="item"><span class="swatch line-actual"></span> Bankroll</div>
+            <div class="item"><span class="swatch line-hypo"></span> Hypo (WoO)</div>
+            <div class="item"><span class="swatch win"></span> Win (followed)</div>
+            <div class="item"><span class="swatch lose"></span> Loss (followed)</div>
+            <div class="item"><span class="swatch dev-win"></span> Win (deviated)</div>
+            <div class="item"><span class="swatch dev-lose"></span> Loss (deviated)</div>
+          </div>
         </div>
       </div>
     </div>
@@ -715,24 +785,27 @@
 <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
 <!-- Session Report Modal -->
-<div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1400;">
-  <div style="position:absolute; inset:24px; bottom:auto; max-height:calc(90vh - 48px); height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
+<div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:3400;">
+  <div style="position:absolute; inset:24px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Session Report</div>
       <button id="reportClose" style="background:#22314f; border-color:#2e4470;">Close</button>
     </div>
     <div id="reportSummary" style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; font-size:10px; color:#b6c6ea;"></div>
-    <div style="flex:1; min-height:0; display:grid; grid-template-columns:1fr; gap:10px;">
-      <div style="border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; overflow:auto;">
-        <div style="font-weight:700; color:#d9e6ff; margin-bottom:6px;">Hand Log</div>
-        <div id="reportLog" style="font-size:12px; line-height:1.4"></div>
-      </div>
-    </div>
-    <div style="display:flex; gap:8px; justify-content:flex-end;">
-      <button id="reportEnd" style="background:#3a1a1a; border-color:#5c2a2a;">End and Log Session & Reset Bank</button>
     </div>
   </div>
 
+</div>
+
+<!-- Hand Log Modal -->
+<div id="handLogModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:3400;">
+  <div style="position:absolute; inset:24px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px; width:min(700px, 92vw); left:50%; transform:translateX(-50%);">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Hand Log</div>
+      <button id="handLogClose" style="background:#22314f; border-color:#2e4470;">Close</button>
+    </div>
+    <div id="handLogContent" style="border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; font-size:12px; line-height:1.4; max-height:60vh; overflow:auto;"></div>
+  </div>
 </div>
 
 <!-- Version Info Modal -->
@@ -741,6 +814,7 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
+      <p class="muted"><b>Version 2.1</b></br>-More stats!</br>-Mini stat box on the main screen, swappable with the graph with the click of a button.</br>-Ability to delete players.</br>-Other visual improvements.</p>
       <p class="muted"><b>Version 2.0</b></br>-Now tracks sessions and stats by player, on the local device only.  Note, you must end/restart the session in order to save it.</br>-Added a Strategy option: Correct Strategy Mistakes.  This allows the player to play without guidance, but will advise upon a strategy mistake and provide an option to correct the play.</br>-Now tracks more stats each session.</br>-Improved viewability, primarily through easier-to-read card ranks and suits.</p>
     </div>
   </div>
@@ -761,24 +835,28 @@
 </div>
 
 <!-- Player Stats Modal -->
-<div id="statsModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:1450;">
+<div id="statsModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:3450;">
   <div style="position:absolute; inset:24px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Player Sessions</div>
       <button id="statsClose" style="background:#22314f; border-color:#2e4470;">Close</button>
     </div>
     <div id="statsMeta" class="muted" style="font-size:12px;"></div>
+    <div id="statsSummary" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:8px;"></div>
     <div style="border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; overflow:auto;">
       <table id="statsTable" style="width:100%; font-size:12px; border-collapse:collapse; color:#d9e6ff;">
         <thead>
           <tr style="text-align:left; color:#b6c6ea;">
             <th style="padding:6px; border-bottom:1px solid #24365d;">#</th>
             <th style="padding:6px; border-bottom:1px solid #24365d;">Start</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">End</th>
             <th style="padding:6px; border-bottom:1px solid #24365d;">Start Bank</th>
             <th style="padding:6px; border-bottom:1px solid #24365d;">End Bank</th>
             <th style="padding:6px; border-bottom:1px solid #24365d;">Hands</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Hand Record</th>
             <th style="padding:6px; border-bottom:1px solid #24365d;">Profit</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Play/Ante/Odds Profit</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Trips Profit</th>
+            <th style="padding:6px; border-bottom:1px solid #24365d;">Pocket Profit</th>
             <th style="padding:6px; border-bottom:1px solid #24365d;">Followed</th>
             <th style="padding:6px; border-bottom:1px solid #24365d;">Hypo Profit</th>
             <th style="padding:6px; border-bottom:1px solid #24365d;">Best Hand</th>
@@ -801,13 +879,17 @@
     <div class="muted" style="font-size:12px;">Choose an existing name or enter a new one.</div>
     <label style="font-size:12px; color:#b6c6ea;">Existing Players</label>
     <select id="playerNameSelect" style="padding:8px; background:#0c172a; border:1px solid #2a3f66; border-radius:10px; color:#d9e6ff;">
-      <option value="">-- none --</option>
+      <option value="">-- new player --</option>
     </select>
     <div style="text-align:center; font-size:11px; color:#8ea2c8;">or</div>
     <label style="font-size:12px; color:#b6c6ea;">New Player Name</label>
-    <input id="playerNameInput" type="text" placeholder="Enter name" style="padding:8px; background:#0c172a; border:1px solid #2a3f66; border-radius:10px; color:#d9e6ff;" />
+    <input id="playerNameInput" type="text" placeholder="Enter name" style="padding:8px; background:#0c172a; border:1px solid #2a3f66; border-radius:10px; color:#d9e6ff;" disabled />
     <div id="playerErr" class="muted" style="min-height:16px; color:#ff6b6b; font-size:12px;"></div>
-    <div style="display:flex; gap:8px; justify-content:flex-end;">
+    <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="playerViewStats" style="background:#22314f; border-color:#2e4470;">View Player Stats</button>
+        <button id="playerDelete" style="background:#3a232c; border-color:#5a2f3f;">Delete Player</button>
+      </div>
       <button id="playerContinue" style="background:#1f3b2e; border-color:#2f5a46;">Continue</button>
     </div>
   </div>
@@ -841,9 +923,9 @@
 <div class="sticky-actions">
   <div class="bar-row">
     <div class="actions">
-      <button id="raise3" class="action">Raise 3x (Preflop)</button>
-      <button id="raise2" class="action">Raise 2x (After Flop)</button>
-      <button id="call1" class="action">Call 1x (After River)</button>
+      <button id="raise3" class="action">Raise 3x</button>
+      <button id="raise2" class="action">Raise 2x</button>
+      <button id="call1" class="action">Call 1x</button>
       <button id="check" class="action">Check</button>
       <button id="fold" class="action" style="background:#3a1a1a;border-color:#5c2a2a">Fold</button>
     </div>
@@ -993,7 +1075,14 @@ const state={
   sessionStartBank:1000,
   sessionStartTs: Date.now(),
   playerName:'-',
-  metrics:{followed:0,deviated:0,totalDelta:0,totalProfit:0},
+  metrics:{
+    followed:0,
+    deviated:0,
+    totalDelta:0,
+    totalProfit:0,
+    handRecord:{win:0,loss:0,push:0},
+    betProfit:{play:0,trips:0,pocket:0}
+  },
   showAdvice:false,
   showPlayerHand:false,
   correctMistakes:false,
@@ -1001,15 +1090,73 @@ const state={
   handProfits:[],   // per-hand profit values
   handFollowed:[],  // per-hand WoO adherence (true=followed, false=deviated)
   handHypProfits:[], // per-hand hypothetical profit if WoO followed
-  handClasses:[]     // per-hand player's final hand class
+  handClasses:[],    // per-hand player's final hand class
+  handOutcomes:[],   // per-hand outcome labels
+  handBetBreakdown:[] // per-hand profit breakdowns
 };
 
 function updateBank(){el('bankVal').textContent=state.bank.toFixed(0)}
 function refreshBankrollEditable(){
-  const inp=el('bankroll');
-  if(!inp) return;
-  // Disable after first hand is started; enable before any bets are placed
-  inp.disabled = (state.hands>0);
+  const inp = el('bankroll');
+  const prompt = el('newHandPrompt');
+  const hasHands = state.hands>0;
+  if(inp){
+    // Disable after first hand is started; enable before any bets are placed
+    inp.disabled = hasHands;
+  }
+  if(prompt){
+    prompt.style.display = hasHands ? 'none' : 'block';
+    prompt.setAttribute('aria-hidden', hasHands ? 'true' : 'false');
+  }
+}
+
+function formatCurrency(value){
+  const rounded = Math.round(value);
+  const sign = rounded >= 0 ? '+$' : '-$';
+  return sign + Math.abs(rounded);
+}
+
+function updateMiniStats(){
+  const totalEl = document.getElementById('miniStatTotal');
+  if(!totalEl) return;
+  const tripsEl = document.getElementById('miniStatTrips');
+  const pocketEl = document.getElementById('miniStatPocket');
+  const recordEl = document.getElementById('miniStatRecord');
+  const followEl = document.getElementById('miniStatFollow');
+  const bestEl = document.getElementById('miniStatBest');
+
+  const startBank = Number(state.sessionStartBank||0);
+  const currentBank = Number(state.bank||0);
+  const totalProfit = currentBank - startBank;
+  const metrics = state.metrics || {};
+  const betProfit = metrics.betProfit || {play:0,trips:0,pocket:0};
+  const record = metrics.handRecord || {win:0,loss:0,push:0};
+  const followed = Number(metrics.followed||0);
+  const hands = Number(state.hands||0);
+
+  if(totalEl){ totalEl.textContent = formatCurrency(totalProfit); }
+  if(tripsEl){ tripsEl.textContent = formatCurrency(Number(betProfit.trips||0)); }
+  if(pocketEl){ pocketEl.textContent = formatCurrency(Number(betProfit.pocket||0)); }
+  if(recordEl){ recordEl.textContent = `${Number(record.win||0)}-${Number(record.loss||0)}-${Number(record.push||0)}`; }
+  if(followEl){ followEl.textContent = `${followed}/${hands}`; }
+
+  if(bestEl){
+    const classes = Array.isArray(state.handClasses) ? state.handClasses.filter(Boolean) : [];
+    if(classes.length){
+      const classOrder = {royal_flush:9, straight_flush:8, four_kind:7, full_house:6, flush:5, straight:4, three_kind:3, two_pair:2, one_pair:1, high_card:0};
+      let bestClass = null;
+      let bestScore = -1;
+      for(const cls of classes){
+        const score = classOrder[cls] !== undefined ? classOrder[cls] : -1;
+        if(score > bestScore){ bestScore = score; bestClass = cls; }
+      }
+      const count = classes.filter(c=>c===bestClass).length;
+      const label = bestClass ? labelTextFromClass(bestClass) : '-';
+      bestEl.textContent = count > 0 ? `${label} x ${count}` : label;
+    }else{
+      bestEl.textContent = '-';
+    }
+  }
 }
 function setStage(s){state.lastStage=state.stage; state.stage=s; el('stage').textContent=s[0].toUpperCase()+s.slice(1)}
 function clearLabels(){ el('dealerLabel').textContent='Dealer'; el('dealerLabel').className='label muted'; el('playerLabel').textContent='You'; el('playerLabel').className='label muted'; }
@@ -1215,11 +1362,11 @@ function updatePrimaryAction(){
   let enabled = false;
   try{
     if(st==='preflop' && state.playMult===0){
-      label = 'Raise 3x (Preflop)'; act='raise3'; enabled=true;
+      label = 'Raise 3x'; act='raise3'; enabled=true;
     }else if(st==='flop' && state.playMult===0){
-      label = 'Raise 2x (After Flop)'; act='raise2'; enabled=true;
+      label = 'Raise 2x'; act='raise2'; enabled=true;
     }else if(st==='river' && state.playMult===0){
-      label = 'Call 1x (After River)'; act='call1'; enabled=true;
+      label = 'Call 1x'; act='call1'; enabled=true;
     }
   }catch(e){ /* ignore */ }
   btn.textContent = label;
@@ -1317,7 +1464,7 @@ function showdown(){
   // Hand over: clear betting-circle chips after payout animation
   setTimeout(clearBetChips, 800);
   // Update bankroll graph
-  try{ recordHand(res.profit, res.strategy?!!res.strategy.followed:null, res.strategy?Number(res.strategy.hypProfit):null, res.pClass); }catch(e){}
+  try{ recordHand(res.profit, res.strategy?!!res.strategy.followed:null, res.strategy?Number(res.strategy.hypProfit):null, res.pClass, res.outcome, res.breakdown); }catch(e){}
   // Big result popup
   if(typeof res.profit==='number') showBigResult(res.profit);
 }
@@ -1370,6 +1517,15 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
   );
   const strategyNote = `WoO Chart - ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (Δ ${fmt(hyp.ProfitH-Profit)})`;
 
+  const breakdown = {
+    play: -(ante + blind),
+    ante: -ante,
+    blind: -blind,
+    playBet: 0,
+    trips: trips>0?-trips:0,
+    pocket: pocket>0?-pocket:0
+  };
+
   // Log the fold with net impact and strategy note
   const outcomeHtml=`<span class="loss">fold</span>`;
   const detail=`Ante ${fmt(0)}, Odds ${fmt(0)}, Play ${fmt(0)}, Trips ${fmt(0)}, Pocket ${fmt(0)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
@@ -1387,7 +1543,7 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
   animateChips(el('pot'), el('potDealer'), 10);
   setTimeout(clearBetChips, 800);
   // Update bankroll graph
-  try{ recordHand(Profit, !!followed, Number(hyp.ProfitH), pe.cls); }catch(e){}
+  try{ recordHand(Profit, !!followed, Number(hyp.ProfitH), pe.cls, 'loss', breakdown); }catch(e){}
 }
 
 function handEval(cards){ const r=handRank7(cards); return {rank:r[0], tie:r[1], cls: classify(r[0], r[1])}; }
@@ -1661,6 +1817,20 @@ function settleAll(){
   const Net=Ante+Blind+Play+tripsPay+pocketPay;
   const invested=(ante)+(blind)+((play>0)?play:0)+((trips>0)?trips:0)+((pocket>0)?pocket:0);
   const Profit=Net-invested;
+  const anteNet = Ante - ante;
+  const blindNet = Blind - blind;
+  const playNet = Play - (play>0?play:0);
+  const tripsNet = tripsPay - (trips>0?trips:0);
+  const pocketNet = pocketPay - (pocket>0?pocket:0);
+  const breakdown = {
+    play: anteNet + blindNet + playNet,
+    ante: anteNet,
+    blind: blindNet,
+    playBet: playNet,
+    trips: tripsNet,
+    pocket: pocketNet
+  };
+  const outcome = cmp>0?'win':(cmp<0?'loss':'push');
 
   // Wizard of Odds strategy (simplified heuristic): recommend actions and compute hypothetical profit
   function recommendWoO(){
@@ -1765,7 +1935,7 @@ function settleAll(){
   const ocClass=cmp>0?"win":(cmp<0?"loss":"push");
   const outcomeHtml=`<span class="${ocClass}">${cmp>0?"player win":(cmp<0?"dealer win":"push")}</span>`;
   const detail=`Ante ${fmt(Ante)}, Odds ${fmt(Blind)}, Play ${fmt(Play)}, Trips ${fmt(tripsPay)}, Pocket ${fmt(pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
-  return {playerNet:Net, playerOutcomeHtml:outcomeHtml, playerLogHtml:`Result — ${outcomeHtml}: ${detail}`, pClass:pe.cls, dClass:de.cls, cmp, profit:Profit, strategy:{followed, delta:(hyp.ProfitH-Profit), hypProfit:hyp.ProfitH, rec}};
+  return {playerNet:Net, playerOutcomeHtml:outcomeHtml, playerLogHtml:`Result — ${outcomeHtml}: ${detail}`, pClass:pe.cls, dClass:de.cls, cmp, profit:Profit, outcome, breakdown, strategy:{followed, delta:(hyp.ProfitH-Profit), hypProfit:hyp.ProfitH, rec}};
 }
 function pocketBonusPayout(hole,wager){
   const r0=RANKS[hole[0]%13], r1=RANKS[hole[1]%13];
@@ -1789,6 +1959,9 @@ function setupCharts(){
   if(!Array.isArray(state.handProfits)) state.handProfits=[];
   if(!Array.isArray(state.handFollowed)) state.handFollowed=[];
   if(!Array.isArray(state.handHypProfits)) state.handHypProfits=[];
+  if(!Array.isArray(state.handClasses)) state.handClasses=[];
+  if(!Array.isArray(state.handOutcomes)) state.handOutcomes=[];
+  if(!Array.isArray(state.handBetBreakdown)) state.handBetBreakdown=[];
   if(state.bankHistory.length===0){ state.bankHistory=[state.bank]; }
   const miniWrap = document.getElementById('chartMiniWrap');
   const mini = document.getElementById('chartMini');
@@ -1807,13 +1980,28 @@ function isChartOpen(){ const m=document.getElementById('chartModal'); return m 
 function openChartModal(){ const m=document.getElementById('chartModal'); if(!m) return; m.style.display='block'; drawLargeChart(); }
 function closeChartModal(){ const m=document.getElementById('chartModal'); if(!m) return; m.style.display='none'; }
 
-function recordHand(profit, followed, hypProfit, pClass){
+function recordHand(profit, followed, hypProfit, pClass, outcome, breakdown){
   // Append profit and resulting bank to histories
+  if(!Array.isArray(state.handProfits)) state.handProfits=[];
   state.handProfits.push(Number(profit)||0);
   if(Array.isArray(state.handFollowed)) state.handFollowed.push(typeof followed==='boolean'?followed:null);
   if(Array.isArray(state.handHypProfits)) state.handHypProfits.push((hypProfit!==undefined&&hypProfit!==null)?Number(hypProfit):null);
   if(Array.isArray(state.handClasses)) state.handClasses.push(pClass||null);
+  if(Array.isArray(state.handOutcomes)) state.handOutcomes.push(outcome||null);
+  if(Array.isArray(state.handBetBreakdown)) state.handBetBreakdown.push(breakdown||null);
   state.bankHistory.push(state.bank);
+  const metrics = state.metrics || (state.metrics = {followed:0, deviated:0, totalDelta:0, totalProfit:0, handRecord:{win:0,loss:0,push:0}, betProfit:{play:0,trips:0,pocket:0}});
+  if(!metrics.handRecord) metrics.handRecord = {win:0,loss:0,push:0};
+  if(outcome){
+    if(outcome==='win') metrics.handRecord.win += 1;
+    else if(outcome==='loss') metrics.handRecord.loss += 1;
+    else if(outcome==='push') metrics.handRecord.push += 1;
+  }
+  if(!metrics.betProfit) metrics.betProfit = {play:0,trips:0,pocket:0};
+  if(breakdown && typeof breakdown.play==='number') metrics.betProfit.play += breakdown.play;
+  if(breakdown && typeof breakdown.trips==='number') metrics.betProfit.trips += breakdown.trips;
+  if(breakdown && typeof breakdown.pocket==='number') metrics.betProfit.pocket += breakdown.pocket;
+  updateMiniStats();
   drawMiniChart(); if(isChartOpen()) drawLargeChart();
 }
 
@@ -2020,6 +2208,46 @@ function drawChartCore(canvas, mini){
   }
 }
 
+const miniContainer = document.getElementById('bankrollBelowTable');
+const miniSwapBtn = document.getElementById('miniSwapToggle');
+let miniViewMode = 'stats';
+
+function setMiniPanels(view){
+  miniViewMode = view === 'chart' ? 'chart' : 'stats';
+  if(miniSwapBtn){
+    const label = miniViewMode === 'chart' ? 'Show stats' : 'Show chart';
+    miniSwapBtn.setAttribute('aria-label', label);
+    miniSwapBtn.setAttribute('title', label);
+  }
+  if(!miniContainer) return;
+  if(window.innerWidth >= 1100){
+    miniContainer.classList.remove('show-stats','show-chart');
+    return;
+  }
+  miniContainer.classList.remove('show-stats','show-chart');
+  miniContainer.classList.add(miniViewMode === 'chart' ? 'show-chart' : 'show-stats');
+  if(miniViewMode === 'chart'){ drawMiniChart(); }
+}
+
+function updateMiniLayout(){
+  if(!miniContainer) return;
+  if(window.innerWidth >= 1100){
+    miniContainer.classList.remove('show-stats','show-chart');
+  }else{
+    setMiniPanels(miniViewMode);
+  }
+}
+
+if(miniSwapBtn){
+  miniSwapBtn.addEventListener('click', ()=>{
+    const next = miniViewMode === 'stats' ? 'chart' : 'stats';
+    setMiniPanels(next);
+  });
+}
+window.addEventListener('resize', updateMiniLayout);
+updateMiniLayout();
+
+
 // IndexedDB helpers for persisting session summaries
 async function _openSessionDB(){
   return new Promise((resolve, reject)=>{
@@ -2113,13 +2341,39 @@ async function getSessions(player){
   });
 }
 
+async function deletePlayer(name){
+  if(!name) return 0;
+  const db = await _openSessionDB();
+  return new Promise((resolve, reject)=>{
+    try{
+      const tx = db.transaction('sessions','readwrite');
+      const store = tx.objectStore('sessions');
+      const idx = store.index('byPlayer');
+      let removed = 0;
+      const req = idx.openCursor(IDBKeyRange.only(name));
+      req.onsuccess = (e)=>{
+        const cur = e.target.result;
+        if(cur){
+          try{
+            cur.delete();
+            removed += 1;
+            cur.continue();
+          }catch(err){ reject(err); return; }
+        }else{ resolve(removed); }
+      };
+      req.onerror = ()=> reject(req.error||new Error('delete failed'));
+      tx.onerror = ()=> reject(tx.error||new Error('delete tx failed'));
+    }catch(err){ reject(err); }
+  });
+}
+
 // Open Player Stats modal for current player
-async function openStatsModal(){
+async function openStatsModal(playerOverride){
   const modal = document.getElementById('statsModal');
   const tbody = document.querySelector('#statsTable tbody');
   const empty = document.getElementById('statsEmpty');
   const meta = document.getElementById('statsMeta');
-  const name = (state.playerName || localStorage.getItem('huhe.playerName') || '-');
+  const name = (playerOverride && playerOverride.trim()) || (state.playerName || localStorage.getItem('huhe.playerName') || '-');
   if(meta) meta.textContent = `Player: ${name}`;
   if(tbody) tbody.innerHTML = '';
   if(empty) empty.style.display = 'none';
@@ -2131,18 +2385,25 @@ async function openStatsModal(){
       const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(); }catch(e){ return '-'; } };
       const frag = document.createDocumentFragment();
       rows.forEach(r=>{
+        const wins = Number(r.wins||0);
+        const losses = Number(r.losses||0);
+        const pushes = Number(r.pushes||0);
+        const recordStr = `${wins}-${losses}-${pushes}`;
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td style="padding:6px; border-bottom:1px solid #24365d;">${r.sessionNo||'-'}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionStart)}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionEnd)}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.startBank||0}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.endBank||0}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">${r.hands||0}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(r.profit||0)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${recordStr}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.profit||0))}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.playProfit||0))}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.tripsProfit||0))}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.pocketProfit||0))}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.wooFollowed||0)} / ${(r.hands||0)}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(r.hypoProfit||0)}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.bestHandLabel||'-')} ${r.bestHandCount?('× '+r.bestHandCount):''}</td>`;
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.hypoProfit||0))}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.bestHandLabel||'-')} ${r.bestHandCount?('x '+r.bestHandCount):''}</td>`;
         frag.appendChild(tr);
       });
       if(tbody) tbody.appendChild(frag);
@@ -2175,7 +2436,20 @@ function showBigResult(amount){
 }
 
 document.getElementById('newHand').addEventListener('click',newHand);
-document.getElementById('reset').addEventListener('click',()=>{ showReport(); });
+const _viewSessionBtn = document.getElementById('viewSessionStats');
+if(_viewSessionBtn){ _viewSessionBtn.addEventListener('click', ()=>{ showReport(); }); }
+const _startNewGameBtn = document.getElementById('startNewGame');
+if(_startNewGameBtn){ _startNewGameBtn.addEventListener('click', async ()=>{
+  const reportModal = document.getElementById('reportModal');
+  if(reportModal) reportModal.style.display='none';
+  await logSessionAndReset();
+}); }
+const _endGameExitBtn = document.getElementById('endGameExit');
+if(_endGameExitBtn){ _endGameExitBtn.addEventListener('click', async ()=>{
+  const reportModal = document.getElementById('reportModal');
+  if(reportModal) reportModal.style.display='none';
+  await logSessionAndReset({ exitToSplash:true });
+}); }
 const _viewStatsBtn = document.getElementById('viewStats');
 if(_viewStatsBtn){ _viewStatsBtn.addEventListener('click', ()=>{ openStatsModal(); }); }
 
@@ -2257,7 +2531,7 @@ document.getElementById('fold').addEventListener('click',fold);
   }catch(e){}
 })();
 
-state.bank=Number(document.getElementById('bankroll').value)||1000; state.sessionStartBank=state.bank; updateBank(); setStage('waiting'); renderAll(); enableButtons();
+state.bank=Number(document.getElementById('bankroll').value)||1000; state.sessionStartBank=state.bank; updateBank(); setStage('waiting'); renderAll(); enableButtons(); updateMiniStats();
 /// Initialize chart data and hooks
 try{ state.sessionStartTs = Date.now(); state.bankHistory=[state.bank]; state.handProfits=[]; state.handFollowed=[]; state.handHypProfits=[]; state.handClasses=[]; setupCharts(); }catch(e){}
 // Allow changing starting bankroll before first bet only
@@ -2277,153 +2551,212 @@ try{
       state.handFollowed = [];
       state.handHypProfits = [];
       state.handClasses = [];
+      state.handOutcomes = [];
+      state.handBetBreakdown = [];
       try{ drawMiniChart(); if(isChartOpen()) drawLargeChart(); }catch(e){}
     });
   }
   refreshBankrollEditable();
 }catch(e){}
 
-function showReport(){
-  const modal=el('reportModal'); const sum=el('reportSummary'); const logCont=el('reportLog');
-  // Build summary
-  const start=state.sessionStartBank; const end=state.bank; const profit=end-start;
-  const f=state.metrics.followed, d=state.metrics.deviated, delta=state.metrics.totalDelta, tot=state.hands;
+function captureSessionSummary(){
+  const startBank = Number(state.sessionStartBank || 0);
+  const endBank = Number(state.bank || 0);
+  const metrics = state.metrics || {};
+  const tot = Number(state.hands || 0);
+  const followed = Number(metrics.followed || 0);
+  const delta = Number(metrics.totalDelta || 0);
+  const profit = endBank - startBank;
   const profitIfWOO = profit + delta;
-  sum.innerHTML=`
-    <div class="panel" style="padding:10px;">Hands<br/><span class="money" style="font-size:18px;">${tot}</span></div>
-    <div class="panel" style="padding:10px;">Profit<br/><span class="money" style="font-size:18px;">${fmt(profit)}</span></div>
-    <div class="panel" style="padding:10px;">WoO Strategy Followed<br/><span class="money" style="font-size:18px;">${f} / ${tot}</span></div>
-    <div class="panel" style="padding:10px;">Δ vs WoO<br/><span class="money" style="font-size:18px;">${fmt(delta)}</span></div>`;
-  // Replace the 4th panel with Profit if WoO Followed
-  try{
-    const panels = sum.querySelectorAll('.panel');
-    if(panels && panels.length>=4){
-      panels[3].innerHTML = `Hypo Profit (Using WoO Strategy)<br/><span class="money" style="font-size:18px;">${fmt(profit + delta)}</span>`;
-    }
-  }catch(e){}
-  // Append additional session stats
-  try{
-    const startTs = state.sessionStartTs || Date.now();
-    const endTs = Date.now();
-    const profits = Array.isArray(state.handProfits) ? state.handProfits.slice() : [];
-    const maxWin = profits.length ? Math.max.apply(null, profits) : 0;
-    const maxLoss = profits.length ? Math.min.apply(null, profits) : 0;
-    const bh = Array.isArray(state.bankHistory) ? state.bankHistory.slice() : [];
-    const startBank = start;
-    const endBank = end;
-    const maxBank = bh.length ? Math.max.apply(null, bh) : endBank;
-    const minBank = bh.length ? Math.min.apply(null, bh) : endBank;
-    const maxTotalProfit = (maxBank - startBank);
-    const maxTotalLoss = (minBank - startBank);
-    const classOrder = {royal_flush:9, straight_flush:8, four_kind:7, full_house:6, flush:5, straight:4, three_kind:3, two_pair:2, one_pair:1, high_card:0};
-    const classes = Array.isArray(state.handClasses) ? state.handClasses : [];
-    let bestIdx = -1, bestScore = -1;
-    for(let i=0;i<classes.length;i++){
-      const c = classes[i]; const sc = (c && classOrder[c]!==undefined) ? classOrder[c] : -1;
-      if(sc>bestScore){ bestScore=sc; bestIdx=i; }
-    }
-    const bestClass = (bestIdx>=0) ? classes[bestIdx] : null;
-    const bestLabel = bestClass ? labelTextFromClass(bestClass) : '-';
-    const bestCount = bestClass ? classes.filter(c=>c===bestClass).length : 0;
-    let winStreak=0, lossStreak=0, maxWinStreak=0, maxLossStreak=0;
-    for(const v of profits){
-      if(v>0){ winStreak++; lossStreak=0; if(winStreak>maxWinStreak) maxWinStreak=winStreak; }
-      else if(v<0){ lossStreak++; winStreak=0; if(lossStreak>maxLossStreak) maxLossStreak=lossStreak; }
-      else { winStreak=0; lossStreak=0; }
-    }
-    const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(); }catch(e){ return '-'; } };
-    sum.innerHTML += `
-      <div class="panel" style="padding:10px;">Session Start<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(startTs)}</span></div>
-      <div class="panel" style="padding:10px;">Session End<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(endTs)}</span></div>
-      <div class="panel" style="padding:10px;">Starting Bankroll<br/><span class="money" style="font-size:18px;">$${startBank}</span></div>
-      <div class="panel" style="padding:10px;">Ending Bankroll<br/><span class="money" style="font-size:18px;">$${endBank}</span></div>
-      <div class="panel" style="padding:10px;">Greatest Total Profit<br/><span class="money" style="font-size:18px;">${fmt(maxTotalProfit)}</span></div>
-      <div class="panel" style="padding:10px;">Greatest Total Loss<br/><span class="money" style="font-size:18px;">${fmt(maxTotalLoss)}</span></div>
-      <div class="panel" style="padding:10px;">Best Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(maxWin)}</span></div>
-      <div class="panel" style="padding:10px;">Worst Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(maxLoss)}</span></div>
-      <div class="panel" style="padding:10px;">Most Consecutive Wins<br/><span class="money" style="font-size:18px;">${maxWinStreak}</span></div>
-      <div class="panel" style="padding:10px;">Most Consecutive Losses<br/><span class="money" style="font-size:18px;">${maxLossStreak}</span></div>
-      <div class="panel" style="padding:10px;">Best Hand<br/><span style="font-size:12px; color:#b6c6ea;">${bestLabel}${bestCount>0?` \u00D7 ${bestCount}`:''}</span></div>`;
-    // Reorder summary exactly as requested
-    const playerName = state.playerName || '-';
+  const handRecord = metrics.handRecord || {};
+  const wins = Number(handRecord.win || 0);
+  const losses = Number(handRecord.loss || 0);
+  const pushes = Number(handRecord.push || 0);
+  const betProfit = metrics.betProfit || {};
+  const playProfit = Number(betProfit.play || 0);
+  const tripsProfit = Number(betProfit.trips || 0);
+  const pocketProfit = Number(betProfit.pocket || 0);
+  const startTs = state.sessionStartTs || Date.now();
+  const endTs = Date.now();
+  const profits = Array.isArray(state.handProfits) ? state.handProfits.slice() : [];
+  const maxWin = profits.length ? Math.max.apply(null, profits) : 0;
+  const maxLoss = profits.length ? Math.min.apply(null, profits) : 0;
+  const bankHistory = Array.isArray(state.bankHistory) ? state.bankHistory.slice() : [];
+  const maxBank = bankHistory.length ? Math.max.apply(null, bankHistory) : endBank;
+  const minBank = bankHistory.length ? Math.min.apply(null, bankHistory) : endBank;
+  const maxTotalProfit = maxBank - startBank;
+  const maxTotalLoss = minBank - startBank;
+  const classOrder = {royal_flush:9, straight_flush:8, four_kind:7, full_house:6, flush:5, straight:4, three_kind:3, two_pair:2, one_pair:1, high_card:0};
+  const classes = Array.isArray(state.handClasses) ? state.handClasses : [];
+  let bestIdx = -1, bestScore = -1;
+  for(let i=0;i<classes.length;i++){
+    const c = classes[i]; const sc = (c && classOrder[c]!==undefined) ? classOrder[c] : -1;
+    if(sc>bestScore){ bestScore=sc; bestIdx=i; }
+  }
+  const bestClass = (bestIdx>=0) ? classes[bestIdx] : null;
+  const bestLabel = bestClass ? labelTextFromClass(bestClass) : '-';
+  const bestCount = bestClass ? classes.filter(c=>c===bestClass).length : 0;
+  let winStreak=0, lossStreak=0, maxWinStreak=0, maxLossStreak=0;
+  for(const v of profits){
+    if(v>0){ winStreak++; lossStreak=0; if(winStreak>maxWinStreak) maxWinStreak=winStreak; }
+    else if(v<0){ lossStreak++; winStreak=0; if(lossStreak>maxLossStreak) maxLossStreak=lossStreak; }
+    else { winStreak=0; lossStreak=0; }
+  }
+  const summary = {
+    startBank,
+    endBank,
+    hands: tot,
+    profit,
+    followed,
+    delta,
+    profitIfWOO,
+    wins,
+    losses,
+    pushes,
+    playProfit,
+    tripsProfit,
+    pocketProfit,
+    startTs,
+    endTs,
+    greatestTotalProfit: maxTotalProfit,
+    greatestTotalLoss: maxTotalLoss,
+    bestProfitHand: maxWin,
+    worstProfitHand: maxLoss,
+    mostConsecutiveWins: maxWinStreak,
+    mostConsecutiveLosses: maxLossStreak,
+    bestHandLabel: bestLabel,
+    bestHandCount: bestCount
+  };
+  const persist = {
+    player: state.playerName || '-',
+    sessionNo: null,
+    sessionStart: startTs,
+    sessionEnd: endTs,
+    startBank,
+    endBank,
+    hands: tot,
+    profit,
+    wins,
+    losses,
+    pushes,
+    playProfit,
+    tripsProfit,
+    pocketProfit,
+    wooFollowed: followed,
+    hypoProfit: profitIfWOO,
+    greatestTotalProfit: maxTotalProfit,
+    greatestTotalLoss: maxTotalLoss,
+    bestProfitHand: maxWin,
+    worstProfitHand: maxLoss,
+    mostConsecutiveWins: maxWinStreak,
+    mostConsecutiveLosses: maxLossStreak,
+    bestHandLabel: bestLabel,
+    bestHandCount: bestCount,
+    createdAt: new Date().toISOString()
+  };
+  state._lastSummary = persist;
+  summary.persist = persist;
+  return summary;
+}
+
+function showReport(){
+  const modal=el('reportModal'); const sum=el('reportSummary');
+  const summary = captureSessionSummary();
+  const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(); }catch(e){ return '-'; } };
+  const playerName = state.playerName || '-';
+  const bestLabel = summary.bestHandLabel || '-';
+  const bestCount = summary.bestHandCount || 0;
+  const winsCount = Number(summary.wins || 0);
+  const lossesCount = Number(summary.losses || 0);
+  const pushesCount = Number(summary.pushes || 0);
+  const recordStr = `${winsCount}-${lossesCount}-${pushesCount}`;
+  const playProfitVal = Number(summary.playProfit || 0);
+  const tripsProfitVal = Number(summary.tripsProfit || 0);
+  const pocketProfitVal = Number(summary.pocketProfit || 0);
+  if(sum){
     sum.innerHTML = `
       <div class="panel" style="padding:10px; grid-column:1 / -1;">Player Name<br/><span style="font-size:12px; color:#b6c6ea;">${playerName}</span></div>
-      <div class="panel" style="padding:10px;">Session Start<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(startTs)}</span></div>
-      <div class="panel" style="padding:10px;">Session End<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(endTs)}</span></div>
-      <div class="panel" style="padding:10px;">Starting Bankroll<br/><span class="money" style="font-size:18px;">$${startBank}</span></div>
-      <div class="panel" style="padding:10px;">Ending Bankroll<br/><span class="money" style="font-size:18px;">$${endBank}</span></div>
-      <div class="panel" style="padding:10px;">Hands Played<br/><span class="money" style="font-size:18px;">${tot}</span></div>
-      <div class="panel" style="padding:10px;">Total Profit<br/><span class="money" style="font-size:18px;">${fmt(profit)}</span></div>
-      <div class="panel" style="padding:10px;">Strategy Followed<br/><span class="money" style="font-size:18px;">${f} / ${tot}</span></div>
-      <div class="panel" style="padding:10px;">Hypo Profit (Using Strategy)<br/><span class="money" style="font-size:18px;">${fmt(profitIfWOO)}</span></div>
-      <div class="panel" style="padding:10px;">Greatest Total Profit<br/><span class="money" style="font-size:18px;">${fmt(maxTotalProfit)}</span></div>
-      <div class="panel" style="padding:10px;">Greatest Total Loss<br/><span class="money" style="font-size:18px;">${fmt(maxTotalLoss)}</span></div>
-      <div class="panel" style="padding:10px;">Best Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(maxWin)}</span></div>
-      <div class="panel" style="padding:10px;">Worst Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(maxLoss)}</span></div>
-      <div class="panel" style="padding:10px;">Most Consec Wins<br/><span class="money" style="font-size:18px;">${maxWinStreak}</span></div>
-      <div class="panel" style="padding:10px;">Most Consec Losses<br/><span class="money" style="font-size:18px;">${maxLossStreak}</span></div>
-      <div class="panel" style="padding:10px;">Best Hand<br/><span style="font-size:12px; color:#b6c6ea;">${bestLabel}${bestCount>0?` \u00D7 ${bestCount}`:''}</span></div>`;
-    // Capture summary for persistence
-    state._lastSummary = {
-      player: state.playerName || '-',
-      sessionNo: null,
-      sessionStart: startTs,
-      sessionEnd: endTs,
-      startBank: startBank,
-      endBank: endBank,
-      hands: tot,
-      profit: profit,
-      wooFollowed: f,
-      hypoProfit: profitIfWOO,
-      greatestTotalProfit: maxTotalProfit,
-      greatestTotalLoss: maxTotalLoss,
-      bestProfitHand: maxWin,
-      worstProfitHand: maxLoss,
-      mostConsecutiveWins: maxWinStreak,
-      mostConsecutiveLosses: maxLossStreak,
-      bestHandLabel: bestLabel,
-      bestHandCount: bestCount,
-      createdAt: new Date().toISOString()
+      <div class="panel" style="padding:10px;">Session Start<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(summary.startTs)}</span></div>
+      <div class="panel" style="padding:10px;">Session End<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(summary.endTs)}</span></div>
+      <div class="panel" style="padding:10px;">Starting Bankroll<br/><span class="money" style="font-size:18px;">$${summary.startBank}</span></div>
+      <div class="panel" style="padding:10px;">Ending Bankroll<br/><span class="money" style="font-size:18px;">$${summary.endBank}</span></div>
+      <div class="panel" style="padding:10px;">Hands Played<br/><span class="money" style="font-size:18px;">${summary.hands}</span></div>
+      <div class="panel" style="padding:10px;">Hand Record<br/><span class="money" style="font-size:18px;">${recordStr}</span></div>
+      <div class="panel" style="padding:10px;">Total Profit<br/><span class="money" style="font-size:18px;">${fmt(summary.profit)}</span></div>
+      <div class="panel" style="padding:10px;">Play / Ante / Odds Profit<br/><span class="money" style="font-size:18px;">${fmt(playProfitVal)}</span></div>
+      <div class="panel" style="padding:10px;">Trips Profit<br/><span class="money" style="font-size:18px;">${fmt(tripsProfitVal)}</span></div>
+      <div class="panel" style="padding:10px;">Pocket Profit<br/><span class="money" style="font-size:18px;">${fmt(pocketProfitVal)}</span></div>
+      <div class="panel" style="padding:10px;">Strategy Followed<br/><span class="money" style="font-size:18px;">${summary.followed} / ${summary.hands}</span></div>
+      <div class="panel" style="padding:10px;">Hypo Profit (Using Strategy)<br/><span class="money" style="font-size:18px;">${fmt(summary.profitIfWOO)}</span></div>
+      <div class="panel" style="padding:10px;">Greatest Total Profit<br/><span class="money" style="font-size:18px;">${fmt(summary.greatestTotalProfit)}</span></div>
+      <div class="panel" style="padding:10px;">Greatest Total Loss<br/><span class="money" style="font-size:18px;">${fmt(summary.greatestTotalLoss)}</span></div>
+      <div class="panel" style="padding:10px;">Best Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(summary.bestProfitHand)}</span></div>
+      <div class="panel" style="padding:10px;">Worst Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(summary.worstProfitHand)}</span></div>
+      <div class="panel" style="padding:10px;">Most Consec Wins<br/><span class="money" style="font-size:18px;">${summary.mostConsecutiveWins}</span></div>
+      <div class="panel" style="padding:10px;">Most Consec Losses<br/><span class="money" style="font-size:18px;">${summary.mostConsecutiveLosses}</span></div>
+      <div class="panel" style="padding:10px;">Best Hand<br/><span style="font-size:12px; color:#b6c6ea;">${bestLabel}${bestCount>0?` x ${bestCount}`:''}</span></div>`;
+  }
+  if(modal){ modal.style.display='block'; }
+  const closeBtn = el('reportClose');
+  if(closeBtn){ closeBtn.onclick = ()=>{ if(modal) modal.style.display='none'; }; }
+  const endBtn = el('reportEnd');
+  if(endBtn){
+    endBtn.onclick = async ()=>{
+      if(modal) modal.style.display='none';
+      await logSessionAndReset();
     };
+  }
+}
+
+async function logSessionAndReset(options){
+  const opts = options || {};
+  const exitToSplash = !!opts.exitToSplash;
+  const summary = captureSessionSummary();
+  try{
+    await saveSessionSummary(summary.persist || {});
   }catch(e){}
-  // Copy current log HTML
-  logCont.innerHTML = el('log').innerHTML;
-  modal.style.display='block';
-  // Wire buttons
-  el('reportClose').onclick=()=>{ modal.style.display='none'; };
-  el('reportEnd').onclick=async ()=>{
-    modal.style.display='none';
-    // Persist session summary to IndexedDB
-    try{
-      const prev = state._lastSummary || {};
-      const payload = {
-        ...prev,
-        player: state.playerName || prev.player || '-',
-        sessionEnd: Date.now(),
-        endBank: state.bank,
-        profit: (state.bank - state.sessionStartBank)
-      };
-      await saveSessionSummary(payload);
-    }catch(e){}
-    // Reset bank and session
-    state.bank=Number(document.getElementById('bankroll').value)||0; updateBank();
-    // Reset session start and clear chart data
-    state.sessionStartBank = state.bank; state.sessionStartTs = Date.now();
-    state.bankHistory = [state.bank];
-    state.handProfits = [];
-    state.handFollowed = [];
-    state.handHypProfits = [];
-    state.handClasses = [];
-    state.handFollowed = [];
-    state.hands=0; el('handCount').textContent='0';
-    // Re-enable editing starting bankroll for next session
-    try{ const bi=document.getElementById('bankroll'); if(bi){ bi.disabled=false; } }catch(e){}
-    el('log').innerHTML='';
-    state.metrics={followed:0,deviated:0,totalDelta:0,totalProfit:0};
-    setStage('waiting'); renderAll(); enableButtons(); clearBetChips();
-    // Redraw charts to reflect cleared state
-    try{ drawMiniChart(); if(isChartOpen()) drawLargeChart(); }catch(e){}
+  try{
+    const bankrollInput = document.getElementById('bankroll');
+    const newBank = bankrollInput ? Number(bankrollInput.value)||0 : 0;
+    state.bank = newBank;
+    updateBank();
+    if(bankrollInput){ bankrollInput.disabled = false; }
+  }catch(e){}
+  state.sessionStartBank = state.bank;
+  state.sessionStartTs = Date.now();
+  state.bankHistory = [state.bank];
+  state.handProfits = [];
+  state.handFollowed = [];
+  state.handHypProfits = [];
+  state.handClasses = [];
+  state.handOutcomes = [];
+  state.handBetBreakdown = [];
+  state.metrics = {
+    followed:0,
+    deviated:0,
+    totalDelta:0,
+    totalProfit:0,
+    handRecord:{win:0,loss:0,push:0},
+    betProfit:{play:0,trips:0,pocket:0}
   };
+  state.hands = 0;
+  try{ const handCountEl = document.getElementById('handCount'); if(handCountEl) handCountEl.textContent='0'; }catch(e){}
+  try{ const logEl = el('log'); if(logEl){ logEl.innerHTML=''; } }catch(e){}
+  setStage('waiting');
+  renderAll();
+  enableButtons();
+  clearBetChips();
+  try{ drawMiniChart(); if(isChartOpen()) drawLargeChart(); }catch(e){}
+  refreshBankrollEditable();
+  updateMiniStats();
+  state._lastSummary = null;
+  if(exitToSplash){
+    try{
+      const splash = document.getElementById('splashOverlay');
+      if(splash){ splash.style.display='flex'; }
+      if(document && document.body){ document.body.classList.add('splash-open'); }
+    }catch(e){}
+  }
 }
 </script>
 
@@ -2510,28 +2843,65 @@ function showReport(){
   const playerErr = document.getElementById('playerErr');
   const playerCancel = document.getElementById('playerCancel');
   const playerContinue = document.getElementById('playerContinue');
+  const playerViewStats = document.getElementById('playerViewStats');
+  const playerDeleteBtn = document.getElementById('playerDelete');
   const woo = document.getElementById("wooModal");
   const wooClose = document.getElementById("wooClose");
   const rules = document.getElementById("rulesModal");
   const rulesClose = document.getElementById("rulesClose");
   const version = document.getElementById("versionModal");
   const versionClose = document.getElementById("versionClose");
+  const handLogModal = document.getElementById('handLogModal');
+  const handLogClose = document.getElementById('handLogClose');
+  const handLogContent = document.getElementById('handLogContent');
+  const miniLog = document.getElementById('log');
+
+
+  function updatePlayerInputState(){
+    const selectedVal = playerSel ? playerSel.value : '';
+    const isNew = !selectedVal;
+    if(playerInp){
+      playerInp.disabled = !isNew;
+      if(!isNew){ playerInp.value = ''; }
+    }
+    if(playerViewStats){ playerViewStats.disabled = isNew; }
+    if(playerDeleteBtn){ playerDeleteBtn.disabled = isNew; }
+  }
+
+  function openHandLog(){
+    if(handLogModal){
+      const logEl = document.getElementById('log');
+      if(handLogContent){ handLogContent.innerHTML = logEl ? logEl.innerHTML : ''; }
+      handLogModal.style.display='block';
+    }
+  }
+  function closeHandLog(){
+    if(handLogModal){ handLogModal.style.display='none'; }
+  }
 
   function openSplash(){ if(splash){ splash.style.display="flex"; body.classList.add("splash-open"); } }
   function closeSplash(){ if(splash){ splash.style.display="none"; body.classList.remove("splash-open"); } }
-  function openPlayer(){ if(playerModal){ playerModal.style.display='block'; populatePlayers(); setTimeout(()=>{ try{ if(playerInp) playerInp.focus(); }catch(e){} }, 0); } }
+  function openPlayer(){ if(playerModal){ playerModal.style.display='block'; populatePlayers(true); } }
   function closePlayer(){ if(playerModal){ playerModal.style.display='none'; } }
-  async function populatePlayers(){
+  async function populatePlayers(focusAfterLoad){
     try{
       if(!playerSel) return;
       const names = await listPlayers();
       const chosen = (localStorage.getItem('huhe.playerName')||'').trim();
-      playerSel.innerHTML = '<option value="">-- none --</option>' +
+      playerSel.innerHTML = '<option value="">-- new player --</option>' +
         (names||[]).map(n=>`<option value="${String(n).replace(/"/g,'&quot;')}">${n}</option>`).join('');
       if(chosen){
         const opt = Array.from(playerSel.options).find(o=>o.value===chosen);
         if(opt) playerSel.value = chosen;
-        if(playerInp) playerInp.value = chosen;
+      }
+      if(playerErr) playerErr.textContent = '';
+      updatePlayerInputState();
+      if(focusAfterLoad){
+        setTimeout(()=>{ try{
+          if(playerSel && playerSel.value === '' && playerInp && !playerInp.disabled){ playerInp.focus(); }
+          else if(playerSel){ playerSel.focus(); }
+          else if(playerInp && !playerInp.disabled){ playerInp.focus(); }
+        }catch(e){} }, 0);
       }
     }catch(e){}
   }
@@ -2541,46 +2911,13 @@ function showReport(){
   function closeRules(){ if(rules){ rules.style.display="none"; } }
   function openVersion(){ if(version){ version.style.display="block"; } }
   function closeVersion(){ if(version){ version.style.display="none"; } }
-  async function _openStatsModal_local(){
-    const modal = document.getElementById('statsModal');
-    const tbody = document.querySelector('#statsTable tbody');
-    const empty = document.getElementById('statsEmpty');
-    const meta = document.getElementById('statsMeta');
-    const name = (state.playerName || localStorage.getItem('huhe.playerName') || '-');
-    if(meta) meta.textContent = `Player: ${name}`;
-    if(tbody) tbody.innerHTML = '';
-    if(empty) empty.style.display = 'none';
-    try{
-      const rows = await getSessions(name);
-      if(!rows || rows.length===0){
-        if(empty) empty.style.display='block';
-      }else{
-        const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(); }catch(e){ return '-'; } };
-        const frag = document.createDocumentFragment();
-        rows.forEach(r=>{
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td style="padding:6px; border-bottom:1px solid #24365d;">${r.sessionNo||'-'}</td>
-            <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionStart)}</td>
-            <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionEnd)}</td>
-            <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.startBank||0}</td>
-            <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.endBank||0}</td>
-            <td style="padding:6px; border-bottom:1px solid #24365d;">${r.hands||0}</td>
-            <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(r.profit||0)}</td>
-            <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.wooFollowed||0)} / ${(r.hands||0)}</td>
-            <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(r.hypoProfit||0)}</td>
-            <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.bestHandLabel||'-')} ${r.bestHandCount?('× '+r.bestHandCount):''}</td>`;
-          frag.appendChild(tr);
-        });
-        if(tbody) tbody.appendChild(frag);
-      }
-    }catch(e){ if(empty) empty.style.display='block'; }
-    if(modal){ modal.style.display='block'; }
-    const closeBtn = document.getElementById('statsClose');
-    if(closeBtn){ closeBtn.onclick = ()=>{ if(modal) modal.style.display='none'; }; }
+  async function _openStatsModal_local(playerOverride){
+    return openStatsModal(playerOverride);
   }
 
   if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", openSplash); } else { openSplash(); }
+
+  updatePlayerInputState();
 
   if(splashClose) splashClose.addEventListener("click", function(){ openPlayer(); });
   if(splashShowWoo) splashShowWoo.addEventListener("click", function(){ openWoo(); });
@@ -2593,11 +2930,61 @@ function showReport(){
   if(versionClose) versionClose.addEventListener("click", closeVersion);
   if(version) version.addEventListener("click", function(e){ if(e.target === version) closeVersion(); });
 
+  if(handLogClose) handLogClose.addEventListener('click', closeHandLog);
+  if(handLogModal) handLogModal.addEventListener('click', function(e){ if(e.target === handLogModal) closeHandLog(); });
+  if(miniLog){
+    miniLog.style.cursor = 'pointer';
+    if(!miniLog.hasAttribute('tabindex')) miniLog.setAttribute('tabindex','0');
+    miniLog.addEventListener('click', function(){ openHandLog(); });
+    miniLog.addEventListener('keydown', function(evt){ if(evt.key==='Enter' || evt.key===' '){ evt.preventDefault(); openHandLog(); } });
+  }
+
+  if(playerSel) playerSel.addEventListener('change', function(){
+    if(playerErr) playerErr.textContent='';
+    updatePlayerInputState();
+    if(playerSel.value === '' && playerInp && !playerInp.disabled){
+      setTimeout(()=>{ try{ playerInp.focus(); }catch(e){} }, 0);
+    }
+  });
+  if(playerViewStats) playerViewStats.addEventListener('click', async function(){
+    try{
+      const selected = playerSel ? playerSel.value : '';
+      if(!selected) return;
+      await _openStatsModal_local(selected);
+    }catch(e){}
+  });
+  if(playerDeleteBtn) playerDeleteBtn.addEventListener('click', async function(){
+    try{
+      const selected = playerSel ? playerSel.value : '';
+      if(!selected) return;
+      if(typeof window !== 'undefined' && !window.confirm(`Delete player "${selected}"? This will remove all saved sessions.`)){ return; }
+      if(playerErr) playerErr.textContent='';
+      if(playerViewStats) playerViewStats.disabled = true;
+      playerDeleteBtn.disabled = true;
+      await deletePlayer(selected);
+      try{
+        const stored = (localStorage.getItem('huhe.playerName')||'').trim();
+        if(stored === selected){ localStorage.removeItem('huhe.playerName'); }
+      }catch(e){}
+      if(state.playerName === selected){ state.playerName = '-'; }
+      if(playerInp){ playerInp.value=''; }
+      await populatePlayers();
+      updatePlayerInputState();
+      if(playerSel){ playerSel.focus(); }
+      if(playerErr){ playerErr.textContent = `Deleted player "${selected}".`; }
+    }catch(err){
+      if(playerErr){ playerErr.textContent = 'Unable to delete player. Please try again.'; }
+      if(playerViewStats){ playerViewStats.disabled = !selected; }
+      playerDeleteBtn.disabled = !selected;
+    }
+  });
   if(playerCancel) playerCancel.addEventListener('click', function(){ closePlayer(); });
   if(playerModal) playerModal.addEventListener('click', function(e){ if(e.target===playerModal) closePlayer(); });
   if(playerContinue) playerContinue.addEventListener('click', async function(){
     try{
-      const name = (playerInp && playerInp.value ? playerInp.value : playerSel && playerSel.value ? playerSel.value : '').trim();
+      const selected = playerSel ? playerSel.value : '';
+      const inputVal = playerInp ? playerInp.value : '';
+      const name = (!selected ? inputVal : selected).trim();
       if(!name){ if(playerErr){ playerErr.textContent='Please enter or select a player name.'; } return; }
       state.playerName = name;
       try{ localStorage.setItem('huhe.playerName', name); }catch(e){}
