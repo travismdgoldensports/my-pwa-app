@@ -217,7 +217,7 @@
   /* Small helper text under a bet circle */
   .bet-note{ font-size:10px; line-height:1.2; opacity:.8; text-align:center; }
 
-  .sticky-actions{position:fixed;left:232px;right:auto;width:min(920px, calc(100vw - 232px - 24px));bottom:env(safe-area-inset-bottom);z-index:1200;background:#0a1528cc;border:1px solid #203355;border-radius:14px;padding:8px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .sticky-actions{position:fixed;left:50%;transform:translateX(-50%);bottom:env(safe-area-inset-bottom);z-index:1200;background:#0a1528cc;border:1px solid #203355;border-radius:14px;padding:8px;box-sizing:border-box;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);width:min(920px, calc(100vw - 32px));max-width:920px;}
   .actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
   .actions button{width:100%}
   .bar-row{ display:flex; align-items:stretch; gap:10px; }
@@ -227,7 +227,6 @@
   /* Keep table and actions compact on narrow screens */
   @media(max-width:1000px){
     #tableWrap{ max-width:100%; justify-self:stretch }
-    .sticky-actions{ left:12px; width: calc(100vw - 60px); }
   }
 
   /* Between 725px and 501px: move stats below buttons, keep buttons in one row */
@@ -265,17 +264,17 @@
   .mini-chart{ border:1px solid #24365d; border-radius:10px; padding:6px; background:#0c172a; cursor:pointer; overflow-x:auto; overflow-y:hidden; transition:width .3s ease; margin:2px auto 0; }
   .mini-chart canvas{ display:block; width:100%; height:162px; }
   #bankrollBelowTable{ position:relative; margin-top:4px; }
-  #bankrollBelowTable .mini-area-controls{ position:absolute; top:-10px; left:0; display:none; z-index:5; }
+  #bankrollBelowTable .mini-area-controls{ position:absolute; top:-20px; left:0; display:none; z-index:5; }
   #miniSwapToggle{ display:none; align-items:center; justify-content:center; background:#22314f; border:1px solid #2e4470; color:#d9e6ff; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,0.35); }
   #miniSwapToggle:hover{ background:#2b3f63; }
   #miniSwapToggle:focus{ outline:2px solid #35c48d; outline-offset:2px; }
-  .mini-panels{ display:flex; gap:12px; align-items:stretch; }
+  .mini-panels{ display:flex; gap:12px; align-items:stretch; overflow-y:auto; overscroll-behavior:contain; }
   .mini-panel{ flex:1 1 0; display:flex; flex-direction:column; gap:8px; }
-  #miniStatPanel{ border:1px solid #24365d; border-radius:10px; background:#111a2b; padding:10px; min-width:0; }
-  .mini-stat-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:10px; }
-  .mini-stat-item{ background:rgba(36,52,93,0.55); border:1px solid rgba(52,92,155,0.55); border-radius:8px; padding:8px; }
-  .mini-stat-label{ font-size:11px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
-  .mini-stat-value{ font-size:18px; font-weight:700; color:#e9f0ff; }
+  #miniStatPanel{ border:1px solid #24365d; border-radius:10px; background:#111a2b; padding: 4px; min-width:0; }
+  .mini-stat-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(110px,1fr)); gap:6px; }
+  .mini-stat-item{ background:rgba(36,52,93,0.55); border:1px solid rgba(52,92,155,0.55); border-radius:8px; padding:4px; }
+  .mini-stat-label{ font-size:8px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+  .mini-stat-value{ font-size:12px; font-weight:500; color:#e9f0ff; }
   .chart-panel{ border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; }
   .chart-panel > .mini-chart{ margin:0; border:1px solid #24365d; }
   .chart-panel > #chartLegendMini{ margin-top:8px; }
@@ -456,7 +455,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.1</div>
+    <div class="splash-version">Version 2.2</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -521,7 +520,7 @@
         <li><b>Trips Plus</b>: Pays on your final 5-card hand, regardless of dealer outcome.</li>
         <li><b>Pocket Bonus</b>: Pays based on your 2 starting cards (e.g., AA, A+Face suited/off, other pairs).</li>
       </ul>
-      <p class="muted">Tip: The in‑app “Wizard of Odds Strategy” provides recommended raises/calls.</p>
+      <p class="muted">Tip: The in-app  “Wizard of Odds Strategy” provides recommended raises/calls.</p>
     </div>
   </div>
   </div>
@@ -543,11 +542,12 @@
     <div class="row"><label>Trips Plus (opt)</label><input id="trips" type="number" value="0" min="0" step="1"></div>
     <div class="row"><label>Pocket Bonus (opt)</label><input id="pocket" type="number" value="0" min="0" step="1"></div>
     <h2>Game Controls</h2> 
-    <div class="row" style="margin-top:6px;"><button id="newHand">➕ New Hand</button>
-    <div class="row" style="margin-top:6px;"><button id="startNewGame">Start New Session</button><button id="endGameExit">End Session and Exit</button></div>
+    <button id="newHand">➕ New Hand</button>
+    <div class="row" style="margin-top:6px;"><button id="startNewGame">Start New Session</button></div>
+    <div class="row" style="margin-top:6px; margin-bottom:6px;"><button id="endGameExit">End Session and Exit</button></div>
     <h2>View Stats</h2>
-    <div class="row" style="margin-top:6px;"></div><button id="viewSessionStats">Session</button></div>
-    <div class="row" style="margin-top:6px;"><button id="viewStats">Player</button></div>
+    <div class="row" style="margin-top:6px;"><button id="viewSessionStats">Session</button></div>
+    <div class="row" style="margin-top:6px; margin-bottom: 6px;"><button id="viewStats">Player</button></div>
     <div class="row" style="margin-top:12px; margin-bottom: 12px; justify-content:space-between; display:none;"></div>
     <div style="margin-top:12px;"><h2>Status</h2><div class="row"><span class="pill">Stage: <span id="stage">Waiting</span></span><span class="pill">Outcome: <span id="outcome">—</span></span></div></div>
       <h2>Strategy</h2>
@@ -625,10 +625,10 @@
               <tr><td>Other wins</td><td class="payout">Push</td><td class="payout">&mdash;</td></tr>
             </tbody>
           </table>
-          Win: Royal Flush 500x Â· Straight Flush 50x Â· Four of a Kind 10x Â· Full House 3x Â· Flush 1.5x Â· Straight 1x Â· All others push
+          Win: Royal Flush 500x · Straight Flush 50x · Four of a Kind 10x · Full House 3x · Flush 1.5x · Straight 1x · All others push
           <div style="margin-top:6px; opacity:.9;">
             <span class="muted">Bad Beat (losing):</span><br/>
-            Straight Flush 500x Â· Four of a Kind 25x Â· Full House 6x Â· Flush 5x Â· Straight 4x
+            Straight Flush 500x · Four of a Kind 25x · Full House 6x · Flush 5x · Straight 4x
           </div>
         </div>
         
@@ -732,31 +732,63 @@
     <!-- Bankroll chart moved beneath the table -->
     <div id="bankrollBelowTable" class="mini-area show-stats">
       <div class="mini-area-controls">
-        <button id="miniSwapToggle" type="button" aria-label="Show chart" title="Show chart"><span aria-hidden="true">↻</span></button>
+        <button id="miniSwapToggle" type="button" aria-label="Show chart" title="Show chart"><span aria-hidden="true">⇄</span></button>
       </div>
       <div class="mini-panels">
         <div id="miniStatPanel" class="mini-panel stats-panel">
           <div class="mini-stat-grid">
+            
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Total Bet</div>
+              <div class="mini-stat-value" id="miniStatTotalBet">$0</div>
+            </div>
+            
             <div class="mini-stat-item">
               <div class="mini-stat-label">Total Profit</div>
-              <div class="mini-stat-value" id="miniStatTotal">+$0</div>
+              <div class="mini-stat-value" id="miniStatTotal">$0</div>
             </div>
+            
+
             <div class="mini-stat-item">
-              <div class="mini-stat-label">Trips Plus Profit</div>
-              <div class="mini-stat-value" id="miniStatTrips">+$0</div>
+              <div class="mini-stat-label">Play/Ante/Odds Bet</div>
+              <div class="mini-stat-value" id="miniStatBaseBet">$0</div>
             </div>
+            
             <div class="mini-stat-item">
-              <div class="mini-stat-label">Pocket Bonus Profit</div>
-              <div class="mini-stat-value" id="miniStatPocket">+$0</div>
+              <div class="mini-stat-label">Play/Ante/Odds Profit</div>
+              <div class="mini-stat-value" id="miniStatBaseProfit">$0</div>
             </div>
+            
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Trips Bet</div>
+              <div class="mini-stat-value" id="miniStatTripsBet">$0</div>
+            </div>
+            
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Trips Profit</div>
+              <div class="mini-stat-value" id="miniStatTrips">$0</div>
+            </div>
+            
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Pocket Bet</div>
+              <div class="mini-stat-value" id="miniStatPocketBet">$0</div>
+            </div>
+            
+            <div class="mini-stat-item">
+              <div class="mini-stat-label">Pocket Profit</div>
+              <div class="mini-stat-value" id="miniStatPocket">$0</div>
+            </div>
+            
             <div class="mini-stat-item">
               <div class="mini-stat-label">Record</div>
               <div class="mini-stat-value" id="miniStatRecord">0-0-0</div>
             </div>
+            
             <div class="mini-stat-item">
               <div class="mini-stat-label">Strategy Followed</div>
               <div class="mini-stat-value" id="miniStatFollow">0/0</div>
             </div>
+            
             <div class="mini-stat-item">
               <div class="mini-stat-label">Best Hand</div>
               <div class="mini-stat-value" id="miniStatBest">-</div>
@@ -788,10 +820,10 @@
 <div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:3400;">
   <div style="position:absolute; inset:24px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Session Report</div>
+      <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Session Stats</div>
       <button id="reportClose" style="background:#22314f; border-color:#2e4470;">Close</button>
     </div>
-    <div id="reportSummary" style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; font-size:10px; color:#b6c6ea;"></div>
+    <div id="reportSummary" style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; font-size:10px; color:#b6c6ea;"></div>
     </div>
   </div>
 
@@ -814,7 +846,8 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
-      <p class="muted"><b>Version 2.1</b></br>-More stats!</br>-Mini stat box on the main screen, swappable with the graph with the click of a button.</br>-Ability to delete players.</br>-Other visual improvements.</p>
+      <p class="muted"><b>Version 2.2</b></br>-Even more stats, including player totals.</br>-Other minor visual improvements.</p>
+      <p class="muted"><b>Version 2.1</b></br>-More stats!</br>-Mini stat box on the main screen, swappable with the graph with the click of a button.</br>-Ability to delete player sessions.</br>-Other visual improvements.</p>
       <p class="muted"><b>Version 2.0</b></br>-Now tracks sessions and stats by player, on the local device only.  Note, you must end/restart the session in order to save it.</br>-Added a Strategy option: Correct Strategy Mistakes.  This allows the player to play without guidance, but will advise upon a strategy mistake and provide an option to correct the play.</br>-Now tracks more stats each session.</br>-Improved viewability, primarily through easier-to-read card ranks and suits.</p>
     </div>
   </div>
@@ -836,30 +869,34 @@
 
 <!-- Player Stats Modal -->
 <div id="statsModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:3450;">
-  <div style="position:absolute; inset:24px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px;">
+  <div style="position:absolute; inset:12px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:8px; display:flex; flex-direction:column; gap:10px;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Player Sessions</div>
+      <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Player Stats</div>
       <button id="statsClose" style="background:#22314f; border-color:#2e4470;">Close</button>
     </div>
     <div id="statsMeta" class="muted" style="font-size:12px;"></div>
-    <div id="statsSummary" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:8px;"></div>
+    <div id="statsSummary" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(100px, 1fr)); gap:8px;"></div>
     <div style="border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; overflow:auto;">
-      <table id="statsTable" style="width:100%; font-size:12px; border-collapse:collapse; color:#d9e6ff;">
+      <table id="statsTable" style="width:100%; font-size:9px; border-collapse:collapse; color:#d9e6ff;">
         <thead>
           <tr style="text-align:left; color:#b6c6ea;">
-            <th style="padding:6px; border-bottom:1px solid #24365d;">#</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Start</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Start Bank</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">End Bank</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Hands</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Hand Record</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Profit</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Play/Ante/Odds Profit</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Trips Profit</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Pocket Profit</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Followed</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Hypo Profit</th>
-            <th style="padding:6px; border-bottom:1px solid #24365d;">Best Hand</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">#</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Start</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Start Bank</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">End Bank</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Hands</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Hand Record</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Total Bet</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Play/Ante/</br>Odds Bet</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Trips Bet</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Pocket Bet</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Profit</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Play/Ante/</br>Odds Profit</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Trips Profit</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Pocket Profit</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Followed</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Hypo Profit</th>
+            <th style="padding:3px; border-bottom:1px solid #24365d;">Best Hand</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -888,7 +925,7 @@
     <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center;">
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="playerViewStats" style="background:#22314f; border-color:#2e4470;">View Player Stats</button>
-        <button id="playerDelete" style="background:#3a232c; border-color:#5a2f3f;">Delete Player</button>
+        <button id="playerDelete" style="background:#3a232c; border-color:#5a2f3f;">Delete Player Sessions</button>
       </div>
       <button id="playerContinue" style="background:#1f3b2e; border-color:#2f5a46;">Continue</button>
     </div>
@@ -1081,7 +1118,8 @@ const state={
     totalDelta:0,
     totalProfit:0,
     handRecord:{win:0,loss:0,push:0},
-    betProfit:{play:0,trips:0,pocket:0}
+    betProfit:{play:0,trips:0,pocket:0},
+    betTotals:{play:0,ante:0,blind:0,trips:0,pocket:0}
   },
   showAdvice:false,
   showPlayerHand:false,
@@ -1108,18 +1146,24 @@ function refreshBankrollEditable(){
     prompt.style.display = hasHands ? 'none' : 'block';
     prompt.setAttribute('aria-hidden', hasHands ? 'true' : 'false');
   }
+  scheduleMiniPanelsClamp();
 }
 
 function formatCurrency(value){
-  const rounded = Math.round(value);
-  const sign = rounded >= 0 ? '+$' : '-$';
-  return sign + Math.abs(rounded);
+  const rounded = Math.round(Number(value)||0);
+  const absVal = Math.abs(rounded);
+  const amount = String(absVal);
+  return rounded < 0 ? `$(${amount})` : `$${amount}`;
 }
-
 function updateMiniStats(){
   const totalEl = document.getElementById('miniStatTotal');
   if(!totalEl) return;
+  const totalBetEl = document.getElementById('miniStatTotalBet');
+  const baseBetEl = document.getElementById('miniStatBaseBet');
+  const baseProfitEl = document.getElementById('miniStatBaseProfit');
+  const tripsBetEl = document.getElementById('miniStatTripsBet');
   const tripsEl = document.getElementById('miniStatTrips');
+  const pocketBetEl = document.getElementById('miniStatPocketBet');
   const pocketEl = document.getElementById('miniStatPocket');
   const recordEl = document.getElementById('miniStatRecord');
   const followEl = document.getElementById('miniStatFollow');
@@ -1130,12 +1174,26 @@ function updateMiniStats(){
   const totalProfit = currentBank - startBank;
   const metrics = state.metrics || {};
   const betProfit = metrics.betProfit || {play:0,trips:0,pocket:0};
+  const betTotals = metrics.betTotals || {play:0,ante:0,blind:0,trips:0,pocket:0};
   const record = metrics.handRecord || {win:0,loss:0,push:0};
   const followed = Number(metrics.followed||0);
   const hands = Number(state.hands||0);
 
+  const playBetTotal = Number(betTotals.play||0);
+  const anteBetTotal = Number(betTotals.ante||0);
+  const blindBetTotal = Number(betTotals.blind||0);
+  const baseBetTotal = playBetTotal + anteBetTotal + blindBetTotal;
+  const tripsBetTotal = Number(betTotals.trips||0);
+  const pocketBetTotal = Number(betTotals.pocket||0);
+  const totalBet = baseBetTotal + tripsBetTotal + pocketBetTotal;
+
   if(totalEl){ totalEl.textContent = formatCurrency(totalProfit); }
+  if(totalBetEl){ totalBetEl.textContent = formatCurrency(totalBet); }
+  if(baseBetEl){ baseBetEl.textContent = formatCurrency(baseBetTotal); }
+  if(baseProfitEl){ baseProfitEl.textContent = formatCurrency(Number(betProfit.play||0)); }
+  if(tripsBetEl){ tripsBetEl.textContent = formatCurrency(tripsBetTotal); }
   if(tripsEl){ tripsEl.textContent = formatCurrency(Number(betProfit.trips||0)); }
+  if(pocketBetEl){ pocketBetEl.textContent = formatCurrency(pocketBetTotal); }
   if(pocketEl){ pocketEl.textContent = formatCurrency(Number(betProfit.pocket||0)); }
   if(recordEl){ recordEl.textContent = `${Number(record.win||0)}-${Number(record.loss||0)}-${Number(record.push||0)}`; }
   if(followEl){ followEl.textContent = `${followed}/${hands}`; }
@@ -1157,6 +1215,7 @@ function updateMiniStats(){
       bestEl.textContent = '-';
     }
   }
+  scheduleMiniPanelsClamp();
 }
 function setStage(s){state.lastStage=state.stage; state.stage=s; el('stage').textContent=s[0].toUpperCase()+s.slice(1)}
 function clearLabels(){ el('dealerLabel').textContent='Dealer'; el('dealerLabel').className='label muted'; el('playerLabel').textContent='You'; el('playerLabel').className='label muted'; }
@@ -1272,7 +1331,7 @@ function computeAdvice(){
     const uniqAceLow = uniq.includes(12) ? [-1,...uniq] : uniq.slice();
     let hasOESD=false; for(let i=0;i<uniqAceLow.length-3;i++){ if(uniqAceLow[i+3]-uniqAceLow[i]===3){ hasOESD=true; break; } }
     const reasons=[]; if(hasPairOrBetter) reasons.push('Pair or better'); if(hasFourFlush) reasons.push('Four to a flush'); if(hasOESD) reasons.push('Open-ended straight draw');
-    if(reasons.length>0) return {stage:'Flop', action:'Raise 2x', why: reasons.join(' â€¢ ')};
+    if(reasons.length>0) return {stage:'Flop', action:'Raise 2x', why: reasons.join(' • ')};
     return {stage:'Flop', action:'Check', why:'No pair+, four-flush, or OESD'};
   }
 
@@ -1515,7 +1574,7 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
     ((rec.preflop==='raise3') || (state.actions.flop===rec.flop)) &&
     ((rec.preflop==='raise3'||rec.flop==='raise2') || (state.actions.river===rec.river))
   );
-  const strategyNote = `WoO Chart - ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (Δ ${fmt(hyp.ProfitH-Profit)})`;
+  const strategyNote = `WoO Chart - ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (? ${fmt(hyp.ProfitH-Profit)})`;
 
   const breakdown = {
     play: -(ante + blind),
@@ -1523,7 +1582,13 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
     blind: -blind,
     playBet: 0,
     trips: trips>0?-trips:0,
-    pocket: pocket>0?-pocket:0
+    pocket: pocket>0?-pocket:0,
+    betPlay: 0,
+    betAnte: ante,
+    betBlind: blind,
+    betTrips: (trips>0?trips:0),
+    betPocket: (pocket>0?pocket:0),
+    betTotal: (ante + blind + (trips>0?trips:0) + (pocket>0?pocket:0))
   };
 
   // Log the fold with net impact and strategy note
@@ -1828,7 +1893,13 @@ function settleAll(){
     blind: blindNet,
     playBet: playNet,
     trips: tripsNet,
-    pocket: pocketNet
+    pocket: pocketNet,
+    betPlay: (play>0?play:0),
+    betAnte: ante,
+    betBlind: blind,
+    betTrips: (trips>0?trips:0),
+    betPocket: (pocket>0?pocket:0),
+    betTotal: (ante + blind + (play>0?play:0) + (trips>0?trips:0) + (pocket>0?pocket:0))
   };
   const outcome = cmp>0?'win':(cmp<0?'loss':'push');
 
@@ -1931,7 +2002,7 @@ function settleAll(){
     ((rec.preflop==='raise3') || (state.actions.flop===rec.flop)) &&
     ((rec.preflop==='raise3'||rec.flop==='raise2') || (state.actions.river===rec.river))
   );
-  const strategyNote = `WoO Chart — ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (Δ ${fmt(hyp.ProfitH-Profit)})`;
+  const strategyNote = `WoO Chart — ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (? ${fmt(hyp.ProfitH-Profit)})`;
   const ocClass=cmp>0?"win":(cmp<0?"loss":"push");
   const outcomeHtml=`<span class="${ocClass}">${cmp>0?"player win":(cmp<0?"dealer win":"push")}</span>`;
   const detail=`Ante ${fmt(Ante)}, Odds ${fmt(Blind)}, Play ${fmt(Play)}, Trips ${fmt(tripsPay)}, Pocket ${fmt(pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
@@ -1950,7 +2021,7 @@ function pocketBonusPayout(hole,wager){
   // No qualifying pocket bonus: no return (loss already counted in invested)
   return 0;
 }
-function fmt(x){ return (x>=0?"+$":"-$")+Math.abs(x) }
+function fmt(x){ return formatCurrency(x); }
 
 // Bankroll chart setup and rendering
 function setupCharts(){
@@ -1990,17 +2061,23 @@ function recordHand(profit, followed, hypProfit, pClass, outcome, breakdown){
   if(Array.isArray(state.handOutcomes)) state.handOutcomes.push(outcome||null);
   if(Array.isArray(state.handBetBreakdown)) state.handBetBreakdown.push(breakdown||null);
   state.bankHistory.push(state.bank);
-  const metrics = state.metrics || (state.metrics = {followed:0, deviated:0, totalDelta:0, totalProfit:0, handRecord:{win:0,loss:0,push:0}, betProfit:{play:0,trips:0,pocket:0}});
+  const metrics = state.metrics || (state.metrics = {followed:0, deviated:0, totalDelta:0, totalProfit:0, handRecord:{win:0,loss:0,push:0}, betProfit:{play:0,trips:0,pocket:0}, betTotals:{play:0,ante:0,blind:0,trips:0,pocket:0}});
   if(!metrics.handRecord) metrics.handRecord = {win:0,loss:0,push:0};
+  if(!metrics.betProfit) metrics.betProfit = {play:0,trips:0,pocket:0};
+  if(!metrics.betTotals) metrics.betTotals = {play:0,ante:0,blind:0,trips:0,pocket:0};
   if(outcome){
     if(outcome==='win') metrics.handRecord.win += 1;
     else if(outcome==='loss') metrics.handRecord.loss += 1;
     else if(outcome==='push') metrics.handRecord.push += 1;
   }
-  if(!metrics.betProfit) metrics.betProfit = {play:0,trips:0,pocket:0};
   if(breakdown && typeof breakdown.play==='number') metrics.betProfit.play += breakdown.play;
   if(breakdown && typeof breakdown.trips==='number') metrics.betProfit.trips += breakdown.trips;
   if(breakdown && typeof breakdown.pocket==='number') metrics.betProfit.pocket += breakdown.pocket;
+  if(breakdown && typeof breakdown.betPlay==='number') metrics.betTotals.play += breakdown.betPlay;
+  if(breakdown && typeof breakdown.betAnte==='number') metrics.betTotals.ante += breakdown.betAnte;
+  if(breakdown && typeof breakdown.betBlind==='number') metrics.betTotals.blind += breakdown.betBlind;
+  if(breakdown && typeof breakdown.betTrips==='number') metrics.betTotals.trips += breakdown.betTrips;
+  if(breakdown && typeof breakdown.betPocket==='number') metrics.betTotals.pocket += breakdown.betPocket;
   updateMiniStats();
   drawMiniChart(); if(isChartOpen()) drawLargeChart();
 }
@@ -2009,6 +2086,71 @@ function getCssColor(varName, fallback){
   const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
   return v || fallback;
 }
+
+let miniPanelsClampFrame = null;
+let miniPanelsClampInit = false;
+let miniPanelsClampObserver = null;
+
+function applyMiniPanelsClamp(){
+  try{
+    const container = document.getElementById('bankrollBelowTable');
+    if(!container) return;
+    const panels = container.querySelector('.mini-panels');
+    const sticky = document.querySelector('.sticky-actions');
+    if(!panels || !sticky) return;
+
+    const stickyRect = sticky.getBoundingClientRect();
+    const panelRect = panels.getBoundingClientRect();
+    if(!stickyRect || !panelRect) return;
+
+    const gap = Math.floor(stickyRect.top - panelRect.top - 12);
+    if(gap <= 0){
+      panels.style.removeProperty('max-height');
+      panels.removeAttribute('data-max-clamp');
+      return;
+    }
+
+    const prev = Number(panels.getAttribute('data-max-clamp') || '0');
+    if(prev !== gap){
+      panels.setAttribute('data-max-clamp', String(gap));
+      panels.style.maxHeight = gap + 'px';
+    }
+    panels.style.overflowY = 'auto';
+    panels.style.webkitOverflowScrolling = 'touch';
+  }catch(e){}
+}
+
+function scheduleMiniPanelsClamp(){
+  if(!miniPanelsClampInit){
+    miniPanelsClampInit = true;
+    window.addEventListener('resize', scheduleMiniPanelsClamp);
+    window.addEventListener('load', scheduleMiniPanelsClamp);
+  }
+
+  const container = document.getElementById('bankrollBelowTable');
+  const panels = container ? container.querySelector('.mini-panels') : null;
+  const sticky = document.querySelector('.sticky-actions');
+
+  if(!container || !panels || !sticky){
+    return;
+  }
+
+  if(miniPanelsClampObserver === null && 'ResizeObserver' in window){
+    miniPanelsClampObserver = new ResizeObserver(()=> scheduleMiniPanelsClamp());
+    [container, panels, sticky].forEach(el=>{ if(el) miniPanelsClampObserver.observe(el); });
+  }
+
+  if(miniPanelsClampFrame !== null){
+    return;
+  }
+
+  miniPanelsClampFrame = requestAnimationFrame(()=>{
+    miniPanelsClampFrame = null;
+    applyMiniPanelsClamp();
+  });
+}
+
+scheduleMiniPanelsClamp();
 
 function drawMiniChart(){
   const c = document.getElementById('chartMini'); if(!c) return;
@@ -2082,6 +2224,7 @@ function drawMiniChart(){
   // Keep the newest games in view by default
   try{ if(wCanvas > wWrap){ wrap.scrollLeft = wrap.scrollWidth; } }catch(e){}
   drawChartCore(c, true);
+  scheduleMiniPanelsClamp();
 }
 function drawLargeChart(){
   const c = document.getElementById('chartLarge'); if(!c) return;
@@ -2227,6 +2370,7 @@ function setMiniPanels(view){
   miniContainer.classList.remove('show-stats','show-chart');
   miniContainer.classList.add(miniViewMode === 'chart' ? 'show-chart' : 'show-stats');
   if(miniViewMode === 'chart'){ drawMiniChart(); }
+  scheduleMiniPanelsClamp();
 }
 
 function updateMiniLayout(){
@@ -2236,6 +2380,7 @@ function updateMiniLayout(){
   }else{
     setMiniPanels(miniViewMode);
   }
+  scheduleMiniPanelsClamp();
 }
 
 if(miniSwapBtn){
@@ -2373,40 +2518,127 @@ async function openStatsModal(playerOverride){
   const tbody = document.querySelector('#statsTable tbody');
   const empty = document.getElementById('statsEmpty');
   const meta = document.getElementById('statsMeta');
+  const statsSummaryEl = document.getElementById('statsSummary');
+  const statsTotalsEl = document.getElementById('statsTotals');
   const name = (playerOverride && playerOverride.trim()) || (state.playerName || localStorage.getItem('huhe.playerName') || '-');
   if(meta) meta.textContent = `Player: ${name}`;
   if(tbody) tbody.innerHTML = '';
+  if(statsSummaryEl) statsSummaryEl.innerHTML = '';
+  if(statsTotalsEl) statsTotalsEl.innerHTML = '';
   if(empty) empty.style.display = 'none';
-  try{
+  try {
     const rows = await getSessions(name);
     if(!rows || rows.length===0){
       if(empty) empty.style.display='block';
+      if(statsSummaryEl) statsSummaryEl.innerHTML = '';
+      if(statsTotalsEl) statsTotalsEl.innerHTML = '';
     }else{
-      const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(); }catch(e){ return '-'; } };
+      if(empty) empty.style.display='none';
+      const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'numeric', minute:'numeric' }); }catch(e){ return '-' ; } };
+      const formatPercent = (value, denom)=> denom>0 ? `${((value/denom)*100).toFixed(1)}%` : '0.0%';
+      const labelRank = { 'Royal Flush':9, 'Straight Flush':8, 'Four Kind':7, 'Full House':6, 'Flush':5, 'Straight':4, 'Three Kind':3, 'Two Pair':2, 'One Pair':1, 'High Card':0 };
       const frag = document.createDocumentFragment();
+      let totalSessions = rows.length;
+      let totalHands=0,totalProfit=0,totalBaseBet=0,totalTripsBet=0,totalPocketBet=0,totalTotalBet=0,totalFollowed=0,totalHypo=0,totalWins=0,totalLosses=0,totalPushes=0,totalPlayProfit=0,totalTripsProfit=0,totalPocketProfit=0;
+      const bestCounter = {};
       rows.forEach(r=>{
         const wins = Number(r.wins||0);
         const losses = Number(r.losses||0);
         const pushes = Number(r.pushes||0);
         const recordStr = `${wins}-${losses}-${pushes}`;
+        const totalBet = Number(r.totalBet||0);
+        const baseBet = Number(r.playAnteOddsBet||r.baseBet||0);
+        const tripsBet = Number(r.tripsBet||0);
+        const pocketBet = Number(r.pocketBet||0);
+        const playProfit = Number(r.playProfit||0);
+        const tripsProfit = Number(r.tripsProfit||0);
+        const pocketProfit = Number(r.pocketProfit||0);
+        const profitVal = Number(r.profit||0);
+        const hypoVal = Number(r.hypoProfit||0);
+        const followedVal = Number(r.wooFollowed||0);
+        const handsVal = Number(r.hands||0);
+        totalHands += handsVal;
+        totalTotalBet += totalBet;
+        totalBaseBet += baseBet;
+        totalTripsBet += tripsBet;
+        totalPocketBet += pocketBet;
+        totalProfit += profitVal;
+        totalPlayProfit += playProfit;
+        totalTripsProfit += tripsProfit;
+        totalPocketProfit += pocketProfit;
+        totalFollowed += followedVal;
+        totalHypo += hypoVal;
+        totalWins += wins; totalLosses += losses; totalPushes += pushes;
+        const bestLabelSession = r.bestHandLabel || '-';
+        const bestCountSession = Number(r.bestHandCount||0) || (bestLabelSession && bestLabelSession !== '-' ? 1 : 0);
+        if(bestLabelSession){ bestCounter[bestLabelSession] = (bestCounter[bestLabelSession]||0) + bestCountSession; }
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td style="padding:6px; border-bottom:1px solid #24365d;">${r.sessionNo||'-'}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionStart)}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.startBank||0}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.endBank||0}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${r.hands||0}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${handsVal}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">${recordStr}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.profit||0))}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.playProfit||0))}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.tripsProfit||0))}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.pocketProfit||0))}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.wooFollowed||0)} / ${(r.hands||0)}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(Number(r.hypoProfit||0))}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.bestHandLabel||'-')} ${r.bestHandCount?('x '+r.bestHandCount):''}</td>`;
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${formatCurrency(totalBet)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${formatCurrency(baseBet)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${formatCurrency(tripsBet)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${formatCurrency(pocketBet)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(profitVal)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(playProfit)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(tripsProfit)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(pocketProfit)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${followedVal} / ${handsVal||0}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(hypoVal)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.bestHandLabel||'-')} ${bestCountSession>0?("x "+bestCountSession):""}</td>`;
         frag.appendChild(tr);
       });
       if(tbody) tbody.appendChild(frag);
+      const avgHands = totalSessions ? totalHands / totalSessions : 0;
+      const followRate = totalHands ? (totalFollowed / totalHands) * 100 : 0;
+      const followDisplay = totalHands ? `${totalFollowed}/${totalHands} (${followRate.toFixed(1)}%)` : `${totalFollowed}/0 (0.0%)`;
+      let bestLabel = '-'; let bestCount = 0; let bestRankScore = -1;
+      for(const [label,count] of Object.entries(bestCounter)){
+        const rank = labelRank[label] !== undefined ? labelRank[label] : -1;
+        if(rank > bestRankScore || (rank === bestRankScore && count > bestCount)){
+          bestRankScore = rank;
+          bestLabel = label;
+          bestCount = count;
+        }
+      }
+      if(bestLabel === '-' && bestCounter['-']){ bestCount = bestCounter['-']; }
+      const totalProfitDisplay = `${fmt(totalProfit)} (${formatPercent(totalProfit, totalTotalBet)})`;
+      const playProfitDisplay = `${fmt(totalPlayProfit)} (${formatPercent(totalPlayProfit, totalTotalBet)})`;
+      const tripsProfitDisplay = `${fmt(totalTripsProfit)} (${formatPercent(totalTripsProfit, totalTotalBet)})`;
+      const pocketProfitDisplay = `${fmt(totalPocketProfit)} (${formatPercent(totalPocketProfit, totalTotalBet)})`;
+      if(statsTotalsEl){
+        statsTotalsEl.innerHTML = `
+          <div class="mini-stat-item"><div class="mini-stat-label">Hands</div><div class="mini-stat-value">${totalHands}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Hand Record (W-L-P)</div><div class="mini-stat-value">${totalWins}-${totalLosses}-${totalPushes}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Total Bet</div><div class="mini-stat-value">${formatCurrency(totalTotalBet)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Total Profit</div><div class="mini-stat-value">${totalProfitDisplay}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Play/Ante/Odds Profit</div><div class="mini-stat-value">${playProfitDisplay}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Trips Profit</div><div class="mini-stat-value">${tripsProfitDisplay}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Pocket Profit</div><div class="mini-stat-value">${pocketProfitDisplay}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Followed</div><div class="mini-stat-value">${followDisplay}</div></div>`;
+      }
+      if(statsSummaryEl){
+        statsSummaryEl.innerHTML = `
+          <div class="mini-stat-item"><div class="mini-stat-label">Sessions</div><div class="mini-stat-value">${totalSessions}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Total Hands</div><div class="mini-stat-value">${totalHands}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Avg Hands / Session</div><div class="mini-stat-value">${avgHands.toFixed(1)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Hand Record (W-L-P)</div><div class="mini-stat-value">${totalWins}-${totalLosses}-${totalPushes}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Total Bet</div><div class="mini-stat-value">${formatCurrency(totalTotalBet)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Play/Ante/Odds Bet</div><div class="mini-stat-value">${formatCurrency(totalBaseBet)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Trips Bet</div><div class="mini-stat-value">${formatCurrency(totalTripsBet)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Pocket Bet</div><div class="mini-stat-value">${formatCurrency(totalPocketBet)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Total Profit</div><div class="mini-stat-value">${totalProfitDisplay}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Play/Ante/Odds Profit</div><div class="mini-stat-value">${playProfitDisplay}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Trips Profit</div><div class="mini-stat-value">${tripsProfitDisplay}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Pocket Profit</div><div class="mini-stat-value">${pocketProfitDisplay}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Followed</div><div class="mini-stat-value">${followDisplay}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Best Hand</div><div class="mini-stat-value">${bestLabel} ${bestCount>0?("x "+bestCount):""}</div></div>`;
+      }
     }
   }catch(e){ if(empty) empty.style.display='block'; }
   if(modal){ modal.style.display='block'; }
@@ -2417,6 +2649,7 @@ async function openStatsModal(playerOverride){
     modal.addEventListener('click', handler, true);
   }
 }
+
 
 // Big result popup helper
 function showBigResult(amount){
@@ -2485,6 +2718,41 @@ if(_viewStatsBtn){ _viewStatsBtn.addEventListener('click', ()=>{ openStatsModal(
     const newHandBtn = document.getElementById('newHand');
     if(actions && foldBtn && newHandBtn){ newHandBtn.classList.add('action'); actions.appendChild(newHandBtn); }
   }catch(e){}
+})();
+
+(function syncStickyActionsToTable(){
+  const tableWrap = document.getElementById('tableWrap');
+  const sticky = document.querySelector('.sticky-actions');
+  if(!tableWrap || !sticky) return;
+
+  let frameId = null;
+
+  const applySizing = ()=>{
+    const rect = tableWrap.getBoundingClientRect();
+    if(!rect.width) return;
+    sticky.style.width = Math.round(rect.width) + 'px';
+    sticky.style.left = Math.round(rect.left) + 'px';
+    sticky.style.transform = 'none';
+    sticky.style.right = 'auto';
+    scheduleMiniPanelsClamp();
+  };
+
+  const scheduleApply = ()=>{
+    if(frameId !== null) return;
+    frameId = requestAnimationFrame(()=>{
+      frameId = null;
+      applySizing();
+    });
+  };
+
+  scheduleApply();
+  window.addEventListener('resize', scheduleApply);
+  window.addEventListener('load', scheduleApply);
+
+  if('ResizeObserver' in window){
+    const ro = new ResizeObserver(()=> scheduleApply());
+    ro.observe(tableWrap);
+  }
 })();
 
 // Keep legacy listeners (harmless; buttons are hidden)
@@ -2576,6 +2844,14 @@ function captureSessionSummary(){
   const playProfit = Number(betProfit.play || 0);
   const tripsProfit = Number(betProfit.trips || 0);
   const pocketProfit = Number(betProfit.pocket || 0);
+  const betTotals = metrics.betTotals || {};
+  const playBetTotal = Number(betTotals.play || 0);
+  const anteBetTotal = Number(betTotals.ante || 0);
+  const blindBetTotal = Number(betTotals.blind || 0);
+  const tripsBetTotal = Number(betTotals.trips || 0);
+  const pocketBetTotal = Number(betTotals.pocket || 0);
+  const playAnteOddsBet = playBetTotal + anteBetTotal + blindBetTotal;
+  const totalBetPlaced = playAnteOddsBet + tripsBetTotal + pocketBetTotal;
   const startTs = state.sessionStartTs || Date.now();
   const endTs = Date.now();
   const profits = Array.isArray(state.handProfits) ? state.handProfits.slice() : [];
@@ -2610,6 +2886,10 @@ function captureSessionSummary(){
     followed,
     delta,
     profitIfWOO,
+    totalBet: totalBetPlaced,
+    playAnteOddsBet,
+    tripsBet: tripsBetTotal,
+    pocketBet: pocketBetTotal,
     wins,
     losses,
     pushes,
@@ -2636,6 +2916,10 @@ function captureSessionSummary(){
     endBank,
     hands: tot,
     profit,
+    totalBet: totalBetPlaced,
+    playAnteOddsBet,
+    tripsBet: tripsBetTotal,
+    pocketBet: pocketBetTotal,
     wins,
     losses,
     pushes,
@@ -2670,31 +2954,36 @@ function showReport(){
   const lossesCount = Number(summary.losses || 0);
   const pushesCount = Number(summary.pushes || 0);
   const recordStr = `${winsCount}-${lossesCount}-${pushesCount}`;
+  const totalBetVal = formatCurrency(summary.totalBet || 0);
+  const playAnteOddsBetVal = formatCurrency(summary.playAnteOddsBet || 0);
+  const tripsBetVal = formatCurrency(summary.tripsBet || 0);
+  const pocketBetVal = formatCurrency(summary.pocketBet || 0);
   const playProfitVal = Number(summary.playProfit || 0);
   const tripsProfitVal = Number(summary.tripsProfit || 0);
   const pocketProfitVal = Number(summary.pocketProfit || 0);
   if(sum){
     sum.innerHTML = `
-      <div class="panel" style="padding:10px; grid-column:1 / -1;">Player Name<br/><span style="font-size:12px; color:#b6c6ea;">${playerName}</span></div>
-      <div class="panel" style="padding:10px;">Session Start<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(summary.startTs)}</span></div>
-      <div class="panel" style="padding:10px;">Session End<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(summary.endTs)}</span></div>
-      <div class="panel" style="padding:10px;">Starting Bankroll<br/><span class="money" style="font-size:18px;">$${summary.startBank}</span></div>
-      <div class="panel" style="padding:10px;">Ending Bankroll<br/><span class="money" style="font-size:18px;">$${summary.endBank}</span></div>
-      <div class="panel" style="padding:10px;">Hands Played<br/><span class="money" style="font-size:18px;">${summary.hands}</span></div>
-      <div class="panel" style="padding:10px;">Hand Record<br/><span class="money" style="font-size:18px;">${recordStr}</span></div>
-      <div class="panel" style="padding:10px;">Total Profit<br/><span class="money" style="font-size:18px;">${fmt(summary.profit)}</span></div>
-      <div class="panel" style="padding:10px;">Play / Ante / Odds Profit<br/><span class="money" style="font-size:18px;">${fmt(playProfitVal)}</span></div>
-      <div class="panel" style="padding:10px;">Trips Profit<br/><span class="money" style="font-size:18px;">${fmt(tripsProfitVal)}</span></div>
-      <div class="panel" style="padding:10px;">Pocket Profit<br/><span class="money" style="font-size:18px;">${fmt(pocketProfitVal)}</span></div>
-      <div class="panel" style="padding:10px;">Strategy Followed<br/><span class="money" style="font-size:18px;">${summary.followed} / ${summary.hands}</span></div>
-      <div class="panel" style="padding:10px;">Hypo Profit (Using Strategy)<br/><span class="money" style="font-size:18px;">${fmt(summary.profitIfWOO)}</span></div>
-      <div class="panel" style="padding:10px;">Greatest Total Profit<br/><span class="money" style="font-size:18px;">${fmt(summary.greatestTotalProfit)}</span></div>
-      <div class="panel" style="padding:10px;">Greatest Total Loss<br/><span class="money" style="font-size:18px;">${fmt(summary.greatestTotalLoss)}</span></div>
-      <div class="panel" style="padding:10px;">Best Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(summary.bestProfitHand)}</span></div>
-      <div class="panel" style="padding:10px;">Worst Profit Hand<br/><span class="money" style="font-size:18px;">${fmt(summary.worstProfitHand)}</span></div>
-      <div class="panel" style="padding:10px;">Most Consec Wins<br/><span class="money" style="font-size:18px;">${summary.mostConsecutiveWins}</span></div>
-      <div class="panel" style="padding:10px;">Most Consec Losses<br/><span class="money" style="font-size:18px;">${summary.mostConsecutiveLosses}</span></div>
-      <div class="panel" style="padding:10px;">Best Hand<br/><span style="font-size:12px; color:#b6c6ea;">${bestLabel}${bestCount>0?` x ${bestCount}`:''}</span></div>`;
+      <div class="panel" style="padding:4px; grid-column:1 / -1;">Player Name<br/><span style="font-size:12px; color:#b6c6ea;">${playerName}</span></div>
+      <div class="panel" style="padding:4px;">Session Start<br/><span style="font-size:12px; color:#b6c6ea;">${fmtDT(summary.startTs)}</span></div>
+      <div class="panel" style="padding:4px;">Starting Bankroll<br/><span class="money" style="font-size:18px;">$${summary.startBank}</span></div>
+      <div class="panel" style="padding:4px;">Ending Bankroll<br/><span class="money" style="font-size:18px;">$${summary.endBank}</span></div>
+      <div class="panel" style="padding:4px;">Hands Played<br/><span class="money" style="font-size:18px;">${summary.hands}</span></div>
+      <div class="panel" style="padding:4px;">Total Bet<br/><span class="money" style="font-size:18px;">${totalBetVal}</span></div>
+      <div class="panel" style="padding:4px;">Total Profit<br/><span class="money" style="font-size:18px;">${fmt(summary.profit)}</span></div>
+      <div class="panel" style="padding:4px;">Play / Ante / Odds Bet<br/><span class="money" style="font-size:18px;">${playAnteOddsBetVal}</span></div>
+      <div class="panel" style="padding:4px;">Play / Ante / Odds Profit<br/><span class="money" style="font-size:18px;">${fmt(playProfitVal)}</span></div>
+      <div class="panel" style="padding:4px;">Trips Bet<br/><span class="money" style="font-size:18px;">${tripsBetVal}</span></div>
+      <div class="panel" style="padding:4px;">Trips Profit<br/><span class="money" style="font-size:18px;">${fmt(tripsProfitVal)}</span></div>
+      <div class="panel" style="padding:4px;">Pocket Bet<br/><span class="money" style="font-size:18px;">${pocketBetVal}</span></div>
+      <div class="panel" style="padding:4px;">Pocket Profit<br/><span class="money" style="font-size:18px;">${fmt(pocketProfitVal)}</span></div>
+      <div class="panel" style="padding:4px;">Hand Record<br/><span class="money" style="font-size:18px;">${recordStr}</span></div>
+      <div class="panel" style="padding:4px;">Strategy Followed<br/><span class="money" style="font-size:18px;">${summary.followed} / ${summary.hands}</span></div>
+      <div class="panel" style="padding:4px;">Hypo Profit (Using Strategy)<br/><span class="money" style="font-size:18px;">${fmt(summary.profitIfWOO)}</span></div>
+      <div class="panel" style="padding:4px;">Greatest Total Profit<br/><span class="money" style="font-size:18px;">${fmt(summary.greatestTotalProfit)}</span></div>
+      <div class="panel" style="padding:4px;">Greatest Total Loss<br/><span class="money" style="font-size:18px;">${fmt(summary.greatestTotalLoss)}</span></div>
+      <div class="panel" style="padding:4px;">Most Consec Wins<br/><span class="money" style="font-size:18px;">${summary.mostConsecutiveWins}</span></div>
+      <div class="panel" style="padding:4px;">Most Consec Losses<br/><span class="money" style="font-size:18px;">${summary.mostConsecutiveLosses}</span></div>
+      <div class="panel" style="padding:4px;">Best Hand<br/><span style="font-size:12px; color:#b6c6ea;">${bestLabel}${bestCount>0?` x ${bestCount}`:''}</span></div>`;
   }
   if(modal){ modal.style.display='block'; }
   const closeBtn = el('reportClose');
@@ -2737,7 +3026,8 @@ async function logSessionAndReset(options){
     totalDelta:0,
     totalProfit:0,
     handRecord:{win:0,loss:0,push:0},
-    betProfit:{play:0,trips:0,pocket:0}
+    betProfit:{play:0,trips:0,pocket:0},
+    betTotals:{play:0,ante:0,blind:0,trips:0,pocket:0}
   };
   state.hands = 0;
   try{ const handCountEl = document.getElementById('handCount'); if(handCountEl) handCountEl.textContent='0'; }catch(e){}
@@ -2957,7 +3247,7 @@ async function logSessionAndReset(options){
     try{
       const selected = playerSel ? playerSel.value : '';
       if(!selected) return;
-      if(typeof window !== 'undefined' && !window.confirm(`Delete player "${selected}"? This will remove all saved sessions.`)){ return; }
+      if(typeof window !== 'undefined' && !window.confirm(`Delete player sessions for "${selected}"? This will remove all saved sessions.`)){ return; }
       if(playerErr) playerErr.textContent='';
       if(playerViewStats) playerViewStats.disabled = true;
       playerDeleteBtn.disabled = true;
@@ -2973,7 +3263,7 @@ async function logSessionAndReset(options){
       if(playerSel){ playerSel.focus(); }
       if(playerErr){ playerErr.textContent = `Deleted player "${selected}".`; }
     }catch(err){
-      if(playerErr){ playerErr.textContent = 'Unable to delete player. Please try again.'; }
+      if(playerErr){ playerErr.textContent = 'Unable to delete player sessions. Please try again.'; }
       if(playerViewStats){ playerViewStats.disabled = !selected; }
       playerDeleteBtn.disabled = !selected;
     }
@@ -2996,6 +3286,7 @@ async function logSessionAndReset(options){
 </script>
 </body>
 </html>
+
 
 
 
