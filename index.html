@@ -455,7 +455,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.2</div>
+    <div class="splash-version">Version 2.2.1</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -2608,9 +2608,9 @@ async function openStatsModal(playerOverride){
       }
       if(bestLabel === '-' && bestCounter['-']){ bestCount = bestCounter['-']; }
       const totalProfitDisplay = `${fmt(totalProfit)} (${formatPercent(totalProfit, totalTotalBet)})`;
-      const playProfitDisplay = `${fmt(totalPlayProfit)} (${formatPercent(totalPlayProfit, totalTotalBet)})`;
-      const tripsProfitDisplay = `${fmt(totalTripsProfit)} (${formatPercent(totalTripsProfit, totalTotalBet)})`;
-      const pocketProfitDisplay = `${fmt(totalPocketProfit)} (${formatPercent(totalPocketProfit, totalTotalBet)})`;
+      const playProfitDisplay = `${fmt(totalPlayProfit)} (${formatPercent(totalPlayProfit, totalBaseBet)})`;
+      const tripsProfitDisplay = `${fmt(totalTripsProfit)} (${formatPercent(totalTripsProfit, totalTripsBet)})`;
+      const pocketProfitDisplay = `${fmt(totalPocketProfit)} (${formatPercent(totalPocketProfit, totalPocketBet)})`;
       if(statsTotalsEl){
         statsTotalsEl.innerHTML = `
           <div class="mini-stat-item"><div class="mini-stat-label">Hands</div><div class="mini-stat-value">${totalHands}</div></div>
