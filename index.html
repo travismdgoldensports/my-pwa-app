@@ -247,11 +247,11 @@
       inset 0 1px 2px rgba(255,255,255,.45),
       inset 0 -2px 3px rgba(0,0,0,.3);
   }
-  .denom-1  { --chip-light:#ffffff; --chip-dark:#d8dce6; --chip-text:#111821; --chip-core:#f8fbff; }
-  .denom-5  { --chip-light:#ffb0b0; --chip-dark:#ae1f1f; --chip-text:#1b0909; --chip-core:#ffd9d9; }
-  .denom-25 { --chip-light:#baf2d5; --chip-dark:#118855; --chip-text:#073222; --chip-core:#d5fbe7; }
-  .denom-100{ --chip-light:#ededed; --chip-dark:#2c2e3c; --chip-text:#0f131f; --chip-core:#d9dde8; }
-  .denom-500{ --chip-light:#ecd8ff; --chip-dark:#5125b1; --chip-text:#130d28; --chip-core:#dfc9ff; }
+  .denom-1  { --chip-light:#ffffff; --chip-dark:#d8dce6; --chip-text:#515355; --chip-core:#f8fbff; }
+  .denom-5  { --chip-light:#ffb0b0; --chip-dark:#ae1f1f; --chip-text:#924040; --chip-core:#ffd9d9; }
+  .denom-25 { --chip-light:#baf2d5; --chip-dark:#118855; --chip-text:#256d52; --chip-core:#d5fbe7; }
+  .denom-100{ --chip-light:#ededed; --chip-dark:#2c2e3c; --chip-text:#454b5d; --chip-core:#d9dde8; }
+  .denom-500{ --chip-light:#ecd8ff; --chip-dark:#5125b1; --chip-text:#611aa0; --chip-core:#dfc9ff; }
   
   .pot{ position:absolute; left:50%; top:50%; transform: translate(-50%, -20%); width:120px; height:40px; pointer-events:none; }
   .seat-pot-player{ position:absolute; left:50%; bottom:12%; transform: translateX(-50%); width:120px; height:40px; }
@@ -324,6 +324,9 @@
   .mini-panel{ flex:1 1 0; display:flex; flex-direction:column; gap:8px; }
   #miniStatPanel{ border:1px solid #24365d; border-radius:10px; background:#111a2b; padding: 4px; min-width:0; }
   .mini-stat-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(110px,1fr)); gap:6px; }
+  .mini-stat-item{ position:relative; padding:6px; border:1px solid transparent; border-radius:8px; background:rgba(255,255,255,0.02); cursor:grab; user-select:none; transition:border-color .15s ease, background .15s ease; }
+  .mini-stat-item:focus{ outline:2px solid rgba(53,196,141,0.6); outline-offset:2px; }
+  .mini-stat-item.dragging{ opacity:.7; cursor:grabbing; border-color:rgba(53,196,141,0.5); background:rgba(53,196,141,0.12); }
   .mini-stat-item{ background:rgba(36,52,93,0.55); border:1px solid rgba(52,92,155,0.55); border-radius:8px; padding:4px; }
   .mini-stat-label{ font-size:8px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
   .mini-stat-value{ font-size:12px; font-weight:500; color:#e9f0ff; }
@@ -507,7 +510,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.3</div>
+    <div class="splash-version">Version 2.4</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -790,58 +793,58 @@
         <div id="miniStatPanel" class="mini-panel stats-panel">
           <div class="mini-stat-grid">
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="totalBet">
               <div class="mini-stat-label">Total Bet</div>
               <div class="mini-stat-value" id="miniStatTotalBet">$0</div>
             </div>
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="totalProfit">
               <div class="mini-stat-label">Total Profit</div>
               <div class="mini-stat-value" id="miniStatTotal">$0</div>
             </div>
             
 
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="baseBet">
               <div class="mini-stat-label">Play/Ante/Odds Bet</div>
               <div class="mini-stat-value" id="miniStatBaseBet">$0</div>
             </div>
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="baseProfit">
               <div class="mini-stat-label">Play/Ante/Odds Profit</div>
               <div class="mini-stat-value" id="miniStatBaseProfit">$0</div>
             </div>
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="tripsBet">
               <div class="mini-stat-label">Trips Bet</div>
               <div class="mini-stat-value" id="miniStatTripsBet">$0</div>
             </div>
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="tripsProfit">
               <div class="mini-stat-label">Trips Profit</div>
               <div class="mini-stat-value" id="miniStatTrips">$0</div>
             </div>
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="pocketBet">
               <div class="mini-stat-label">Pocket Bet</div>
               <div class="mini-stat-value" id="miniStatPocketBet">$0</div>
             </div>
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="pocketProfit">
               <div class="mini-stat-label">Pocket Profit</div>
               <div class="mini-stat-value" id="miniStatPocket">$0</div>
             </div>
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="record">
               <div class="mini-stat-label">Record</div>
               <div class="mini-stat-value" id="miniStatRecord">0-0-0</div>
             </div>
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="followed">
               <div class="mini-stat-label">Strategy Followed</div>
               <div class="mini-stat-value" id="miniStatFollow">0/0</div>
             </div>
             
-            <div class="mini-stat-item">
+            <div class="mini-stat-item" data-stat-key="best">
               <div class="mini-stat-label">Best Hand</div>
               <div class="mini-stat-value" id="miniStatBest">-</div>
             </div>
@@ -898,9 +901,11 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
-      <p class="muted"><b>Version 2.3</b></br>-Corrected settlement of side bets when player folds.</br>-More realistic chips.</p><b>Version 2.2</b></br>-Even more stats, including player totals.</br>-Other minor visual improvements.</p>
-      <p class="muted"><b>Version 2.1</b></br>-More stats!</br>-Mini stat box on the main screen, swappable with the graph with the click of a button.</br>-Ability to delete player sessions.</br>-Other visual improvements.</p>
-      <p class="muted"><b>Version 2.0</b></br>-Now tracks sessions and stats by player, on the local device only.  Note, you must end/restart the session in order to save it.</br>-Added a Strategy option: Correct Strategy Mistakes.  This allows the player to play without guidance, but will advise upon a strategy mistake and provide an option to correct the play.</br>-Now tracks more stats each session.</br>-Improved viewability, primarily through easier-to-read card ranks and suits.</p>
+      <p class="muted"><b>Version 2.4</b></br>-Now you see bet-by-bet settlement and chip improved chip animation.</br>-Added the ability to drag the mini-stats to reorder them-keep your favorites on top.</p>
+      <p class="muted"><b>Version 2.3</b></br>-Corrected settlement of side bets when player folds.</br>-More realistic chips.</p>
+      <p class="muted"></p><b>Version 2.2</b></br>-Even more stats, including player totals.</p>
+      <p class="muted"><b>Version 2.1</b></br>-More stats!</br>-Mini stat box on the main screen, swappable with the graph with the click of a button.</br>-Ability to delete player sessions.</p>
+      <p class="muted"><b>Version 2.0</b></br>-Now tracks sessions and stats by player, on the local device only.  Note, you must end/restart the session in order to save it.</br>-Added a Strategy option: Correct Strategy Mistakes.  This allows the player to play without guidance, but will advise upon a strategy mistake and provide an option to correct the play.</br>-Now tracks more stats each session.</p>
     </div>
   </div>
 </div>
@@ -1207,6 +1212,147 @@ function formatCurrency(value){
   const amount = String(absVal);
   return rounded < 0 ? `$(${amount})` : `$${amount}`;
 }
+const MINI_STAT_ORDER_KEY = 'huhe.miniStatsOrder';
+const miniStatDragState = { grid:null, dragging:null };
+
+function initMiniStatDrag(){
+  if(miniStatDragState.grid) return;
+  var grid = document.querySelector('#miniStatPanel .mini-stat-grid');
+  if(!grid) return;
+  miniStatDragState.grid = grid;
+  grid.setAttribute('role','list');
+  if(!grid.hasAttribute('aria-label')) grid.setAttribute('aria-label','Mini stats');
+  var items = Array.prototype.slice.call(grid.querySelectorAll('.mini-stat-item'));
+  items.forEach(function(item, idx){
+    if(!item.dataset.statKey){
+      var valueEl = item.querySelector('.mini-stat-value');
+      var fallback = valueEl && valueEl.id ? valueEl.id : ('mini-stat-' + idx);
+      item.dataset.statKey = fallback;
+    }
+  });
+  applyMiniStatOrder(grid);
+  Array.prototype.slice.call(grid.querySelectorAll('.mini-stat-item')).forEach(prepareMiniStatItem);
+  grid.addEventListener('dragover', miniStatDragOver);
+  grid.addEventListener('drop', miniStatDrop);
+  grid.addEventListener('dragenter', function(evt){ if(evt) evt.preventDefault(); });
+  persistMiniStatOrder(grid);
+}
+
+function applyMiniStatOrder(grid){
+  if(!grid) return;
+  var stored = null;
+  try{ stored = JSON.parse(localStorage.getItem(MINI_STAT_ORDER_KEY)||'null'); }catch(e){ stored = null; }
+  if(!Array.isArray(stored) || !stored.length) return;
+  var items = Array.prototype.slice.call(grid.querySelectorAll('.mini-stat-item'));
+  var byKey = {};
+  items.forEach(function(item){ byKey[item.dataset.statKey || ''] = item; });
+  stored.forEach(function(key){
+    if(byKey[key]){ grid.appendChild(byKey[key]); delete byKey[key]; }
+  });
+  Object.keys(byKey).forEach(function(key){
+    if(byKey[key]) grid.appendChild(byKey[key]);
+  });
+}
+
+function prepareMiniStatItem(item){
+  if(item.dataset.dragReady === '1') return;
+  item.dataset.dragReady = '1';
+  item.setAttribute('draggable','true');
+  item.setAttribute('role','listitem');
+  if(!item.hasAttribute('tabindex')) item.setAttribute('tabindex','0');
+  item.setAttribute('aria-grabbed','false');
+  item.addEventListener('dragstart', miniStatDragStart);
+  item.addEventListener('dragend', miniStatDragEnd);
+  item.addEventListener('keydown', miniStatKeyDown);
+}
+
+function miniStatDragStart(evt){
+  miniStatDragState.dragging = this;
+  this.classList.add('dragging');
+  this.setAttribute('aria-grabbed','true');
+  if(evt && evt.dataTransfer){
+    evt.dataTransfer.effectAllowed = 'move';
+    try{ evt.dataTransfer.setData('text/plain', this.dataset.statKey || ''); }catch(e){}
+  }
+}
+
+function miniStatDragEnd(){
+  this.classList.remove('dragging');
+  this.setAttribute('aria-grabbed','false');
+  miniStatDragState.dragging = null;
+  persistMiniStatOrder(this.parentElement || miniStatDragState.grid);
+}
+
+function miniStatDragOver(evt){
+  if(evt) evt.preventDefault();
+  var grid = miniStatDragState.grid;
+  var dragging = miniStatDragState.dragging;
+  if(!grid || !dragging) return;
+  var clientY = evt && typeof evt.clientY === 'number' ? evt.clientY : null;
+  if(clientY === null && evt && evt.touches && evt.touches.length){ clientY = evt.touches[0].clientY; }
+  if(clientY === null) return;
+  var after = getMiniStatAfterElement(grid, clientY);
+  if(!after){
+    if(grid.lastElementChild !== dragging) grid.appendChild(dragging);
+  }else if(after !== dragging){
+    grid.insertBefore(dragging, after);
+  }
+}
+
+function miniStatDrop(evt){
+  if(evt) evt.preventDefault();
+  persistMiniStatOrder(miniStatDragState.grid);
+}
+
+function getMiniStatAfterElement(container, y){
+  var elements = Array.prototype.slice.call(container.querySelectorAll('.mini-stat-item:not(.dragging)'));
+  var closest = { offset: Number.NEGATIVE_INFINITY, element: null };
+  elements.forEach(function(child){
+    var box = child.getBoundingClientRect();
+    var offset = y - box.top - box.height / 2;
+    if(offset < 0 && offset > closest.offset){ closest = { offset: offset, element: child }; }
+  });
+  return closest.element;
+}
+
+function persistMiniStatOrder(grid){
+  if(!grid) return;
+  var items = Array.prototype.slice.call(grid.querySelectorAll('.mini-stat-item'));
+  var order = items.map(function(item){ return item.dataset.statKey || ''; }).filter(Boolean);
+  try{ localStorage.setItem(MINI_STAT_ORDER_KEY, JSON.stringify(order)); }catch(e){}
+  if(typeof scheduleMiniPanelsClamp === 'function'){
+    try{ scheduleMiniPanelsClamp(); }catch(e){}
+  }
+}
+
+function miniStatKeyDown(evt){
+  var grid = miniStatDragState.grid || this.parentElement;
+  if(!grid) return;
+  if(evt.key === 'ArrowUp' || evt.key === 'ArrowLeft'){
+    evt.preventDefault();
+    var prev = this.previousElementSibling;
+    if(prev){
+      grid.insertBefore(this, prev);
+      this.focus();
+      persistMiniStatOrder(grid);
+    }
+  }else if(evt.key === 'ArrowDown' || evt.key === 'ArrowRight'){
+    evt.preventDefault();
+    var next = this.nextElementSibling;
+    if(next){
+      grid.insertBefore(next, this);
+      this.focus();
+      persistMiniStatOrder(grid);
+    }
+  }
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initMiniStatDrag);
+}else{
+  initMiniStatDrag();
+}
+
 function updateMiniStats(){
   const totalEl = document.getElementById('miniStatTotal');
   if(!totalEl) return;
@@ -1524,6 +1670,76 @@ function animateChips(fromEl, toEl, amount, options={stay:false, store:null}){
   });
 }
 
+const CHIP_ANIM_DURATION = 520;
+function waitMs(ms){ return new Promise(resolve=>setTimeout(resolve, ms)); }
+function animateExistingChipsTo(chips, destinationEl){
+  return new Promise(resolve=>{
+    const list = (chips||[]).filter(chip=>chip && chip.isConnected);
+    if(!list.length){
+      resolve();
+      return;
+    }
+    if(!destinationEl){
+      list.forEach(chip=>{ try{ chip.remove(); }catch(e){} });
+      resolve();
+      return;
+    }
+    const table = document.getElementById('table');
+    if(!table){
+      list.forEach(chip=>{ try{ chip.remove(); }catch(e){} });
+      resolve();
+      return;
+    }
+    const t = table.getBoundingClientRect();
+    const rt = destinationEl.getBoundingClientRect();
+    list.forEach((chip,i)=>{
+      const angle = chip.dataset.angle || '0';
+      chip.style.transition = 'left .45s ease, top .45s ease, transform .45s ease';
+      chip.style.zIndex = 90 + i;
+      requestAnimationFrame(()=>{
+        chip.style.left = (rt.left - t.left + rt.width/2 - 20 + (i%3-1)*8) + 'px';
+        chip.style.top = (rt.top - t.top + rt.height/2 - 20 + (Math.floor(i/3)-1)*8) + 'px';
+        chip.style.transform = 'rotate(' + angle + 'deg)';
+      });
+    });
+    setTimeout(()=>{
+      list.forEach(chip=>{ try{ chip.remove(); }catch(e){} });
+      resolve();
+    }, CHIP_ANIM_DURATION);
+  });
+}
+
+async function settleBetsSequential(result){
+  if(!result || !result.betResults) return;
+  const order = [
+    {key:'trips', store:'trips', circle:'circleTrips'},
+    {key:'pocket', store:'pocket', circle:'circlePocket'},
+    {key:'ante', store:'ante', circle:'circleAnte'},
+    {key:'odds', store:'blind', circle:'circleBlind'},
+    {key:'play', store:'play', circle:'circlePlay'}
+  ];
+  const pot = el('pot');
+  for(const item of order){
+    const data = result.betResults[item.key];
+    if(!data || data.wager<=0) continue;
+    const circleEl = el(item.circle);
+    if(!circleEl) continue;
+    const stack = betChips[item.store] || (betChips[item.store]=[]);
+    for(let i=stack.length-1; i>=0; i--){ if(!stack[i] || !stack[i].isConnected) stack.splice(i,1); }
+    const bonus = Math.max(0, data.returned - data.wager);
+    if(bonus>0 && pot){
+      animateChips(pot, circleEl, bonus, {stay:true, store:stack});
+      await waitMs(CHIP_ANIM_DURATION);
+    }else{
+      await waitMs(140);
+    }
+    const target = el(data.net < 0 ? 'potDealer' : 'potPlayer');
+    await animateExistingChipsTo([...stack], target);
+    stack.length = 0;
+    await waitMs(120);
+  }
+}
+
 // Persistent betting chips tracking
 let betChips = { ante:[], blind:[], play:[], trips:[], pocket:[] };
 function repositionBetChips(){
@@ -1564,19 +1780,28 @@ function newHand(){
 function goFlop(){ setStage('flop'); renderAll(); enableButtons(); }
 function goRiver(){ setStage('river'); renderAll(); enableButtons(); }
 
-function showdown(){
-  setStage('showdown'); renderAll();
-  const res=settleAll(); state.bank+=res.playerNet; updateBank(); el('outcome').innerHTML=res.playerOutcomeHtml;
+async function showdown(){
+  setStage('showdown');
+  renderAll();
+  const res = settleAll();
+  state.bank += res.playerNet;
+  updateBank();
+  el('outcome').innerHTML = res.playerOutcomeHtml;
   // Update strategy metrics
-  if(res.strategy){ if(res.strategy.followed) state.metrics.followed++; else state.metrics.deviated++; state.metrics.totalDelta+=res.strategy.delta; }
+  if(res.strategy){
+    if(res.strategy.followed) state.metrics.followed++;
+    else state.metrics.deviated++;
+    state.metrics.totalDelta += res.strategy.delta;
+  }
   if(typeof res.profit==='number'){ state.metrics.totalProfit += res.profit; }
-  const cmp=res.cmp; el('playerLabel').textContent=labelTextFromClass(res.pClass); el('dealerLabel').textContent=labelTextFromClass(res.dClass);
-  el('playerLabel').className='label '+(cmp>0?'win':cmp<0?'loss':'push'); el('dealerLabel').className='label '+(cmp<0?'win':cmp>0?'loss':'push');
-  logAdd(res.playerLogHtml); enableButtons();
-  const animAmt=Math.abs(res.playerNet);
-  if(animAmt!==0){ animateChips(el('pot'), res.playerNet>0?el('potPlayer'):el('potDealer'), animAmt); }
-  // Hand over: clear betting-circle chips after payout animation
-  setTimeout(clearBetChips, 800);
+  const cmp = res.cmp;
+  el('playerLabel').textContent = labelTextFromClass(res.pClass);
+  el('dealerLabel').textContent = labelTextFromClass(res.dClass);
+  el('playerLabel').className = 'label ' + (cmp>0?'win':cmp<0?'loss':'push');
+  el('dealerLabel').className = 'label ' + (cmp<0?'win':cmp>0?'loss':'push');
+  logAdd(res.playerLogHtml);
+  enableButtons();
+  await settleBetsSequential(res);
   // Update bankroll graph
   try{ recordHand(res.profit, res.strategy?!!res.strategy.followed:null, res.strategy?Number(res.strategy.hypProfit):null, res.pClass, res.outcome, res.breakdown); }catch(e){}
   // Big result popup
@@ -1635,7 +1860,7 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
     ((rec.preflop==='raise3') || (state.actions.flop===rec.flop)) &&
     ((rec.preflop==='raise3'||rec.flop==='raise2') || (state.actions.river===rec.river))
   );
-  const strategyNote = `WoO Chart - ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (? ${fmt(hyp.ProfitH-Profit)})`;
+  const strategyNote = `WoO Chart - ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (Diff ${fmt(hyp.ProfitH-Profit)})`;
 
   const breakdown = {
     play: -(ante + blind),
@@ -1957,6 +2182,14 @@ function settleAll(){
     betPocket: (pocket>0?pocket:0),
     betTotal: (ante + blind + (play>0?play:0) + (trips>0?trips:0) + (pocket>0?pocket:0))
   };
+
+  const betResults = {
+    trips: {wager:(trips>0?trips:0), returned:tripsPay, net:tripsNet},
+    pocket: {wager:(pocket>0?pocket:0), returned:pocketPay, net:pocketNet},
+    ante: {wager:ante, returned:Ante, net:anteNet},
+    odds: {wager:blind, returned:Blind, net:blindNet},
+    play: {wager:(play>0?play:0), returned:Play, net:playNet}
+  };
   const outcome = cmp>0?'win':(cmp<0?'loss':'push');
 
   // Wizard of Odds strategy (simplified heuristic): recommend actions and compute hypothetical profit
@@ -2058,11 +2291,11 @@ function settleAll(){
     ((rec.preflop==='raise3') || (state.actions.flop===rec.flop)) &&
     ((rec.preflop==='raise3'||rec.flop==='raise2') || (state.actions.river===rec.river))
   );
-  const strategyNote = `WoO Chart — ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (? ${fmt(hyp.ProfitH-Profit)})`;
+  const strategyNote = `WoO Chart - ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (Diff ${fmt(hyp.ProfitH-Profit)})`;
   const ocClass=cmp>0?"win":(cmp<0?"loss":"push");
   const outcomeHtml=`<span class="${ocClass}">${cmp>0?"player win":(cmp<0?"dealer win":"push")}</span>`;
   const detail=`Ante ${fmt(Ante)}, Odds ${fmt(Blind)}, Play ${fmt(Play)}, Trips ${fmt(tripsPay)}, Pocket ${fmt(pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
-  return {playerNet:Net, playerOutcomeHtml:outcomeHtml, playerLogHtml:`Result — ${outcomeHtml}: ${detail}`, pClass:pe.cls, dClass:de.cls, cmp, profit:Profit, outcome, breakdown, strategy:{followed, delta:(hyp.ProfitH-Profit), hypProfit:hyp.ProfitH, rec}};
+  return {playerNet:Net, playerOutcomeHtml:outcomeHtml, playerLogHtml:`Result - ${outcomeHtml}: ${detail}`, pClass:pe.cls, dClass:de.cls, cmp, profit:Profit, outcome, breakdown, betResults, strategy:{followed, delta:(hyp.ProfitH-Profit), hypProfit:hyp.ProfitH, rec}};
 }
 function pocketBonusPayout(hole,wager){
   const r0=RANKS[hole[0]%13], r1=RANKS[hole[1]%13];
@@ -2216,16 +2449,31 @@ function drawMiniChart(){
   const legendEl = document.getElementById('chartLegendMini');
   const tableEl = document.getElementById('table');
   const tableW = tableEl && tableEl.getBoundingClientRect ? Math.round(tableEl.getBoundingClientRect().width || 0) : 0;
-  const rowW = (rowEl && rowEl.clientWidth) ? rowEl.clientWidth : (wrap.clientWidth || 300);
-  let maxW = Math.max(200, tableW || rowW);
+  const panelEl = wrap.closest('.chart-panel') || wrap.parentElement;
+  const rowW = (panelEl && panelEl.clientWidth) ? panelEl.clientWidth : (wrap.clientWidth || 300);
+  let panelInnerW = rowW;
+  if(panelEl && panelEl.getBoundingClientRect){
+    panelInnerW = Math.round(panelEl.getBoundingClientRect().width || rowW);
+    try{
+      const pcs = getComputedStyle(panelEl);
+      panelInnerW -= (parseFloat(pcs.paddingLeft)||0) + (parseFloat(pcs.paddingRight)||0);
+    }catch(e){}
+  }
+  const viewportW = window.innerWidth || (document.documentElement && document.documentElement.clientWidth) || rowW;
+  let maxCandidate = tableW || panelInnerW || rowW;
+  if(panelInnerW>0) maxCandidate = Math.min(maxCandidate, panelInnerW);
+  if(viewportW>0) maxCandidate = Math.min(maxCandidate, viewportW - 32);
+  if(maxCandidate<=0) maxCandidate = rowW || 260;
+  let maxW = Math.max(200, Math.round(maxCandidate));
   // Start small and grow with hands played (bankHistory excludes starting point)
   const handsPlayed = Math.max(0, ((state.bankHistory||[]).length - 1));
   const FULL_AT = 30; // reach full width by this many hands
   const minW = Math.min(maxW, Math.max(180, Math.round(maxW * 0.35))); // at least 180px or ~35% of table
   const t = Math.min(1, handsPlayed / FULL_AT);
   const wWrap = Math.round(minW + (maxW - minW) * t);
-  // Apply wrapper width to match (and cap at) table width
-  wrap.style.width = wWrap + 'px';
+  const targetW = Math.min(wWrap, maxW);
+  // Apply wrapper width within available space
+  wrap.style.width = targetW + 'px';
   wrap.style.maxWidth = maxW + 'px';
   wrap.style.marginLeft = 'auto';
   wrap.style.marginRight = 'auto';
@@ -3342,45 +3590,4 @@ async function logSessionAndReset(options){
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
