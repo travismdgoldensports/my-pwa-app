@@ -178,7 +178,10 @@
 
   .pips{ position:absolute; left:30%; top:20%; transform:translate(0%,0%); width:40%; height:60%; display:grid; grid-template-rows: repeat(5, 1fr); grid-template-columns: repeat(3, 1fr); }
   .pips.p4{ grid-template-columns: repeat(4, 1fr); }
-  .pip{ display:flex; align-items:center; justify-content:center; font-size:9px; }
+  .pip{ display:flex; align-items:center; justify-content:center;
+    z-index:0;
+    overflow:hidden;
+    font-size:9px; }
   .pip.red{ color:#c62828; }
   .pips.rank-9 .pip{ font-size:9px; }
   .pips.rank-10 .pip{ font-size:9px; }
@@ -190,17 +193,66 @@
   .flip{ animation:flip .35s ease forwards }
   @keyframes flip{ from{ transform:rotateY(90deg); } to{ transform:rotateY(0); } }
 
-  .chip{ position:absolute; width:34px; height:34px; border-radius:50%; border:3px solid #111; box-shadow: 0 4px 8px rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; color:#111; }
-  .denom-1 { background: radial-gradient(circle at 30% 30%, #ffffff, #e5e7eb); }
-  .denom-5 { background: radial-gradient(circle at 30% 30%, #ff9a9a, #e33a3a); color:#fff; }
-  .denom-25 { background: radial-gradient(circle at 30% 30%, #a7f3c7, #34d399); }
-  .denom-100 { background: radial-gradient(circle at 30% 30%, #cfcfcf, #111); color:#fff; }
-  .denom-500 { background: radial-gradient(circle at 30% 30%, #e9d5ff, #7c3aed); color:#fff; }
-  .chip::after{
-    content:""; position:absolute; inset:4px; border-radius:50%;
-    background: repeating-conic-gradient(#fff 0 10deg, transparent 10deg 20deg);
-    opacity:.45; mix-blend-mode:overlay;
+  .chip{
+    position:absolute;
+    width:40px; height:40px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    z-index:0;
+    overflow:hidden;
+    font-size:14px; font-weight:800; letter-spacing:.4px;
+    color:var(--chip-text,#121821);
+    text-shadow:
+      0 1px 1px rgba(255,255,255,.55),
+      0 2px 4px rgba(0,0,0,.75);
+    --chip-light:#f5f5f7;
+    --chip-dark:#b0b6c4;
+    --chip-core:#e0e4ef;
+    background:
+      radial-gradient(circle at 28% 24%, rgba(255,255,255,.75) 0%, rgba(255,255,255,0) 45%),
+      radial-gradient(circle at 52% 118%, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 60%),
+      radial-gradient(circle, var(--chip-light) 0%, var(--chip-dark) 70%);
+    box-shadow:
+      inset 0 1px 3px rgba(255,255,255,.25),
+      inset 0 -3px 8px rgba(0,0,0,.45),
+      0 5px 12px rgba(0,0,0,.45);
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
   }
+   .chip::before{
+    z-index:-1;
+    pointer-events:none;
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:
+      repeating-conic-gradient(from -8deg,
+        rgba(255,255,255,.92) 0deg 12deg,
+        rgba(255,255,255,0) 12deg 24deg);
+    mask: radial-gradient(circle, transparent 0 58%, rgba(0,0,0,1) 60%);
+    -webkit-mask: radial-gradient(circle, transparent 0 58%, #000 60%);
+    opacity:.28;
+  }
+   .chip::after{
+    z-index:-1;
+    pointer-events:none;
+    content:"";
+    position:absolute;
+    inset:9px;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 30% 28%, rgba(255,255,255,.5) 0%, rgba(255,255,255,0) 48%),
+      radial-gradient(circle, var(--chip-core) 0%, rgba(0,0,0,.22) 110%);
+    box-shadow:
+      inset 0 1px 2px rgba(255,255,255,.45),
+      inset 0 -2px 3px rgba(0,0,0,.3);
+  }
+  .denom-1  { --chip-light:#ffffff; --chip-dark:#d8dce6; --chip-text:#111821; --chip-core:#f8fbff; }
+  .denom-5  { --chip-light:#ffb0b0; --chip-dark:#ae1f1f; --chip-text:#1b0909; --chip-core:#ffd9d9; }
+  .denom-25 { --chip-light:#baf2d5; --chip-dark:#118855; --chip-text:#073222; --chip-core:#d5fbe7; }
+  .denom-100{ --chip-light:#ededed; --chip-dark:#2c2e3c; --chip-text:#0f131f; --chip-core:#d9dde8; }
+  .denom-500{ --chip-light:#ecd8ff; --chip-dark:#5125b1; --chip-text:#130d28; --chip-core:#dfc9ff; }
+  
   .pot{ position:absolute; left:50%; top:50%; transform: translate(-50%, -20%); width:120px; height:40px; pointer-events:none; }
   .seat-pot-player{ position:absolute; left:50%; bottom:12%; transform: translateX(-50%); width:120px; height:40px; }
   .seat-pot-dealer{ position:absolute; left:50%; top:12%; transform: translateX(-50%); width:120px; height:40px; }
@@ -455,7 +507,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.2.1</div>
+    <div class="splash-version">Version 2.3</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -846,7 +898,7 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
-      <p class="muted"><b>Version 2.2</b></br>-Even more stats, including player totals.</br>-Other minor visual improvements.</p>
+      <p class="muted"><b>Version 2.3</b></br>-Corrected settlement of side bets when player folds.</br>-More realistic chips.</p><b>Version 2.2</b></br>-Even more stats, including player totals.</br>-Other minor visual improvements.</p>
       <p class="muted"><b>Version 2.1</b></br>-More stats!</br>-Mini stat box on the main screen, swappable with the graph with the click of a button.</br>-Ability to delete player sessions.</br>-Other visual improvements.</p>
       <p class="muted"><b>Version 2.0</b></br>-Now tracks sessions and stats by player, on the local device only.  Note, you must end/restart the session in order to save it.</br>-Added a Strategy option: Correct Strategy Mistakes.  This allows the player to play without guidance, but will advise upon a strategy mistake and provide an option to correct the play.</br>-Now tracks more stats each session.</br>-Improved viewability, primarily through easier-to-read card ranks and suits.</p>
     </div>
@@ -1456,11 +1508,14 @@ function animateChips(fromEl, toEl, amount, options={stay:false, store:null}){
   const t = table.getBoundingClientRect();
   parts.forEach((d,i)=>{
     const c=makeChip(d);
+    const angle = ((Math.random()*24)-12).toFixed(2);
+    c.dataset.angle = angle;
+    c.style.transform = `rotate(${angle}deg)`;
     const rf=fromEl.getBoundingClientRect(); const rt=toEl.getBoundingClientRect();
-    c.style.left = (rf.left - t.left + rf.width/2 - 17) + "px"; c.style.top  = (rf.top - t.top + rf.height/2 - 17) + "px";
+    c.style.left = (rf.left - t.left + rf.width/2 - 20) + "px"; c.style.top  = (rf.top - t.top + rf.height/2 - 20) + "px";
     c.style.transition='left .45s ease, top .45s ease, transform .45s ease'; c.style.zIndex=60+i;
     table.appendChild(c);
-    requestAnimationFrame(()=>{ c.style.left = (rt.left - t.left + rt.width/2 - 17 + (i%3-1)*6) + "px"; c.style.top  = (rt.top - t.top + rt.height/2 - 17 + (Math.floor(i/3)-1)*6) + "px"; });
+    requestAnimationFrame(()=>{ c.style.left = (rt.left - t.left + rt.width/2 - 20 + (i%3-1)*8) + "px"; c.style.top  = (rt.top - t.top + rt.height/2 - 20 + (Math.floor(i/3)-1)*8) + "px"; c.style.transform = `rotate(${angle}deg)`; });
     if(options.stay){
       if(options.store){ options.store.push(c); }
     }else{
@@ -1479,10 +1534,10 @@ function repositionBetChips(){
     for(const key of Object.keys(idMap)){
       const target = document.getElementById(idMap[key]); if(!target) continue;
       const rt = target.getBoundingClientRect();
-      const baseX = rt.left - t.left + rt.width/2 - 17;
-      const baseY = rt.top - t.top + rt.height/2 - 17;
+      const baseX = rt.left - t.left + rt.width/2 - 20;
+      const baseY = rt.top - t.top + rt.height/2 - 20;
       const arr = betChips[key] || [];
-      arr.forEach((chip,i)=>{ if(!chip) return; chip.style.left = (baseX + (i%3-1)*6) + "px"; chip.style.top = (baseY + (Math.floor(i/3)-1)*6) + "px"; });
+      arr.forEach((chip,i)=>{ if(!chip) return; const angle = chip.dataset.angle || "0"; chip.style.left = (baseX + (i%3-1)*8) + "px"; chip.style.top = (baseY + (Math.floor(i/3)-1)*8) + "px"; chip.style.transform = `rotate(${angle}deg)`; });
     }
   }catch(e){}
 }
@@ -1558,15 +1613,21 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
   setStage('showdown'); renderAll(); enableButtons(); el('outcome').innerHTML=`<span class="loss">fold</span>`;
   el('playerLabel').textContent='Fold'; el('playerLabel').className='label loss';
 
-  // Compute net impact of folding (no returns; all initial Wagers &mdash; tand as losses)
   const ante=state.wagers.Ante, blind=state.wagers.Blind, trips=state.wagers.Trips, pocket=state.wagers.Pocket;
-  const invested=(ante)+(blind)+((trips>0)?trips:0)+((pocket>0)?pocket:0);
-  const Profit = -invested; // bank already debited at hand start
-
-  // Compute WoO recommendation and hypothetical outcome given actual cards
   const p7=[...state.player,...state.board], d7=[...state.dealer,...state.board];
   const pe=handEval(p7), de=handEval(d7); const cmp=compareHands([pe.rank,pe.tie],[de.rank,de.tie]);
   const dealerQual = de.rank>=1;
+
+  const tripsPay = trips>0 ? (TRIPS_PAY[pe.cls] ? trips * (TRIPS_PAY[pe.cls] + 1) : 0) : 0;
+  const pocketPay = pocket>0 ? pocketBonusPayout(state.player,pocket) : 0;
+
+  const invested=(ante)+(blind)+((trips>0)?trips:0)+((pocket>0)?pocket:0);
+  const Net = tripsPay + pocketPay;
+  const Profit = Net - invested; // bank already debited at hand start
+
+  state.bank += Net;
+  updateBank();
+
   const rec = recommendWoOGlobal();
   const hyp = settleHypGeneric(pe, de, cmp, dealerQual, ante, blind, trips, pocket, rec.recPlay, rec.recFold);
   const followed = (
@@ -1581,36 +1642,31 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
     ante: -ante,
     blind: -blind,
     playBet: 0,
-    trips: trips>0?-trips:0,
-    pocket: pocket>0?-pocket:0,
+    trips: tripsPay - (trips>0?trips:0),
+    pocket: pocketPay - (pocket>0?pocket:0),
     betPlay: 0,
     betAnte: ante,
     betBlind: blind,
     betTrips: (trips>0?trips:0),
     betPocket: (pocket>0?pocket:0),
-    betTotal: (ante + blind + (trips>0?trips:0) + (pocket>0?pocket:0))
+    betTotal: invested
   };
 
-  // Log the fold with net impact and strategy note
   const outcomeHtml=`<span class="loss">fold</span>`;
-  const detail=`Ante ${fmt(0)}, Odds ${fmt(0)}, Play ${fmt(0)}, Trips ${fmt(0)}, Pocket ${fmt(0)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
+  const detail=`Ante ${fmt(0)}, Odds ${fmt(0)}, Play ${fmt(0)}, Trips ${fmt(tripsPay)}, Pocket ${fmt(pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
   logAdd(`Result - ${outcomeHtml}: ${detail}`);
 
-  // Show big result popup on fold as well
   showBigResult(Profit);
 
-  // Update strategy metrics to include fold hands
   if(followed) state.metrics.followed++; else state.metrics.deviated++;
   state.metrics.totalDelta += (hyp.ProfitH - Profit);
   state.metrics.totalProfit += Profit;
 
-  // Simple chip animation to dealer for a folded hand
-  animateChips(el('pot'), el('potDealer'), 10);
+  const netAbs = Math.abs(Profit);
+  if(netAbs>0){ animateChips(el('pot'), Profit>=0?el('potPlayer'):el('potDealer'), netAbs); }
   setTimeout(clearBetChips, 800);
-  // Update bankroll graph
   try{ recordHand(Profit, !!followed, Number(hyp.ProfitH), pe.cls, 'loss', breakdown); }catch(e){}
 }
-
 function handEval(cards){ const r=handRank7(cards); return {rank:r[0], tie:r[1], cls: classify(r[0], r[1])}; }
 // Determine if the best 5-card hand involves a hole card in the made component.
 // Rules:
@@ -3286,6 +3342,22 @@ async function logSessionAndReset(options){
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
