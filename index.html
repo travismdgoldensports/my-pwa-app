@@ -511,7 +511,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.4.1</div>
+    <div class="splash-version">Version 2.4.2</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -1787,7 +1787,6 @@ async function showdown(){
   const res = settleAll();
   state.bank += res.playerNet;
   updateBank();
-  el('outcome').innerHTML = res.playerOutcomeHtml;
   // Update strategy metrics
   if(res.strategy){
     if(res.strategy.followed) state.metrics.followed++;
@@ -1800,7 +1799,7 @@ async function showdown(){
   el('dealerLabel').textContent = labelTextFromClass(res.dClass);
   el('playerLabel').className = 'label ' + (cmp>0?'win':cmp<0?'loss':'push');
   el('dealerLabel').className = 'label ' + (cmp<0?'win':cmp>0?'loss':'push');
-  logAdd(res.playerLogHtml);
+  logAdd(`${res.playerLogHtml}<br/><span class="muted">Bankroll: ${fmt(state.bank)}</span>`);
   enableButtons();
   await settleBetsSequential(res);
   // Update bankroll graph
@@ -1880,7 +1879,7 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
 
   const outcomeHtml=`<span class="loss">fold</span>`;
   const detail=`Ante ${fmt(0)}, Odds ${fmt(0)}, Play ${fmt(0)}, Trips ${fmt(tripsPay)}, Pocket ${fmt(pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
-  logAdd(`Result - ${outcomeHtml}: ${detail}`);
+  logAdd(`Result - ${outcomeHtml}: ${detail}<br/><span class="muted">Bankroll: ${fmt(state.bank)}</span>`);
 
   showBigResult(Profit);
 
@@ -2445,6 +2444,12 @@ scheduleMiniPanelsClamp();
 function drawMiniChart(){
   const c = document.getElementById('chartMini'); if(!c) return;
   const wrap = c.parentElement; if(!wrap) return;
+  let wrapExtras = 0;
+  try{
+    const wrapStyle = getComputedStyle(wrap);
+    wrapExtras = (parseFloat(wrapStyle.paddingLeft)||0) + (parseFloat(wrapStyle.paddingRight)||0) + (parseFloat(wrapStyle.borderLeftWidth)||0) + (parseFloat(wrapStyle.borderRightWidth)||0);
+  }catch(e){ wrapExtras = 0; }
+  if(!Number.isFinite(wrapExtras) || wrapExtras < 0) wrapExtras = 0;
   // Prefer matching the actual table width
   const rowEl = wrap.parentElement; // .chart-row
   const legendEl = document.getElementById('chartLegendMini');
@@ -2461,10 +2466,6 @@ function drawMiniChart(){
     }catch(e){}
   }
   const viewportW = window.innerWidth || (document.documentElement && document.documentElement.clientWidth) || rowW;
-  let maxCandidate = tableW || panelInnerW || rowW;
-  if(panelInnerW>0) maxCandidate = Math.min(maxCandidate, panelInnerW);
-  if(viewportW>0) maxCandidate = Math.min(maxCandidate, viewportW - 32);
-  if(maxCandidate<=0) maxCandidate = rowW || 260;
   let cssMax = 0;
   try{
     const cssVal = getComputedStyle(document.documentElement).getPropertyValue('--mini-chart-max-width').trim();
@@ -2473,10 +2474,51 @@ function drawMiniChart(){
       if(!Number.isNaN(parsed) && parsed > 0){ cssMax = Math.round(parsed); }
     }
   }catch(e){}
-  if(cssMax > 0){
-    maxCandidate = Math.min(maxCandidate, cssMax);
+  const widthLimits = [];
+  const pushLimit = v => { if(Number.isFinite(v) && v > 0) widthLimits.push(v); };
+  pushLimit(tableW - wrapExtras);
+  pushLimit(panelInnerW - wrapExtras);
+  pushLimit(rowW - wrapExtras);
+  pushLimit((viewportW||0) - 32 - wrapExtras);
+  if(cssMax > 0) pushLimit(cssMax - wrapExtras);
+  let maxCandidate;
+  if(widthLimits.length){
+    maxCandidate = Math.min(...widthLimits);
+  }else{
+    const fallback = (rowW || 260) - wrapExtras;
+    maxCandidate = Number.isFinite(fallback) && fallback > 0 ? fallback : 260;
+    if(cssMax > 0){
+      maxCandidate = Math.min(maxCandidate, Math.max(0, cssMax - wrapExtras));
+    }
+    if(viewportW > 0){
+      maxCandidate = Math.min(maxCandidate, Math.max(0, viewportW - 32 - wrapExtras));
+    }
   }
-  let maxW = Math.max(200, Math.round(maxCandidate));
+  if(!Number.isFinite(maxCandidate) || maxCandidate <= 0){
+    maxCandidate = Math.max(0, (rowW || 260) - wrapExtras);
+  }
+  let maxW = Math.max(0, Math.round(maxCandidate));
+  if(maxW <= 0){
+    const fallbackWidth = Math.max(0, Math.round((rowW || 260) - wrapExtras));
+    maxW = fallbackWidth > 0 ? fallbackWidth : 200;
+  }
+  if(cssMax > 0){
+    const cssCap = Math.max(0, Math.round(cssMax - wrapExtras));
+    if(cssCap > 0) maxW = Math.min(maxW, cssCap);
+  }
+  if(panelInnerW > 0){
+    const panelCap = Math.max(0, Math.round(panelInnerW - wrapExtras));
+    if(panelCap > 0) maxW = Math.min(maxW, panelCap);
+  }
+  if(rowW > 0){
+    const rowCap = Math.max(0, Math.round(rowW - wrapExtras));
+    if(rowCap > 0) maxW = Math.min(maxW, rowCap);
+  }
+  if(viewportW > 0){
+    const viewportCap = Math.max(0, Math.round(viewportW - 32 - wrapExtras));
+    if(viewportCap > 0) maxW = Math.min(maxW, viewportCap);
+  }
+  if(maxW < 0 || !Number.isFinite(maxW)) maxW = 0;
   // Start small and grow with hands played (bankHistory excludes starting point)
   const handsPlayed = Math.max(0, ((state.bankHistory||[]).length - 1));
   const FULL_AT = 30; // reach full width by this many hands
@@ -3602,3 +3644,10 @@ async function logSessionAndReset(options){
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
