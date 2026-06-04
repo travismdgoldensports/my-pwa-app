@@ -93,6 +93,19 @@ test('preflop strategy raises any ace and checks pocket deuces', () => {
   }).preflop, 'check');
 });
 
+test('preflop check advice explains the missed threshold', () => {
+  const advice = logic.computeAdvice({
+    stage:'preflop',
+    player:[card('K', 'c'), card('4', 'd')],
+    board:[],
+    playMult:0
+  });
+
+  assert.equal(advice.action, 'Check');
+  assert.match(advice.why, /K threshold/);
+  assert.match(advice.why, /K suited 5\+ or K offsuit 7\+/);
+});
+
 test('flop strategy raises hidden pair but not pocket deuces', () => {
   assert.equal(logic.recommendWoO({
     player:[card('4', 'c'), card('8', 'd')],

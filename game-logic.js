@@ -217,6 +217,31 @@
     return {action:'fold', why:`Dealer outs to beat: ${outsStr} (>=21)`};
   }
 
+  function rankLabel(rankIndexValue){
+    return rankIndexValue === 8 ? '10' : RANKS[rankIndexValue];
+  }
+
+  function preflopCheckWhy(hole){
+    const rA = hole[0] % 13, rB = hole[1] % 13;
+    const sA = Math.floor(hole[0] / 13), sB = Math.floor(hole[1] / 13);
+    const high = Math.max(rA, rB), low = Math.min(rA, rB);
+    const suited = sA === sB;
+    const handText = `${rankLabel(high)}${rankLabel(low)} ${suited ? 'suited' : 'offsuit'}`;
+    if(rA === rB){
+      return `Your ${rankLabel(rA)}${rankLabel(rB)} is below the pair threshold: raise 3x with pairs 33+, but check pocket 22.`;
+    }
+    if(high === 11){
+      return `Your ${handText} is below the K threshold: raise 3x with K suited 5+ or K offsuit 7+.`;
+    }
+    if(high === 10){
+      return `Your ${handText} is below the Q threshold: raise 3x with Q suited 8+ or Q offsuit 10+.`;
+    }
+    if(high === 9){
+      return `Your ${handText} is below the J threshold: raise 3x only with J suited 10+.`;
+    }
+    return `Your ${handText} is outside the 3x preflop range: pairs 33+, any A, K suited 5+/offsuit 7+, Q suited 8+/offsuit 10+, or J suited 10+.`;
+  }
+
   function preflopAction(hole){
     const rA = hole[0] % 13, rB = hole[1] % 13;
     const sA = Math.floor(hole[0] / 13), sB = Math.floor(hole[1] / 13);
@@ -228,7 +253,7 @@
     if(isK && ((suited && low >= 3) || (!suited && low >= 5))) return {action:'raise3', why:suited ? 'K with suited 5+' : 'K with offsuit 7+'};
     if(isQ && ((suited && low >= 6) || (!suited && low >= 8))) return {action:'raise3', why:suited ? 'Q with suited 8+' : 'Q with offsuit 10+'};
     if(isJ && suited && low >= 8) return {action:'raise3', why:'J with suited 10+'};
-    return {action:'check', why:'Below 3x preflop thresholds'};
+    return {action:'check', why:preflopCheckWhy(hole)};
   }
 
   function flopAction(hole, flop){
