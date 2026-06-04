@@ -4,6 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Heads Up Hold Em</title>
+<meta name="description" content="Heads Up Hold Em trainer with strategy guidance, bankroll tracking, and offline play." />
+<meta name="theme-color" content="#0f172a" />
 
 <!-- iOS PWA support -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -230,8 +232,8 @@
       repeating-conic-gradient(from -8deg,
         rgba(255,255,255,.92) 0deg 12deg,
         rgba(255,255,255,0) 12deg 24deg);
-    mask: radial-gradient(circle, transparent 0 58%, rgba(0,0,0,1) 60%);
     -webkit-mask: radial-gradient(circle, transparent 0 58%, #000 60%);
+    mask: radial-gradient(circle, transparent 0 58%, rgba(0,0,0,1) 60%);
     opacity:.28;
   }
    .chip::after{
@@ -325,7 +327,7 @@
   .mini-panel{ flex:1 1 0; display:flex; flex-direction:column; gap:8px; }
   #miniStatPanel{ border:1px solid #24365d; border-radius:10px; background:#111a2b; padding: 4px; min-width:0; }
   .mini-stat-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(110px,1fr)); gap:6px; }
-  .mini-stat-item{ position:relative; padding:6px; border:1px solid transparent; border-radius:8px; background:rgba(255,255,255,0.02); cursor:grab; user-select:none; transition:border-color .15s ease, background .15s ease; }
+  .mini-stat-item{ position:relative; padding:6px; border:1px solid transparent; border-radius:8px; background:rgba(255,255,255,0.02); cursor:grab; -webkit-user-select:none; user-select:none; transition:border-color .15s ease, background .15s ease; }
   .mini-stat-item:focus{ outline:2px solid rgba(53,196,141,0.6); outline-offset:2px; }
   .mini-stat-item.dragging{ opacity:.7; cursor:grabbing; border-color:rgba(53,196,141,0.5); background:rgba(53,196,141,0.12); }
   .mini-stat-item{ background:rgba(36,52,93,0.55); border:1px solid rgba(52,92,155,0.55); border-radius:8px; padding:4px; }
@@ -468,6 +470,11 @@
   .splash-version{ font-size:11px; color:#bfa8e8; margin-top:4px; }
   .splash-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0 10px; }
   .splash-actions button{ background:#22314f; border:1px solid #2e4470; }
+  .splash-actions #installBtn{ display:none; background:#174234; border-color:#2c7a5e; }
+  .button-small-muted{ font-size:11px; padding:6px 8px; opacity:.9; }
+  .is-hidden{ display:none; }
+  .mt-6{ margin-top:6px; }
+  .mt-6.mb-6{ margin-bottom:6px; }
   .splash-install{ font-size:12px; color:#cfc1ea; opacity:.95; }
   .splash-install b{ color:#fff; }
   body.splash-open{ overflow:hidden; }
@@ -482,7 +489,7 @@
 </head>
 <body>
 <header><h1>Heads Up Hold Em</h1></header>
-<div id="splashOverlay" class="splash-overlay" role="dialog" aria-modal="true" aria-labelledby="splashTitle" style="display:flex;">
+<div id="splashOverlay" class="splash-overlay" role="dialog" aria-modal="true" aria-labelledby="splashTitle">
   <div class="splash-card">
     <svg class="splash-felt" viewBox="0 0 600 240" aria-hidden="true">
   <defs>
@@ -511,14 +518,15 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.4.2</div>
+    <div class="splash-version">Version 2.4.4</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
       <button id="splashShowWoo">Wizard of Odds Strategy</button>
-      <button id="splashShowVersion" style="font-size:11px; padding:6px 8px; opacity:.9;">Version Info</button>
+      <button id="splashShowVersion" class="button-small-muted">Version Info</button>
+      <button id="installBtn" type="button">Install App</button>
     </div>
-    <div class="splash-install">iOS: tap the Share button, then <b>Add to Home Screen</b> to install.<br/>(This will enable offline use.)</div>
+    <div id="installTip" class="splash-install">Install this app for faster startup and offline play.</div>
   </div>
 </div>
 <div id="wooModal" class="modal-woo" role="dialog" aria-modal="true" aria-labelledby="wooTitle">
@@ -551,7 +559,7 @@
 </div>
 
 <!-- Rules Modal -->
-<div id="rulesModal" class="modal-woo" role="dialog" aria-modal="true" aria-labelledby="rulesTitle" style="display:none;">
+<div id="rulesModal" class="modal-woo" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
   <div class="woo-box">
     <div class="close-row"><button id="rulesClose">Close</button></div>
     <h3 id="rulesTitle">Heads Up Hold 'Em — How to Play</h3>
@@ -593,17 +601,17 @@
     </div>
     <h2>Table Settings & Bets</h2>
     <div id="newHandPrompt" class="sidebar-message pulse-soft" aria-hidden="true">Click on New Hand to begin play.</div>
-    <div class="row"><label>Starting Bankroll</label><input id="bankroll" type="number" value="500" min="0" step="1"></div>
-    <div class="row"><label>Ante / Odds (each)</label><input id="ante" type="number" value="10" min="1" step="1"></div>
-    <div class="row"><label>Trips Plus (opt)</label><input id="trips" type="number" value="0" min="0" step="1"></div>
-    <div class="row"><label>Pocket Bonus (opt)</label><input id="pocket" type="number" value="0" min="0" step="1"></div>
+    <div class="row"><label for="bankroll">Starting Bankroll</label><input id="bankroll" title="Starting Bankroll" type="number" value="500" min="0" step="1"></div>
+    <div class="row"><label for="ante">Ante / Odds (each)</label><input id="ante" title="Ante / Odds bet amount" type="number" value="10" min="1" step="1"></div>
+    <div class="row"><label for="trips">Trips Plus (opt)</label><input id="trips" title="Trips Plus bet amount" type="number" value="0" min="0" step="1"></div>
+    <div class="row"><label for="pocket">Pocket Bonus (opt)</label><input id="pocket" title="Pocket Bonus bet amount" type="number" value="0" min="0" step="1"></div>
     <h2>Game Controls</h2> 
     <button id="newHand">➕ New Hand</button>
-    <div class="row" style="margin-top:6px;"><button id="startNewGame">Start New Session</button></div>
-    <div class="row" style="margin-top:6px; margin-bottom:6px;"><button id="endGameExit">End Session and Exit</button></div>
+    <div class="row mt-6"><button id="startNewGame">Start New Session</button></div>
+    <div class="row mt-6 mb-6"><button id="endGameExit">End Session and Exit</button></div>
     <h2>View Stats</h2>
-    <div class="row" style="margin-top:6px;"><button id="viewSessionStats">Session</button></div>
-    <div class="row" style="margin-top:6px; margin-bottom: 6px;"><button id="viewStats">Player</button></div>
+    <div class="row mt-6"><button id="viewSessionStats">Session</button></div>
+    <div class="row mt-6 mb-6"><button id="viewStats">Player</button></div>
     <div class="row" style="margin-top:12px; margin-bottom: 12px; justify-content:space-between; display:none;"></div>
     <div style="margin-top:12px;"><h2>Status</h2><div class="row"><span class="pill">Stage: <span id="stage">Waiting</span></span><span class="pill">Outcome: <span id="outcome">—</span></span></div></div>
       <h2>Strategy</h2>
@@ -902,6 +910,7 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
+      <p class="muted"><b>Version 2.4.4</b></br>-Moved strategy and settlement logic into a tested module.</br>-Added automated checks for payouts and strategy recommendations.</p>
       <p class="muted"><b>Version 2.4</b></br>-Now you see bet-by-bet settlement and chip improved chip animation.</br>-Added the ability to drag the mini-stats to reorder them-keep your favorites on top.</p>
       <p class="muted"><b>Version 2.3</b></br>-Corrected settlement of side bets when player folds.</br>-More realistic chips.</p>
       <p class="muted"></p><b>Version 2.2</b></br>-Even more stats, including player totals.</p>
@@ -972,13 +981,13 @@
       <button id="playerCancel" style="background:#22314f; border-color:#2e4470;">Cancel</button>
     </div>
     <div class="muted" style="font-size:12px;">Choose an existing name or enter a new one.</div>
-    <label style="font-size:12px; color:#b6c6ea;">Existing Players</label>
-    <select id="playerNameSelect" style="padding:8px; background:#0c172a; border:1px solid #2a3f66; border-radius:10px; color:#d9e6ff;">
+    <label for="playerNameSelect" style="font-size:12px; color:#b6c6ea;">Existing Players</label>
+    <select id="playerNameSelect" title="Existing Players" style="padding:8px; background:#0c172a; border:1px solid #2a3f66; border-radius:10px; color:#d9e6ff;">
       <option value="">-- new player --</option>
     </select>
     <div style="text-align:center; font-size:11px; color:#8ea2c8;">or</div>
-    <label style="font-size:12px; color:#b6c6ea;">New Player Name</label>
-    <input id="playerNameInput" type="text" placeholder="Enter name" style="padding:8px; background:#0c172a; border:1px solid #2a3f66; border-radius:10px; color:#d9e6ff;" disabled />
+    <label for="playerNameInput" style="font-size:12px; color:#b6c6ea;">New Player Name</label>
+    <input id="playerNameInput" title="New Player Name" type="text" placeholder="Enter name" style="padding:8px; background:#0c172a; border:1px solid #2a3f66; border-radius:10px; color:#d9e6ff;" disabled />
     <div id="playerErr" class="muted" style="min-height:16px; color:#ff6b6b; font-size:12px;"></div>
     <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center;">
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -1034,6 +1043,7 @@
   </div>
 </div>
 
+<script src="game-logic.js"></script>
 <script>
 const RANKS="23456789TJQKA", SUITS="cdhs";
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
@@ -1463,83 +1473,7 @@ function renderAll(){ renderCards(); }
 
 // Wizard-of-Odds style advice (player-information only)
 function computeAdvice(){
-  const st=state.stage;
-  const hole=state.player; const board=state.board;
-  if(hole.length<2) return {stage:'Waiting', action:'—', why:'No hand yet'};
-  const rA=hole[0]%13, rB=hole[1]%13; const sA=Math.floor(hole[0]/13), sB=Math.floor(hole[1]/13);
-  const suited=(sA===sB);
-  const hi=Math.max(rA,rB), lo=Math.min(rA,rB); // 12=A..0=2
-  const isPair=(rA===rB), isAce=(rA===12||rB===12), isK=(rA===11||rB===11), isQ=(rA===10||rB===10), isJ=(rA===9||rB===9);
-
-  // WoO Preflop 3x (override)
-  if(st==='preflop'){
-    // Any pair except 22
-    if(isPair && rA!==0) return {stage:'Preflop', action:'Raise 3x', why:'Any pair except 22'};
-    // Ace with any other card
-    if(isAce) return {stage:'Preflop', action:'Raise 3x', why:'Ace with any other card'};
-    // King: suited 5+ or offsuit 7+
-    if(isK && ( (suited && lo>=3) || (!suited && lo>=5) )) return {stage:'Preflop', action:'Raise 3x', why: suited? 'K with suited 5+' : 'K with offsuit 7+'};
-    // Queen: suited 8+ or offsuit 10+
-    if(isQ && ( (suited && lo>=6) || (!suited && lo>=8) )) return {stage:'Preflop', action:'Raise 3x', why: suited? 'Q with suited 8+' : 'Q with offsuit 10+'};
-    // Jack: suited 10+ only
-    if(isJ && suited && lo>=8) return {stage:'Preflop', action:'Raise 3x', why:'J with suited 10+'};
-    return {stage:'Preflop', action:'Check', why:'Below 3x preflop thresholds'};
-  }
-
-  
-  if(st==='flop' && state.playMult===0 && board.length>=3){
-    const flop=board.slice(0,3);
-    const ranks=[rA,rB,flop[0]%13,flop[1]%13,flop[2]%13];
-    const suits=[sA,sB,Math.floor(flop[0]/13),Math.floor(flop[1]/13),Math.floor(flop[2]/13)];
-    // WoO flop criteria: Two pair or better; Hidden pair (not pocket 22); Four to a flush with T+ hole card of that suit
-    {
-      const peNow = handEval([hole[0], hole[1], flop[0], flop[1], flop[2]]);
-      const twoPairOrBetter = (peNow.rank >= 2);
-      let hiddenPair=false;
-      if(peNow.rank===1){
-        const rcTmp=new Array(13).fill(0); [rA,rB,flop[0]%13,flop[1]%13,flop[2]%13].forEach(rr=>rcTmp[rr]++);
-        const pRank = rcTmp.findIndex(c=>c===2);
-        const matchesA = (rA===pRank), matchesB=(rB===pRank);
-        if(matchesA || matchesB){
-          const isPocket = (rA===rB && rA===pRank);
-          hiddenPair = !(isPocket && pRank===0);
-        }
-      }
-      const scTmp=[0,0,0,0]; [sA,sB,Math.floor(flop[0]/13),Math.floor(flop[1]/13),Math.floor(flop[2]/13)].forEach(ss=>scTmp[ss]++);
-      let fourFlushWithTPlus=false;
-      for(let suit=0;suit<4;suit++){
-        if(scTmp[suit] >= 4){
-          if( (sA===suit && rA>=8) || (sB===suit && rB>=8) ){ fourFlushWithTPlus=true; break; }
-        }
-      }
-      if(twoPairOrBetter || hiddenPair || fourFlushWithTPlus){
-        const whyParts=[];
-        if(twoPairOrBetter) whyParts.push('Two pair or better');
-        if(hiddenPair) whyParts.push('Hidden pair (not 22)');
-        if(fourFlushWithTPlus) whyParts.push('Four-flush with T+ in hand');
-        return {stage:'Flop', action:'Raise 2x', why: whyParts.join(' / ')};
-      } else {
-        return {stage:'Flop', action:'Check', why:'No 2-pair+, hidden pair (not 22), or 4-flush+T'};
-      }
-    }
-    const rc=new Array(13).fill(0); ranks.forEach(r=>rc[r]++);
-    const hasPairOrBetter = rc.some(c=>c>=2);
-    const sc=[0,0,0,0]; suits.forEach(s=>sc[s]++);
-    const hasFourFlush = sc.some(c=>c>=4);
-    const uniq=[...new Set(ranks)].sort((a,b)=>a-b);
-    const uniqAceLow = uniq.includes(12) ? [-1,...uniq] : uniq.slice();
-    let hasOESD=false; for(let i=0;i<uniqAceLow.length-3;i++){ if(uniqAceLow[i+3]-uniqAceLow[i]===3){ hasOESD=true; break; } }
-    const reasons=[]; if(hasPairOrBetter) reasons.push('Pair or better'); if(hasFourFlush) reasons.push('Four to a flush'); if(hasOESD) reasons.push('Open-ended straight draw');
-    if(reasons.length>0) return {stage:'Flop', action:'Raise 2x', why: reasons.join(' • ')};
-    return {stage:'Flop', action:'Check', why:'No pair+, four-flush, or OESD'};
-  }
-
-  if((st==='river'||st==='showdown') && state.playMult===0 && board.length===5){
-    const rec = riverWoORuleDecision();
-    return {stage:'River', action: rec.action==='call1' ? 'Call 1x' : 'Fold', why: rec.why};
-  }
-
-  return {stage: st[0].toUpperCase()+st.slice(1), action:'—', why:'No advice (already raised or not applicable)'};
+  return HUHELogic.computeAdvice({stage:state.stage, player:state.player, board:state.board, playMult:state.playMult});
 }
 
 // Map advice action text to internal action id
@@ -1838,61 +1772,37 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
   setStage('showdown'); renderAll(); enableButtons(); el('outcome').innerHTML=`<span class="loss">fold</span>`;
   el('playerLabel').textContent='Fold'; el('playerLabel').className='label loss';
 
-  const ante=state.wagers.Ante, blind=state.wagers.Blind, trips=state.wagers.Trips, pocket=state.wagers.Pocket;
-  const p7=[...state.player,...state.board], d7=[...state.dealer,...state.board];
-  const pe=handEval(p7), de=handEval(d7); const cmp=compareHands([pe.rank,pe.tie],[de.rank,de.tie]);
-  const dealerQual = de.rank>=1;
-
-  const tripsPay = trips>0 ? (TRIPS_PAY[pe.cls] ? trips * (TRIPS_PAY[pe.cls] + 1) : 0) : 0;
-  const pocketPay = pocket>0 ? pocketBonusPayout(state.player,pocket) : 0;
-
-  const invested=(ante)+(blind)+((trips>0)?trips:0)+((pocket>0)?pocket:0);
-  const Net = tripsPay + pocketPay;
-  const Profit = Net - invested; // bank already debited at hand start
-
+  const res = HUHELogic.settleFold({
+    player:state.player,
+    dealer:state.dealer,
+    board:state.board,
+    wagers:state.wagers,
+    actions:state.actions,
+    anteValue:state.ante
+  });
+  const Net = res.playerNet;
+  const Profit = res.profit;
   state.bank += Net;
   updateBank();
 
-  const rec = recommendWoOGlobal();
-  const hyp = settleHypGeneric(pe, de, cmp, dealerQual, ante, blind, trips, pocket, rec.recPlay, rec.recFold);
-  const followed = (
-    (state.actions.preflop===rec.preflop) &&
-    ((rec.preflop==='raise3') || (state.actions.flop===rec.flop)) &&
-    ((rec.preflop==='raise3'||rec.flop==='raise2') || (state.actions.river===rec.river))
-  );
-  const strategyNote = `WoO Chart - ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (Diff ${fmt(hyp.ProfitH-Profit)})`;
-
-  const breakdown = {
-    play: -(ante + blind),
-    ante: -ante,
-    blind: -blind,
-    playBet: 0,
-    trips: tripsPay - (trips>0?trips:0),
-    pocket: pocketPay - (pocket>0?pocket:0),
-    betPlay: 0,
-    betAnte: ante,
-    betBlind: blind,
-    betTrips: (trips>0?trips:0),
-    betPocket: (pocket>0?pocket:0),
-    betTotal: invested
-  };
+  const strategyNote = `WoO Chart - ${res.strategy.followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${res.strategy.rec.preflop}${res.strategy.rec.flop?`, ${res.strategy.rec.flop}`:''}${res.strategy.rec.river?`, ${res.strategy.rec.river}`:''}; Hypo Net <b>${fmt(res.strategy.hypProfit)}</b> (Diff ${fmt(res.strategy.delta)})`;
 
   const outcomeHtml=`<span class="loss">fold</span>`;
-  const detail=`Ante ${fmt(0)}, Odds ${fmt(0)}, Play ${fmt(0)}, Trips ${fmt(tripsPay)}, Pocket ${fmt(pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
+  const detail=`Ante ${fmt(0)}, Odds ${fmt(0)}, Play ${fmt(0)}, Trips ${fmt(res.returns.tripsPay)}, Pocket ${fmt(res.returns.pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${res.pClass}, Dealer: ${res.dClass}${res.dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
   logAdd(`Result - ${outcomeHtml}: ${detail}<br/><span class="muted">Bankroll: ${fmt(state.bank)}</span>`);
 
   showBigResult(Profit);
 
-  if(followed) state.metrics.followed++; else state.metrics.deviated++;
-  state.metrics.totalDelta += (hyp.ProfitH - Profit);
+  if(res.strategy.followed) state.metrics.followed++; else state.metrics.deviated++;
+  state.metrics.totalDelta += res.strategy.delta;
   state.metrics.totalProfit += Profit;
 
   const netAbs = Math.abs(Profit);
   if(netAbs>0){ animateChips(el('pot'), Profit>=0?el('potPlayer'):el('potDealer'), netAbs); }
   setTimeout(clearBetChips, 800);
-  try{ recordHand(Profit, !!followed, Number(hyp.ProfitH), pe.cls, 'loss', breakdown); }catch(e){}
+  try{ recordHand(Profit, !!res.strategy.followed, Number(res.strategy.hypProfit), res.pClass, 'loss', res.breakdown); }catch(e){}
 }
-function handEval(cards){ const r=handRank7(cards); return {rank:r[0], tie:r[1], cls: classify(r[0], r[1])}; }
+function handEval(cards){ return HUHELogic.handEval(cards); }
 // Determine if the best 5-card hand involves a hole card in the made component.
 // Rules:
 // - One pair: one of the paired cards must be a hole.
@@ -1990,17 +1900,7 @@ function _dealerOutsDetailed(hole, board){
 function dealerOutsBeatCount(hole, board){ const d=_dealerOutsDetailed(hole, board); return d.win; }
 // WoO river rule: Call 1x if hidden pair or better, or dealer outs to beat < 21
 function riverWoORuleDecision(){
-  if(state.board.length!==5) return {action:'fold', why:'River not reached'};
-  const hole=state.player, board=state.board;
-  const pe = handEval([hole[0], hole[1], board[0], board[1], board[2], board[3], board[4]]);
-  const involvesHole = best5HoleInRank(hole, board);
-  if(pe.rank>=2 && involvesHole){ return {action:'call1', why:'Two pair+ using hole card'}; }
-  if(pe.rank===1 && involvesHole){ return {action:'call1', why:'Hidden pair'}; }
-  const d=_dealerOutsDetailed(hole, board);
-  const eff = d.win + d.tie*0.5;
-  const outsStr = `${eff.toFixed(1)} [${d.win} win, ${d.tie} tie]`;
-  if(eff<21){ return {action:'call1', why:`Dealer outs to beat: ${outsStr} (<21)`}; }
-  return {action:'fold', why:`Dealer outs to beat: ${outsStr} (>=21)`};
+  return HUHELogic.riverWoORuleDecision({player:state.player, board:state.board});
 }
 // WoO recommendation helper (top-level so fold() can use it too)
 // Compute perfect river decision by enumerating all possible dealer two-card combinations
@@ -2045,257 +1945,27 @@ function evRiverDecision(mult=1){
   return {action, evCall, evFold, beats, ties, loses, combos, hiddenPair};
 }
 function recommendWoOGlobal(){
-  const hole=state.player;
-  const rA=hole[0]%13, rB=hole[1]%13; const sA=Math.floor(hole[0]/13), sB=Math.floor(hole[1]/13);
-  const high=Math.max(rA,rB), low=Math.min(rA,rB); const suited=(sA===sB);
-  // WoO-inspired Preflop 3x chart
-  let preflop='check';
-  const isPair=(rA===rB);
-  const isAce=(rA===12||rB===12);
-  const isK=(rA===11||rB===11);
-  const isQ=(rA===10||rB===10);
-  const isJ=(rA===9||rB===9);
-  const hi=high, lo=low; // 12=A ... 0=2
-  // Any pair except 22
-  if(isPair && rA!==0) preflop='raise3';
-  // Any Ace
-  else if(isAce) preflop='raise3';
-  // Kx: suited 5+; offsuit 7+
-  else if(isK && ((suited && lo>=3) || (!suited && lo>=5))) preflop='raise3';
-  // Qx: suited 8+; offsuit 10+
-  else if(isQ && ((suited && lo>=6) || (!suited && lo>=8))) preflop='raise3';
-  // Jx: suited 10+ only
-  else if(isJ && (suited && lo>=8)) preflop='raise3';
-
-  let flopAct=null, riverAct=null;
-  if(preflop==='check'){
-    const flop=state.board.slice(0,3);
-    // WoO flop: Two pair+; Hidden pair (not pocket 22); or 4-flush with T+ in hand
-    const ranks = [hole[0]%13, hole[1]%13, flop[0]%13, flop[1]%13, flop[2]%13];
-    const suits = [Math.floor(hole[0]/13), Math.floor(hole[1]/13), Math.floor(flop[0]/13), Math.floor(flop[1]/13), Math.floor(flop[2]/13)];
-    const peNow = handEval([hole[0], hole[1], flop[0], flop[1], flop[2]]);
-    const twoPairOrBetter = (peNow.rank >= 2);
-    let hiddenPair=false;
-    if(peNow.rank===1){
-      const rc=new Array(13).fill(0); ranks.forEach(r=>rc[r]++);
-      const pairRank = rc.findIndex(c=>c===2);
-      const matchesA = (hole[0]%13===pairRank);
-      const matchesB = (hole[1]%13===pairRank);
-      if(matchesA || matchesB){
-        const isPocket = ((hole[0]%13)===(hole[1]%13) && (hole[0]%13)===pairRank);
-        const isPocketDeuces = isPocket && pairRank===0;
-        hiddenPair = !isPocketDeuces;
-      }
-    }
-    const suitCount = [0,0,0,0]; suits.forEach(s=>suitCount[s]++);
-    let fourFlushWithTPlus=false;
-    for(let suit=0;suit<4;suit++){
-      if(suitCount[suit] >= 4){
-        if( (Math.floor(hole[0]/13)===suit && hole[0]%13>=8) || (Math.floor(hole[1]/13)===suit && hole[1]%13>=8) ){
-          fourFlushWithTPlus=true; break;
-        }
-      }
-    }
-    flopAct = (twoPairOrBetter||hiddenPair||fourFlushWithTPlus)?'raise2':'check';
-    if(flopAct==='check'){
-      if(state.board.length===5){
-        // River per WoO rule: hidden pair or better OR outs < 21
-        const riverRec = riverWoORuleDecision();
-        riverAct = riverRec.action;
-      }else{
-        // Fallback (shouldn't happen here): call with pair or ace-high
-        const peNow = handEval([...state.player, ...state.board]);
-        const hasPairShowdown = peNow.rank>=1;
-        const aceHigh = ( (state.player[0]%13===12) || (state.player[1]%13===12) );
-        riverAct = (hasPairShowdown||aceHigh)?'call1':'fold';
-      }
-    }
-  }
-  const recPlay = preflop==='raise3' ? state.ante*3 : (flopAct==='raise2' ? state.ante*2 : (riverAct==='call1' ? state.ante*1 : 0));
-  const recFold = (preflop==='raise3'||flopAct==='raise2') ? false : (riverAct==='fold');
-  return {preflop, flop:flopAct, river:riverAct, recPlay, recFold};
+  return HUHELogic.recommendWoO({player:state.player, board:state.board, ante:state.ante});
 }
 // Hypothetical settle helper (standalone)
 function settleHypGeneric(pe,de,cmp,dealerQual,ante,blind,trips,pocket, playAmt, doFold){
-  // Side bets (hypothetical)
-  const tripsPayH = TRIPS_PAY[pe.cls] ? trips * (TRIPS_PAY[pe.cls] + 1) : 0;
-  const pocketPayH = pocket?pocketBonusPayout(state.player,pocket):0;
-  let AnteH=0, BlindH=0, PlayH=0;
-  if(doFold){
-    AnteH=0; PlayH=0; BlindH=0;
-  }else if(cmp>0){
-    PlayH = playAmt>0 ? playAmt*2 : 0;
-    AnteH = dealerQual ? ante*2 : ante;
-    BlindH = BLIND_WIN_PAY[pe.cls] ? blind*(BLIND_WIN_PAY[pe.cls]+1) : blind;
-  }else if(cmp<0){
-    PlayH = 0; AnteH = 0;
-    BlindH = BAD_BEAT_PAY[pe.cls] ? blind*BAD_BEAT_PAY[pe.cls] : 0;
-  }else{
-    PlayH = playAmt>0 ? playAmt : 0; AnteH = ante; BlindH = blind;
-  }
-  const NetH = AnteH+BlindH+PlayH+tripsPayH+pocketPayH;
-  const investedH = ante+blind+(playAmt>0?playAmt:0)+(trips>0?trips:0)+(pocket>0?pocket:0);
-  const ProfitH = NetH - investedH;
-  return {NetH, ProfitH};
+  return HUHELogic.settleHypGeneric({player:state.player, pe, cmp, dealerQual, ante, blind, trips, pocket, playAmt, doFold});
 }
 function settleAll(){
-  const ante=state.wagers.Ante, blind=state.wagers.Blind, play=state.wagers.Play, trips=state.wagers.Trips, pocket=state.wagers.Pocket;
-  const p7=[...state.player,...state.board], d7=[...state.dealer,...state.board];
-  const pe=handEval(p7), de=handEval(d7); const cmp=compareHands([pe.rank,pe.tie],[de.rank,de.tie]);
-  const dealerQual=de.rank>=1;
-  const tripsPay = TRIPS_PAY[pe.cls] ? trips * (TRIPS_PAY[pe.cls] + 1) : 0;
-  const pocketPay=pocket?pocketBonusPayout(state.player,pocket):0;
-  let Ante=0,Blind=0,Play=0;
-  if(cmp>0){
-    // Player wins: Ante/Play pay even money; Odds pays per BLIND_WIN_PAY; otherwise push
-    Play = play>0 ? play*2 : 0;
-    Ante = dealerQual ? ante*2 : ante; // push if no-qual
-    if(BLIND_WIN_PAY[pe.cls]){ Blind = blind * (BLIND_WIN_PAY[pe.cls] + 1); } else { Blind = blind; }
-  }else if(cmp<0){
-    // Player loses: Wagers already debited; only Bad Beat pays on Odds
-    Play = 0; Ante = 0;
-    if(BAD_BEAT_PAY[pe.cls]){ Blind = blind * BAD_BEAT_PAY[pe.cls]; } else { Blind = 0; }
-  } else { // push
-    Play = play>0 ? play : 0;
-    Ante = ante;
-    Blind = blind;
-  }
-  const Net=Ante+Blind+Play+tripsPay+pocketPay;
-  const invested=(ante)+(blind)+((play>0)?play:0)+((trips>0)?trips:0)+((pocket>0)?pocket:0);
-  const Profit=Net-invested;
-  const anteNet = Ante - ante;
-  const blindNet = Blind - blind;
-  const playNet = Play - (play>0?play:0);
-  const tripsNet = tripsPay - (trips>0?trips:0);
-  const pocketNet = pocketPay - (pocket>0?pocket:0);
-  const breakdown = {
-    play: anteNet + blindNet + playNet,
-    ante: anteNet,
-    blind: blindNet,
-    playBet: playNet,
-    trips: tripsNet,
-    pocket: pocketNet,
-    betPlay: (play>0?play:0),
-    betAnte: ante,
-    betBlind: blind,
-    betTrips: (trips>0?trips:0),
-    betPocket: (pocket>0?pocket:0),
-    betTotal: (ante + blind + (play>0?play:0) + (trips>0?trips:0) + (pocket>0?pocket:0))
-  };
-
-  const betResults = {
-    trips: {wager:(trips>0?trips:0), returned:tripsPay, net:tripsNet},
-    pocket: {wager:(pocket>0?pocket:0), returned:pocketPay, net:pocketNet},
-    ante: {wager:ante, returned:Ante, net:anteNet},
-    odds: {wager:blind, returned:Blind, net:blindNet},
-    play: {wager:(play>0?play:0), returned:Play, net:playNet}
-  };
-  const outcome = cmp>0?'win':(cmp<0?'loss':'push');
-
-  // Wizard of Odds strategy (simplified heuristic): recommend actions and compute hypothetical profit
-  function recommendWoO(){
-    const hole=state.player;
-    const rA=hole[0]%13, rB=hole[1]%13; const sA=Math.floor(hole[0]/13), sB=Math.floor(hole[1]/13);
-    const high=Math.max(rA,rB), low=Math.min(rA,rB); const suited=(sA===sB);
-    // WoO-inspired Preflop 3x chart
-    let preflop='check';
-    const isPair=(rA===rB);
-    const isAce=(rA===12||rB===12);
-    const isK=(rA===11||rB===11);
-    const isQ=(rA===10||rB===10);
-    const isJ=(rA===9||rB===9);
-    const hi=high, lo=low; // 12=A ... 0=2
-    // Any pair except 22
-    if(isPair && rA!==0) preflop='raise3';
-    // Any Ace
-    else if(isAce) preflop='raise3';
-    // Kx: suited 5+; offsuit 7+
-    else if(isK && ((suited && lo>=3) || (!suited && lo>=5))) preflop='raise3';
-    // Qx: suited 8+; offsuit 10+
-    else if(isQ && ((suited && lo>=6) || (!suited && lo>=8))) preflop='raise3';
-    // Jx: suited 10+ only
-    else if(isJ && (suited && lo>=8)) preflop='raise3';
-
-    let flopAct=null, riverAct=null;
-    if(preflop==='check'){
-      const flop=state.board.slice(0,3);
-      // WoO flop: Two pair+; Hidden pair (not pocket 22); or 4-flush with T+ in hand
-      const ranks = [hole[0]%13, hole[1]%13, flop[0]%13, flop[1]%13, flop[2]%13];
-      const suits = [Math.floor(hole[0]/13), Math.floor(hole[1]/13), Math.floor(flop[0]/13), Math.floor(flop[1]/13), Math.floor(flop[2]/13)];
-      const peNow = handEval([hole[0], hole[1], flop[0], flop[1], flop[2]]);
-      const twoPairOrBetter = (peNow.rank >= 2);
-      let hiddenPair=false;
-      if(peNow.rank===1){
-        const rc=new Array(13).fill(0); ranks.forEach(r=>rc[r]++);
-        const pairRank = rc.findIndex(c=>c===2);
-        const matchesA = (hole[0]%13===pairRank);
-        const matchesB = (hole[1]%13===pairRank);
-        if(matchesA || matchesB){
-          const isPocket = ((hole[0]%13)===(hole[1]%13) && (hole[0]%13)===pairRank);
-          const isPocketDeuces = isPocket && pairRank===0;
-          hiddenPair = !isPocketDeuces;
-        }
-      }
-      const suitCount = [0,0,0,0]; suits.forEach(s=>suitCount[s]++);
-      let fourFlushWithTPlus=false;
-      for(let suit=0;suit<4;suit++){
-        if(suitCount[suit] >= 4){
-          if( (Math.floor(hole[0]/13)===suit && hole[0]%13>=8) || (Math.floor(hole[1]/13)===suit && hole[1]%13>=8) ){
-            fourFlushWithTPlus=true; break;
-          }
-        }
-      }
-      flopAct = (twoPairOrBetter||hiddenPair||fourFlushWithTPlus)?'raise2':'check';
-      if(flopAct==='check'){
-        if(state.board.length===5){
-          // River per WoO rule: hidden pair or better OR outs < 21
-          const riverRec = riverWoORuleDecision();
-          riverAct = riverRec.action;
-        }else{
-          // Fallback (shouldn't happen here): call with pair or ace-high
-          const hasPairShowdown = pe.rank>=1;
-          const aceHigh = ( (state.player[0]%13===12) || (state.player[1]%13===12) );
-          riverAct = (hasPairShowdown||aceHigh)?'call1':'fold';
-        }
-      }
-    }
-    const recPlay = preflop==='raise3' ? state.ante*3 : (flopAct==='raise2' ? state.ante*2 : (riverAct==='call1' ? state.ante*1 : 0));
-    const recFold = (preflop==='raise3'||flopAct==='raise2') ? false : (riverAct==='fold');
-    return {preflop, flop:flopAct, river:riverAct, recPlay, recFold};
-  }
-
-  function settleHyp(playAmt, doFold){
-    let AnteH=0, BlindH=0, PlayH=0;
-    if(doFold){
-      AnteH=0; PlayH=0; BlindH=0;
-    }else if(cmp>0){
-      PlayH = playAmt>0 ? playAmt*2 : 0;
-      AnteH = dealerQual ? ante*2 : ante;
-      BlindH = BLIND_WIN_PAY[pe.cls] ? blind*(BLIND_WIN_PAY[pe.cls]+1) : blind;
-    }else if(cmp<0){
-      PlayH = 0; AnteH = 0;
-      BlindH = BAD_BEAT_PAY[pe.cls] ? blind*BAD_BEAT_PAY[pe.cls] : 0;
-    }else{
-      PlayH = playAmt>0 ? playAmt : 0; AnteH = ante; BlindH = blind;
-    }
-    const NetH = AnteH+BlindH+PlayH+tripsPay+pocketPay;
-    const investedH = ante+blind+(playAmt>0?playAmt:0)+(trips>0?trips:0)+(pocket>0?pocket:0);
-    const ProfitH = NetH - investedH;
-    return {NetH, ProfitH};
-  }
-
-  const rec = recommendWoO();
-  const hyp = settleHyp(rec.recPlay, rec.recFold);
-  const followed = (
-    (state.actions.preflop===rec.preflop) &&
-    ((rec.preflop==='raise3') || (state.actions.flop===rec.flop)) &&
-    ((rec.preflop==='raise3'||rec.flop==='raise2') || (state.actions.river===rec.river))
-  );
-  const strategyNote = `WoO Chart - ${followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${rec.preflop}${rec.flop?`, ${rec.flop}`:''}${rec.river?`, ${rec.river}`:''}; Hypo Net <b>${fmt(hyp.ProfitH)}</b> (Diff ${fmt(hyp.ProfitH-Profit)})`;
-  const ocClass=cmp>0?"win":(cmp<0?"loss":"push");
-  const outcomeHtml=`<span class="${ocClass}">${cmp>0?"player win":(cmp<0?"dealer win":"push")}</span>`;
-  const detail=`Ante ${fmt(Ante)}, Odds ${fmt(Blind)}, Play ${fmt(Play)}, Trips ${fmt(tripsPay)}, Pocket ${fmt(pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${pe.cls}, Dealer: ${de.cls}${dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
-  return {playerNet:Net, playerOutcomeHtml:outcomeHtml, playerLogHtml:`Result - ${outcomeHtml}: ${detail}`, pClass:pe.cls, dClass:de.cls, cmp, profit:Profit, outcome, breakdown, betResults, strategy:{followed, delta:(hyp.ProfitH-Profit), hypProfit:hyp.ProfitH, rec}};
+  const res = HUHELogic.settleHand({
+    player:state.player,
+    dealer:state.dealer,
+    board:state.board,
+    wagers:state.wagers,
+    actions:state.actions,
+    anteValue:state.ante
+  });
+  const r = res.returns;
+  const strategyNote = `WoO Chart - ${res.strategy.followed?'<span class="win">Followed</span>':'<span class="loss">Deviated</span>'}; Rec: ${res.strategy.rec.preflop}${res.strategy.rec.flop?`, ${res.strategy.rec.flop}`:''}${res.strategy.rec.river?`, ${res.strategy.rec.river}`:''}; Hypo Net <b>${fmt(res.strategy.hypProfit)}</b> (Diff ${fmt(res.strategy.delta)})`;
+  const ocClass=res.cmp>0?"win":(res.cmp<0?"loss":"push");
+  const outcomeHtml=`<span class="${ocClass}">${res.cmp>0?"player win":(res.cmp<0?"dealer win":"push")}</span>`;
+  const detail=`Ante ${fmt(r.Ante)}, Odds ${fmt(r.Blind)}, Play ${fmt(r.Play)}, Trips ${fmt(r.tripsPay)}, Pocket ${fmt(r.pocketPay)}, Net <b>${fmt(res.profit)}</b> <span class="muted">(You: ${res.pClass}, Dealer: ${res.dClass}${res.dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
+  return {...res, playerOutcomeHtml:outcomeHtml, playerLogHtml:`Result - ${outcomeHtml}: ${detail}`};
 }
 function pocketBonusPayout(hole,wager){
   const r0=RANKS[hole[0]%13], r1=RANKS[hole[1]%13];
@@ -3642,6 +3312,7 @@ async function logSessionAndReset(options){
   });
 })();
 </script>
+<script src="app.js" defer></script>
 </body>
 </html>
 
