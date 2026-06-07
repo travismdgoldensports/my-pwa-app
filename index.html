@@ -371,7 +371,7 @@
   .chart-key-toggle:focus{ outline:2px solid #35c48d; outline-offset:2px; }
   @media(min-width:1100px){
     #bankrollBelowTable{ display:flex; flex-direction:column; gap:10px; }
-    #bankrollBelowTable .mini-panels{ display:grid; grid-template-columns:minmax(430px, 0.42fr) minmax(0, 1fr); gap:12px; align-items:stretch; }
+    #bankrollBelowTable .mini-panels{ display:grid; grid-template-columns:minmax(520px, 0.46fr) minmax(0, 1fr); gap:12px; align-items:stretch; }
     #bankrollBelowTable .mini-area-controls{ display:block; }
     #miniSwapToggle{ display:inline-flex; }
     #bankrollBelowTable .mini-panel{ display:none; }
@@ -632,7 +632,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.7</div>
+    <div class="splash-version">Version 2.7.1</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -936,6 +936,11 @@
               <div class="mini-stat-label">Total Profit</div>
               <div class="mini-stat-value" id="miniStatTotal">$0</div>
             </div>
+
+            <div class="mini-stat-item" data-stat-key="hypProfit">
+              <div class="mini-stat-label">Hypo Profit</div>
+              <div class="mini-stat-value" id="miniStatHypProfit">$0</div>
+            </div>
             
 
             <div class="mini-stat-item" data-stat-key="baseBet">
@@ -971,6 +976,11 @@
             <div class="mini-stat-item" data-stat-key="record">
               <div class="mini-stat-label">Record</div>
               <div class="mini-stat-value" id="miniStatRecord">0-0-0</div>
+            </div>
+
+            <div class="mini-stat-item" data-stat-key="hypRecord">
+              <div class="mini-stat-label">Hypo Record</div>
+              <div class="mini-stat-value" id="miniStatHypRecord">0-0-0</div>
             </div>
             
             <div class="mini-stat-item" data-stat-key="followed">
@@ -1343,7 +1353,7 @@ const state={
   handBetBreakdown:[] // per-hand profit breakdowns
 };
 
-function updateBank(){el('bankVal').textContent=state.bank.toFixed(0)}
+function updateBank(){el('bankVal').textContent=Math.round(Number(state.bank)||0).toLocaleString('en-US')}
 const CARD_STYLE_KEY = 'huhe.cardStyle';
 function setCardStyle(value){
   const style = value === 'simple' ? 'simple' : 'typical';
@@ -1373,7 +1383,7 @@ function refreshBankrollEditable(){
 function formatCurrency(value){
   const rounded = Math.round(Number(value)||0);
   const absVal = Math.abs(rounded);
-  const amount = String(absVal);
+  const amount = absVal.toLocaleString('en-US');
   return rounded < 0 ? `$(${amount})` : `$${amount}`;
 }
 const MINI_STAT_ORDER_KEY = 'huhe.miniStatsOrder';
@@ -1521,6 +1531,7 @@ function updateMiniStats(){
   const totalEl = document.getElementById('miniStatTotal');
   if(!totalEl) return;
   const totalBetEl = document.getElementById('miniStatTotalBet');
+  const hypProfitEl = document.getElementById('miniStatHypProfit');
   const baseBetEl = document.getElementById('miniStatBaseBet');
   const baseProfitEl = document.getElementById('miniStatBaseProfit');
   const tripsBetEl = document.getElementById('miniStatTripsBet');
@@ -1528,6 +1539,7 @@ function updateMiniStats(){
   const pocketBetEl = document.getElementById('miniStatPocketBet');
   const pocketEl = document.getElementById('miniStatPocket');
   const recordEl = document.getElementById('miniStatRecord');
+  const hypRecordEl = document.getElementById('miniStatHypRecord');
   const followEl = document.getElementById('miniStatFollow');
   const bestEl = document.getElementById('miniStatBest');
 
@@ -1551,6 +1563,18 @@ function updateMiniStats(){
 
   if(totalEl){ totalEl.textContent = formatCurrency(totalProfit); }
   if(totalBetEl){ totalBetEl.textContent = formatCurrency(totalBet); }
+  const actualProfits = Array.isArray(state.handProfits) ? state.handProfits : [];
+  const hypProfits = Array.isArray(state.handHypProfits) ? state.handHypProfits : [];
+  const hypValues = actualProfits.map((profit, idx)=>{
+    const hyp = hypProfits[idx];
+    return hyp !== null && hyp !== undefined && isFinite(hyp) ? Number(hyp) : Number(profit||0);
+  });
+  const hypTotalProfit = hypValues.reduce((sum, value)=>sum + (Number(value)||0), 0);
+  const hypWins = hypValues.filter(value=>Number(value) > 0).length;
+  const hypLosses = hypValues.filter(value=>Number(value) < 0).length;
+  const hypPushes = hypValues.filter(value=>Number(value) === 0).length;
+  if(hypProfitEl){ hypProfitEl.textContent = formatCurrency(hypTotalProfit); }
+  if(hypRecordEl){ hypRecordEl.textContent = `${hypWins}-${hypLosses}-${hypPushes}`; }
   if(baseBetEl){ baseBetEl.textContent = formatCurrency(baseBetTotal); }
   if(baseProfitEl){ baseProfitEl.textContent = formatCurrency(Number(betProfit.play||0)); }
   if(tripsBetEl){ tripsBetEl.textContent = formatCurrency(tripsBetTotal); }
@@ -2584,7 +2608,7 @@ function drawMiniChart(){
   // Determine when to enable horizontal scrolling by letting canvas exceed wrapper
   const profitsCount = Math.max(0, (state.handProfits||[]).length);
   const vw = window.innerWidth || maxW || 1024;
-  const overflowAt = vw < 640 ? 50 : (vw < 875 ? 75 : 100);
+  const overflowAt = vw < 640 ? 50 : (vw < 875 ? 75 : 50);
   const pxPerHand = vw < 640 ? 10 : (vw < 875 ? 12 : 14);
   // Include padding used in drawChartCore
   const L_PAD = 38, R_PAD = 48;
