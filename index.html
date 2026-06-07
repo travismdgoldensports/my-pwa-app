@@ -60,7 +60,7 @@
   .panel{background:var(--panel);border:1px solid #203355;border-radius:12px;padding:8px}
   h2{font-size:14px;margin:0 0 6px 0;color:#d9e6ff}
   label{display:block;font-size:12px;color:var(--muted);margin:4px 0 2px}
-  input[type=number]{width:100%;padding:8px;background:#0c172a;border:1px solid #2a3f66;border-radius:10px;color:var(--text);font-size:14px}
+  input[type=number], select{width:100%;padding:8px;background:#0c172a;border:1px solid #2a3f66;border-radius:10px;color:var(--text);font-size:14px}
   input[disabled]{ opacity:.55; cursor:not-allowed; }
   /* Keep sidebar label and input on one line */
   #sidebar .row label{ flex: 1 1 auto; margin-right:6px; }
@@ -193,6 +193,15 @@
   .face-svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:40%; height:auto; opacity:.9; }
   .face-svg.red path{ fill:#c62828; }
   .face-svg.black path{ fill:#111; }
+  body.card-style-simple .card .pips,
+  body.card-style-simple .card .face-svg{ display:none; }
+  body.card-style-simple .card .index.br{ display:none; }
+  body.card-style-simple .card .index.tl{ left:50%; top:50%; transform:translate(-50%,-50%); }
+  body.card-style-simple .card .index,
+  body.card-style-simple .card .index.wide{ font-size: clamp(24px, calc(var(--card-w) * .42), 36px); }
+  body.card-style-simple .card .index .suit,
+  body.card-style-simple .card .index.wide .suit{ font-size: clamp(22px, calc(var(--card-w) * .38), 34px); margin-top:2px; }
+  body.card-style-simple .card .index.wide .rank{ font-size: clamp(24px, calc(var(--card-w) * .42), 36px); }
 
   .flip{ animation:flip .35s ease forwards }
   @keyframes flip{ from{ transform:rotateY(90deg); } to{ transform:rotateY(0); } }
@@ -449,15 +458,11 @@
     #table{ height: 360px; min-height: 326px; --card-w: clamp(54px, 16vw, 74px); --card-h: calc(var(--card-w) * 1.36); --card-br: calc(var(--card-w) * .12);}
     .grid{top: 6px; left:8px; right:8px; row-gap: 8px;}
     .cards{gap:3px;}
-    .card .pips,
-    .card .face-svg{ display:none; }
-    .card .index.br{ display:none; }
-    .card .index.tl{ left:50%; top:50%; transform:translate(-50%,-50%); }
-    .card .index,
-    .card .index.wide{ font-size: clamp(24px, calc(var(--card-w) * .48), 34px); }
-    .card .index .suit,
-    .card .index.wide .suit{ font-size: clamp(22px, calc(var(--card-w) * .44), 32px); margin-top:2px; }
-    .card .index.wide .rank{ font-size: clamp(24px, calc(var(--card-w) * .48), 34px); }
+    body.card-style-simple .card .index,
+    body.card-style-simple .card .index.wide{ font-size: clamp(24px, calc(var(--card-w) * .48), 34px); }
+    body.card-style-simple .card .index .suit,
+    body.card-style-simple .card .index.wide .suit{ font-size: clamp(22px, calc(var(--card-w) * .44), 32px); margin-top:2px; }
+    body.card-style-simple .card .index.wide .rank{ font-size: clamp(24px, calc(var(--card-w) * .48), 34px); }
     /* Scale down paytables and bet circles ~25% while keeping them anchored to bottom */
     .felt-left{ transform-origin: left bottom; transform: scale(.65); }
     .bet-circles{ transform-origin: right bottom; transform: scale(.65); }
@@ -538,7 +543,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.6</div>
+    <div class="splash-version">Version 2.6.1</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -635,6 +640,13 @@
     <div class="row" style="margin-top:12px; margin-bottom: 12px; justify-content:space-between; display:none;"></div>
     <div style="margin-top:12px;"><h2>Status</h2><div class="row"><span class="pill">Stage: <span id="stage">Waiting</span></span><span class="pill">Outcome: <span id="outcome">—</span></span></div></div>
       <h2>Strategy</h2>
+      <div class="row">
+        <label for="cardStyle">Card Style</label>
+        <select id="cardStyle" title="Card display style">
+          <option value="typical">Typical</option>
+          <option value="simple">Simple</option>
+        </select>
+      </div>
       <div class="row">
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
           <input id="togglePlayerHand" type="checkbox"> Show Hand Ranking During Play
@@ -1214,6 +1226,7 @@ const state={
   showAdvice:false,
   showPlayerHand:false,
   correctMistakes:false,
+  cardStyle:'typical',
   bankHistory:[],   // bankroll after each hand (includes starting point)
   handProfits:[],   // per-hand profit values
   handFollowed:[],  // per-hand WoO adherence (true=followed, false=deviated)
@@ -1224,6 +1237,17 @@ const state={
 };
 
 function updateBank(){el('bankVal').textContent=state.bank.toFixed(0)}
+const CARD_STYLE_KEY = 'huhe.cardStyle';
+function setCardStyle(value){
+  const style = value === 'simple' ? 'simple' : 'typical';
+  state.cardStyle = style;
+  if(document && document.body){
+    document.body.classList.toggle('card-style-simple', style === 'simple');
+    document.body.classList.toggle('card-style-typical', style === 'typical');
+  }
+  const select = document.getElementById('cardStyle');
+  if(select && select.value !== style) select.value = style;
+}
 function refreshBankrollEditable(){
   const inp = el('bankroll');
   const prompt = el('newHandPrompt');
@@ -2856,6 +2880,15 @@ if(_viewStatsBtn){ _viewStatsBtn.addEventListener('click', ()=>{ openStatsModal(
 // Keep legacy listeners (harmless; buttons are hidden)
 document.getElementById('raise3').addEventListener('click',raise3);
 document.getElementById('raise2').addEventListener('click',raise2);
+try{ setCardStyle(localStorage.getItem(CARD_STYLE_KEY) || state.cardStyle); }catch(e){ setCardStyle(state.cardStyle); }
+const _cardStyleSelect = document.getElementById('cardStyle');
+if(_cardStyleSelect){
+  _cardStyleSelect.addEventListener('change', (e)=>{
+    setCardStyle(e.target.value);
+    try{ localStorage.setItem(CARD_STYLE_KEY, state.cardStyle); }catch(err){}
+    renderCards();
+  });
+}
 const _advToggle= document.getElementById('toggleAdvice');
 if(_advToggle){
   _advToggle.addEventListener('change', (e)=>{ state.showAdvice = !!e.target.checked; renderAdvice(); updatePrimaryAction(); });
