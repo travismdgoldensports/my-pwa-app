@@ -1,4 +1,4 @@
-const VERSION = "v2.5";
+const VERSION = "v2.5.1";
 const STATIC_CACHE = `heads-up-static-${VERSION}`;
 const HTML_CACHE = `heads-up-html-${VERSION}`;
 const OFFLINE_PAGE = "index.html";

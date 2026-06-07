@@ -910,7 +910,7 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
-      <p class="muted"><b>Version 2.5</b></br>-Moved strategy and settlement logic into a tested module.</br>-Added automated checks for payouts and strategy recommendations.</p>
+      <p class="muted"><b>Version 2.5.1</b></br>-Moved strategy and settlement logic into a tested module.</br>-Added automated checks for payouts and strategy recommendations.</p>
       <p class="muted"><b>Version 2.4</b></br>-Now you see bet-by-bet settlement and chip improved chip animation.</br>-Added the ability to drag the mini-stats to reorder them-keep your favorites on top.</p>
       <p class="muted"><b>Version 2.3</b></br>-Corrected settlement of side bets when player folds.</br>-More realistic chips.</p>
       <p class="muted"></p><b>Version 2.2</b></br>-Even more stats, including player totals.</p>
@@ -1574,12 +1574,17 @@ function enableButtons(){
   el('call1').disabled=!(st==='river'&&state.playMult===0);
   el('check').disabled=!(st==='preflop'||st==='flop');
   el('fold').disabled=!(st==='river'&&state.playMult===0);
-  el('newHand').disabled=!(st==='waiting'||st==='showdown');
+  el('newHand').disabled=chipSettlementInProgress || !(st==='waiting'||st==='showdown');
   // keep the single primary action button in sync
   updatePrimaryAction();
 }
 
 const DENOMS=[500,100,25,5,1];
+let chipSettlementInProgress = false;
+function setChipSettlementInProgress(value){
+  chipSettlementInProgress = !!value;
+  enableButtons();
+}
 function makeChip(d){ const div=document.createElement('div'); div.className='chip denom-'+d; div.textContent=+d; return div; }
 function breakdown(amount){ const out=[]; let rem=Math.abs(amount); for(const d of DENOMS){ while(rem>=d && out.length<12){ out.push(d); rem-=d; } } if(rem>0) out.push(1); return out; }
 // options: { stay: boolean, store: array }
@@ -1696,6 +1701,7 @@ window.addEventListener("resize", repositionBetChips);
 function clearBetChips(){ Object.values(betChips).forEach(arr=>{ arr.forEach(el=>el.remove()); arr.length=0; }); }
 
 function newHand(){
+  if(chipSettlementInProgress) return;
   state.ante=Number(el('ante').value)||0; state.trips=Number(el('trips').value)||0; state.pocket=Number(el('pocket').value)||0;
   const needed=state.ante*2+state.trips+state.pocket; if(state.bank<needed){alert("Not enough bank for Ante+Blind+Trips+Pocket.");return;}
   if(state.hands===0){ state.sessionStartBank = state.bank; if(!state.sessionStartTs) state.sessionStartTs=Date.now(); }
@@ -1716,6 +1722,7 @@ function goFlop(){ setStage('flop'); renderAll(); enableButtons(); }
 function goRiver(){ setStage('river'); renderAll(); enableButtons(); }
 
 async function showdown(){
+  setChipSettlementInProgress(true);
   setStage('showdown');
   renderAll();
   const res = settleAll();
@@ -1735,11 +1742,15 @@ async function showdown(){
   el('dealerLabel').className = 'label ' + (cmp<0?'win':cmp>0?'loss':'push');
   logAdd(`${res.playerLogHtml}<br/><span class="muted">Bankroll: ${fmt(state.bank)}</span>`);
   enableButtons();
-  await settleBetsSequential(res);
-  // Update bankroll graph
-  try{ recordHand(res.profit, res.strategy?!!res.strategy.followed:null, res.strategy?Number(res.strategy.hypProfit):null, res.pClass, res.outcome, res.breakdown); }catch(e){}
-  // Big result popup
-  if(typeof res.profit==='number') showBigResult(res.profit);
+  try{
+    await settleBetsSequential(res);
+    // Update bankroll graph
+    try{ recordHand(res.profit, res.strategy?!!res.strategy.followed:null, res.strategy?Number(res.strategy.hypProfit):null, res.pClass, res.outcome, res.breakdown); }catch(e){}
+    // Big result popup
+    if(typeof res.profit==='number') showBigResult(res.profit);
+  }finally{
+    setChipSettlementInProgress(false);
+  }
 }
 
 function raise3(){ if(state.stage!=='preflop'||state.playMult!==0) return; if(maybePromptStrategyDeviation('raise3')) return;
@@ -1767,6 +1778,7 @@ function call1(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybe
 }
 function check(){ if(!(state.stage==='preflop'||state.stage==='flop')) return; if(maybePromptStrategyDeviation('check')) return; if(state.stage==='preflop'){ state.actions.preflop='check'; return goFlop(); } if(state.stage==='flop'){ state.actions.flop='check'; return goRiver(); } }
 function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybePromptStrategyDeviation('fold')) return;
+  setChipSettlementInProgress(true);
   state.actions.river='fold';
   // Move to showdown visuals
   setStage('showdown'); renderAll(); enableButtons(); el('outcome').innerHTML=`<span class="loss">fold</span>`;
@@ -1799,8 +1811,11 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
 
   const netAbs = Math.abs(Profit);
   if(netAbs>0){ animateChips(el('pot'), Profit>=0?el('potPlayer'):el('potDealer'), netAbs); }
-  setTimeout(clearBetChips, 800);
-  try{ recordHand(Profit, !!res.strategy.followed, Number(res.strategy.hypProfit), res.pClass, 'loss', res.breakdown); }catch(e){}
+  setTimeout(()=>{
+    clearBetChips();
+    try{ recordHand(Profit, !!res.strategy.followed, Number(res.strategy.hypProfit), res.pClass, 'loss', res.breakdown); }catch(e){}
+    setChipSettlementInProgress(false);
+  }, 800);
 }
 function handEval(cards){ return HUHELogic.handEval(cards); }
 // Determine if the best 5-card hand involves a hole card in the made component.
