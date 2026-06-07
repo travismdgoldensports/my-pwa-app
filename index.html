@@ -343,20 +343,84 @@
   .mini-stat-item{ background:rgba(36,52,93,0.55); border:1px solid rgba(52,92,155,0.55); border-radius:8px; padding:4px; }
   .mini-stat-label{ font-size:8px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
   .mini-stat-value{ font-size:12px; font-weight:500; color:#e9f0ff; }
+  .result-breakdown{ display:none; border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; }
+  .result-breakdown.is-visible{ display:block; }
+  .result-breakdown.mini-panel{ flex-direction:column; gap:8px; }
+  .result-breakdown-empty{ color:var(--muted); font-size:12px; line-height:1.35; padding:4px 0; }
+  .result-breakdown-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px; }
+  .result-breakdown-title{ font-size:12px; font-weight:800; color:#d9e6ff; text-transform:uppercase; letter-spacing:.4px; }
+  .result-breakdown-total{ font-size:18px; font-weight:900; line-height:1; white-space:nowrap; }
+  .result-breakdown-sub{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .result-breakdown-grid{ display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:6px; }
+  .result-bet-item{ border:1px solid rgba(52,92,155,0.55); border-radius:8px; background:rgba(36,52,93,0.45); padding:7px; min-width:0; }
+  .result-bet-name{ font-size:9px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+  .result-bet-net{ font-size:14px; font-weight:900; margin-bottom:3px; }
+  .result-bet-detail{ font-size:10px; color:#b6c6ea; line-height:1.25; }
+  .result-breakdown-actions{ display:flex; justify-content:flex-end; margin-top:8px; }
+  .result-breakdown-actions button{ background:#22314f; border-color:#2e4470; }
+  @media(max-width:640px){
+    .result-breakdown-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .result-breakdown-head{ align-items:stretch; flex-direction:column; gap:6px; }
+    .result-breakdown-actions{ justify-content:stretch; }
+    .result-breakdown-actions button{ width:100%; }
+  }
   .chart-panel{ border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; }
   .chart-panel > .mini-chart{ margin:0; border:1px solid #24365d; }
   .chart-panel > #chartLegendMini{ margin-top:8px; }
+  .chart-key-toggle{ display:none; align-items:center; justify-content:center; position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:50%; background:#22314f; border:1px solid #2e4470; color:#d9e6ff; font-size:12px; font-weight:800; cursor:pointer; z-index:2; }
+  .chart-key-toggle:focus{ outline:2px solid #35c48d; outline-offset:2px; }
   @media(min-width:1100px){
     #bankrollBelowTable{ display:flex; flex-direction:column; gap:10px; }
-    #bankrollBelowTable .mini-panels{ display:grid; grid-template-columns:260px 1fr; gap:12px; align-items:stretch; }
-    #bankrollBelowTable .mini-area-controls{ display:none !important; }
-    #miniStatPanel, .chart-panel{ display:flex; }
+    #bankrollBelowTable .mini-panels{ display:grid; grid-template-columns:minmax(430px, 0.42fr) minmax(0, 1fr); gap:12px; align-items:stretch; }
+    #bankrollBelowTable .mini-area-controls{ display:block; }
+    #miniSwapToggle{ display:inline-flex; }
+    #bankrollBelowTable .mini-panel{ display:none; }
+    #resultBreakdown{ grid-column:1 / -1; }
+    #bankrollBelowTable.show-result #resultBreakdown{ display:flex; }
+    #bankrollBelowTable.show-stats #miniStatPanel,
+    #bankrollBelowTable.show-stats .chart-panel{ display:flex; }
+    #bankrollBelowTable.show-result .mini-panels{ overflow-y:visible; }
+    #bankrollBelowTable.show-result .result-breakdown{ padding:8px 10px; }
+    #bankrollBelowTable.show-result .result-breakdown-head{ align-items:center; margin-bottom:6px; }
+    #bankrollBelowTable.show-result .result-breakdown-grid{ gap:6px; }
+    #bankrollBelowTable.show-result .result-bet-item{ padding:6px; }
+    #bankrollBelowTable.show-result .result-bet-net{ font-size:13px; margin-bottom:2px; }
+    #bankrollBelowTable.show-result .result-bet-detail{ font-size:9px; line-height:1.2; }
+    #bankrollBelowTable.show-result .result-breakdown-actions{ margin-top:6px; }
+    #bankrollBelowTable.show-result .result-breakdown-actions button{ padding:6px 12px; }
+    #bankrollBelowTable.show-stats .mini-panels{ overflow-y:visible; }
+    #bankrollBelowTable.show-stats #miniStatPanel{ padding:3px; align-self:start; }
+    #bankrollBelowTable.show-stats .mini-stat-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); gap:4px; }
+    #bankrollBelowTable.show-stats .mini-stat-item{ display:flex; flex-direction:column; justify-content:center; min-height:30px; padding:3px 5px; }
+    #bankrollBelowTable.show-stats .mini-stat-label{ margin-bottom:1px; font-size:7px; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #bankrollBelowTable.show-stats .mini-stat-value{ font-size:13px; line-height:1.05; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #bankrollBelowTable.show-stats .chart-panel{ position:relative; padding:8px; min-height:0; }
+    #bankrollBelowTable.show-stats .chart-key-toggle{ display:inline-flex; }
+    #bankrollBelowTable.show-stats #chartLegendMini{
+      display:none;
+      position:absolute;
+      top:42px;
+      right:8px;
+      z-index:4;
+      max-height:none !important;
+      overflow:visible !important;
+      margin-top:0;
+      padding:8px;
+      border:1px solid #2e4470;
+      border-radius:8px;
+      background:rgba(12,23,42,.96);
+      box-shadow:0 10px 24px rgba(0,0,0,.35);
+    }
+    #bankrollBelowTable.show-stats .chart-key-toggle:hover + #chartLegendMini,
+    #bankrollBelowTable.show-stats .chart-key-toggle:focus + #chartLegendMini,
+    #bankrollBelowTable.show-stats .chart-panel:focus-within #chartLegendMini{ display:flex; }
   }
   @media(max-width:1099px){
     #bankrollBelowTable .mini-area-controls{ display:block; }
     #miniSwapToggle{ display:inline-flex; }
     #bankrollBelowTable .mini-panels{ flex-direction:column; }
     #bankrollBelowTable .mini-panel{ display:none; }
+    #bankrollBelowTable.show-result #resultBreakdown{ display:flex; }
     #bankrollBelowTable.show-stats #miniStatPanel{ display:flex; }
     #bankrollBelowTable.show-chart .chart-panel{ display:flex; }
   }
@@ -491,6 +555,31 @@
   .modal-woo .close-row button{ background:#22314f; border:1px solid #2e4470; }
   .modal-woo .woo-content{ font-size:13px; line-height:1.5; max-height:min(70vh,520px); overflow:auto; }
   .modal-woo ul{ margin:8px 0 12px 18px; }
+  .last-hand-modal{ display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:3460; }
+  .last-hand-inner{ position:absolute; inset:24px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:14px; display:flex; flex-direction:column; gap:10px; width:min(780px, 92vw); left:50%; transform:translateX(-50%); }
+  .last-hand-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .last-hand-title{ font-size:18px; font-weight:800; color:#d9e6ff; }
+  .last-hand-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .last-hand-section{ border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; min-width:0; }
+  .last-hand-section.full{ grid-column:1 / -1; }
+  .last-hand-label{ font-size:10px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
+  .last-hand-value{ font-size:13px; color:#e9f0ff; line-height:1.4; }
+  .last-hand-card-row{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; --card-w:54px; --card-h:74px; --card-br:7px; }
+  .last-hand-card-row .card{ box-shadow:0 4px 10px rgba(0,0,0,.25); }
+  .last-hand-card-row .index{ font-size:17px; }
+  .last-hand-card-row .index .suit{ font-size:17px; }
+  .last-hand-card-row .index.wide .rank,
+  .last-hand-card-row .index.wide .suit{ font-size:17px; }
+  .last-hand-card-row .pip{ font-size:7px; }
+  .last-hand-actions-list{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; }
+  .last-hand-action{ border:1px solid rgba(52,92,155,0.55); border-radius:8px; background:rgba(36,52,93,0.45); padding:7px; }
+  @media(max-width:640px){
+    .last-hand-inner{ inset:8px; left:8px; right:8px; transform:none; max-height:calc(100dvh - 16px); padding:10px; width:auto; box-sizing:border-box; }
+    .last-hand-grid{ grid-template-columns:1fr; }
+    .last-hand-section.full{ grid-column:auto; }
+    .last-hand-actions-list{ grid-template-columns:1fr; }
+    .last-hand-card-row{ --card-w:48px; --card-h:65px; gap:4px; }
+  }
   .stats-modal-inner{ position:absolute; inset:12px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:8px; display:flex; flex-direction:column; gap:10px; }
   .stats-table-wrap{ border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; overflow:auto; }
   .stats-session-list{ display:none; flex-direction:column; gap:8px; }
@@ -543,7 +632,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.6.1</div>
+    <div class="splash-version">Version 2.7</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -826,11 +915,15 @@
       </div>
     </div>
     <!-- Bankroll chart moved beneath the table -->
-    <div id="bankrollBelowTable" class="mini-area show-stats">
+    <div id="bankrollBelowTable" class="mini-area show-result">
       <div class="mini-area-controls">
-        <button id="miniSwapToggle" type="button" aria-label="Show chart" title="Show chart"><span aria-hidden="true">⇄</span></button>
+        <button id="miniSwapToggle" type="button" aria-label="Show stats" title="Show stats"><span aria-hidden="true">⇄</span></button>
       </div>
       <div class="mini-panels">
+        <div id="resultBreakdown" class="result-breakdown mini-panel is-visible" aria-live="polite">
+          <div class="result-breakdown-title">Last Result</div>
+          <div class="result-breakdown-empty">No completed hand yet.</div>
+        </div>
         <div id="miniStatPanel" class="mini-panel stats-panel">
           <div class="mini-stat-grid">
             
@@ -895,6 +988,7 @@
           <div id="chartMiniWrap" class="mini-chart" title="Click to expand">
             <canvas id="chartMini"></canvas>
           </div>
+          <button id="chartKeyToggle" class="chart-key-toggle" type="button" aria-label="Show graph key" title="Show graph key">Key</button>
           <div id="chartLegendMini" class="chart-legend right" aria-hidden="true">
             <div class="item"><span class="swatch line-actual"></span> Bankroll</div>
             <div class="item"><span class="swatch line-hypo"></span> Hypo (WoO)</div>
@@ -936,12 +1030,24 @@
   </div>
 </div>
 
+<!-- Last Hand Detail Modal -->
+<div id="lastHandModal" class="last-hand-modal" role="dialog" aria-modal="true" aria-labelledby="lastHandTitle">
+  <div class="last-hand-inner">
+    <div class="last-hand-head">
+      <div id="lastHandTitle" class="last-hand-title">Last Hand</div>
+      <button id="lastHandClose" style="background:#22314f; border-color:#2e4470;">Close</button>
+    </div>
+    <div id="lastHandContent" class="last-hand-grid"></div>
+  </div>
+</div>
+
 <!-- Version Info Modal -->
 <div id="versionModal" class="modal-woo" role="dialog" aria-modal="true" aria-labelledby="versionTitle" style="display:none;">
   <div class="woo-box">
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
+      <p class="muted"><b>Version 2.7</b></br>-Polished the results, stats, and graph panels for desktop and mobile views.</br>-Added a last-hand detail view and improved end-of-hand flow.</p>
       <p class="muted"><b>Version 2.6</b></br>-Updated to accomodate more screen sizes.</p>
       <p class="muted"><b>Version 2.5</b></br>-Moved strategy and settlement logic into a tested module.</br>-Added automated checks for payouts and strategy recommendations.</p>
       <p class="muted"><b>Version 2.4</b></br>-Now you see bet-by-bet settlement and chip improved chip animation.</br>-Added the ability to drag the mini-stats to reorder them-keep your favorites on top.</p>
@@ -1227,6 +1333,7 @@ const state={
   showPlayerHand:false,
   correctMistakes:false,
   cardStyle:'typical',
+  lastHandDetail:null,
   bankHistory:[],   // bankroll after each hand (includes starting point)
   handProfits:[],   // per-hand profit values
   handFollowed:[],  // per-hand WoO adherence (true=followed, false=deviated)
@@ -1472,7 +1579,12 @@ function updateMiniStats(){
   }
   scheduleMiniPanelsClamp();
 }
-function setStage(s){state.lastStage=state.stage; state.stage=s; el('stage').textContent=s[0].toUpperCase()+s.slice(1)}
+function isTerminalStage(stage=state.stage){ return stage==='settling' || stage==='complete' || stage==='showdown'; }
+function stageDisplayName(stage){
+  const names = {waiting:'Waiting', preflop:'Preflop', flop:'Flop', river:'River', settling:'Settling', complete:'Complete', showdown:'Complete'};
+  return names[stage] || (stage ? stage[0].toUpperCase()+stage.slice(1) : '');
+}
+function setStage(s){state.lastStage=state.stage; state.stage=s; el('stage').textContent=stageDisplayName(s)}
 function clearLabels(){ el('dealerLabel').textContent='Dealer'; el('dealerLabel').className='label muted'; el('playerLabel').textContent='You'; el('playerLabel').className='label muted'; }
 
 function renderCards(){
@@ -1483,12 +1595,12 @@ function renderCards(){
     el('boardCards').innerHTML='';
     return;
   }
-  const reveal = state.stage==='preflop' ? 0 : state.stage==='flop' ? 3 : (state.stage==='river'||state.stage==='showdown') ? 5 : 0;
-  const prevReveal = state.lastStage==='preflop' ? 0 : state.lastStage==='flop' ? 3 : (state.lastStage==='river'||state.lastStage==='showdown') ? 5 : 0;
+  const reveal = state.stage==='preflop' ? 0 : state.stage==='flop' ? 3 : (state.stage==='river'||isTerminalStage()) ? 5 : 0;
+  const prevReveal = state.lastStage==='preflop' ? 0 : state.lastStage==='flop' ? 3 : (state.lastStage==='river'||isTerminalStage(state.lastStage)) ? 5 : 0;
 
   const pc=el('playerCards'); pc.innerHTML=''; state.player.forEach(c=>pc.appendChild(makeCardWithPips(uFace(c))));
   const dc=el('dealerCards'); dc.innerHTML='';
-  if(state.stage==='showdown'){ state.dealer.forEach(c=>dc.appendChild(makeCardWithPips(uFace(c), false, state.lastStage!=='showdown'))); }
+  if(isTerminalStage()){ state.dealer.forEach(c=>dc.appendChild(makeCardWithPips(uFace(c), false, !isTerminalStage(state.lastStage)))); }
   else { dc.appendChild(makeCardWithPips("",true)); dc.appendChild(makeCardWithPips("",true)); }
   const bc=el('boardCards'); bc.innerHTML='';
   for(let i=0;i<reveal;i++){ const flip = i >= prevReveal; bc.appendChild(makeCardWithPips(uFace(state.board[i]), false, flip)); }
@@ -1501,7 +1613,7 @@ function renderCards(){
   // Optionally show player's current hand label near cards during play
   try{
     const pl = el('playerLabel');
-    if(state.stage!=='waiting' && state.stage!=='showdown'){
+    if(state.stage!=='waiting' && !isTerminalStage()){
       if(state.showPlayerHand){
         const visibleBoard = state.board.slice(0, reveal);
         const peNow = handEval([...state.player, ...visibleBoard]);
@@ -1565,6 +1677,7 @@ function maybePromptStrategyDeviation(selectedId){
 function renderAdvice(){
   const wrap=el('adviceWrap'); if(!wrap) return;
   if(!state.showAdvice){ wrap.style.display='none'; return; }
+  if(state.stage==='waiting' || isTerminalStage()){ wrap.style.display='none'; return; }
   const adv=computeAdvice();
   wrap.style.display='block';
   el('adviceLine').innerHTML = `Advice: ${adv.action} <span class="muted">(${adv.stage})</span>`;
@@ -1581,7 +1694,7 @@ function updateAdviceGlow(adv){
     const foldBtn = document.getElementById('fold');
     [primary, checkBtn, foldBtn].forEach(b=>{ if(b){ b.classList.remove('adv-glow','glow-raise','glow-call','glow-check','glow-fold'); } });
     if(!state.showAdvice) return;
-    if(state.stage==='waiting' || state.stage==='showdown') return;
+    if(state.stage==='waiting' || isTerminalStage()) return;
     const a = (adv && adv.action ? adv.action : (computeAdvice().action||'')).toLowerCase();
     if(a.startsWith('raise')){ if(primary){ primary.classList.add('adv-glow','glow-raise'); } }
     else if(a.startsWith('call')){ if(primary){ primary.classList.add('adv-glow','glow-call'); } }
@@ -1620,9 +1733,140 @@ function enableButtons(){
   el('call1').disabled=!(st==='river'&&state.playMult===0);
   el('check').disabled=!(st==='preflop'||st==='flop');
   el('fold').disabled=!(st==='river'&&state.playMult===0);
-  el('newHand').disabled=chipSettlementInProgress || !(st==='waiting'||st==='showdown');
+  el('newHand').disabled=chipSettlementInProgress || !(st==='waiting'||st==='complete'||st==='showdown');
   // keep the single primary action button in sync
   updatePrimaryAction();
+}
+
+function clearResultBreakdown(){
+  const panel = document.getElementById('resultBreakdown');
+  if(!panel) return;
+  panel.classList.add('is-visible');
+  panel.innerHTML = '<div class="result-breakdown-title">Last Result</div><div class="result-breakdown-empty">No completed hand yet.</div>';
+  scheduleMiniPanelsClamp();
+}
+function actionDisplay(action){
+  const map = {raise3:'Raise 3x', raise2:'Raise 2x', call1:'Call 1x', check:'Check', fold:'Fold'};
+  return map[action] || '-';
+}
+function recommendationDisplay(rec){
+  if(!rec) return '-';
+  const parts = [];
+  if(rec.preflop) parts.push(`Preflop: ${actionDisplay(rec.preflop)}`);
+  if(rec.flop) parts.push(`Flop: ${actionDisplay(rec.flop)}`);
+  if(rec.river) parts.push(`River: ${actionDisplay(rec.river)}`);
+  return parts.length ? parts.join(' / ') : '-';
+}
+function captureLastHandDetail(result, options={}){
+  if(!result) return null;
+  return {
+    handNo: state.hands,
+    player: state.player.slice(),
+    dealer: state.dealer.slice(),
+    board: state.board.slice(),
+    actions: Object.assign({}, state.actions),
+    wagers: Object.assign({}, state.wagers),
+    result,
+    outcomeLabel: options.outcomeLabel || result.outcome || 'Result',
+    bankAfter: state.bank
+  };
+}
+function renderResultBreakdown(result, options={}){
+  const panel = document.getElementById('resultBreakdown');
+  if(!panel || !result) return;
+  const betResults = result.betResults || {};
+  const rows = [
+    ['Ante', betResults.ante],
+    ['Odds', betResults.odds],
+    ['Play', betResults.play],
+    ['Trips', betResults.trips],
+    ['Pocket', betResults.pocket]
+  ];
+  const profit = Number(result.profit||0);
+  const totalClass = profit>0 ? 'win' : profit<0 ? 'loss' : 'push';
+  const outcome = options.outcomeLabel || (result.outcome ? String(result.outcome) : 'result');
+  const hand = result.pClass ? labelTextFromClass(result.pClass) : '';
+  const dealer = result.dClass ? labelTextFromClass(result.dClass) : '';
+  const dealerQual = result.dealerQual ? 'dealer qualifies' : 'dealer no-qual';
+  const detail = hand ? `${hand}${dealer ? ` vs ${dealer}` : ''}${dealer ? `, ${dealerQual}` : ''}` : '';
+  const itemHtml = rows.map(([name,data])=>{
+    const wager = data && typeof data.wager==='number' ? data.wager : 0;
+    const returned = data && typeof data.returned==='number' ? data.returned : 0;
+    const net = data && typeof data.net==='number' ? data.net : 0;
+    const cls = net>0 ? 'win' : net<0 ? 'loss' : 'push';
+    return `<div class="result-bet-item">
+      <div class="result-bet-name">${name}</div>
+      <div class="result-bet-net ${cls}">${fmt(net)}</div>
+      <div class="result-bet-detail">Bet ${formatCurrency(wager)}<br>Returned ${formatCurrency(returned)}</div>
+    </div>`;
+  }).join('');
+  panel.innerHTML = `
+    <div class="result-breakdown-head">
+      <div>
+        <div class="result-breakdown-title">Last Result</div>
+        <div class="result-breakdown-sub">${outcome}${detail ? ` - ${detail}` : ''}</div>
+      </div>
+      <div class="result-breakdown-total ${totalClass}">${fmt(profit)}</div>
+    </div>
+    <div class="result-breakdown-grid">${itemHtml}</div>
+    <div class="result-breakdown-actions"><button id="lastHandDetailsBtn" type="button">Details</button></div>`;
+  panel.classList.add('is-visible');
+  const btn = document.getElementById('lastHandDetailsBtn');
+  if(btn) btn.addEventListener('click', openLastHandModal);
+}
+function makeDetailSection(label, value, extraClass=''){
+  const section = document.createElement('div');
+  section.className = 'last-hand-section' + (extraClass ? ' ' + extraClass : '');
+  section.innerHTML = `<div class="last-hand-label">${label}</div><div class="last-hand-value">${value}</div>`;
+  return section;
+}
+function makeDetailCardSection(label, cards){
+  const section = document.createElement('div');
+  section.className = 'last-hand-section';
+  const title = document.createElement('div');
+  title.className = 'last-hand-label';
+  title.textContent = label;
+  const row = document.createElement('div');
+  row.className = 'last-hand-card-row';
+  (cards||[]).forEach(card=> row.appendChild(makeCardWithPips(uFace(card))));
+  section.appendChild(title);
+  section.appendChild(row);
+  return section;
+}
+function openLastHandModal(){
+  const modal = document.getElementById('lastHandModal');
+  const content = document.getElementById('lastHandContent');
+  const detail = state.lastHandDetail;
+  if(!modal || !content || !detail) return;
+  const result = detail.result || {};
+  const strategy = result.strategy || {};
+  const profit = Number(result.profit||0);
+  const followed = strategy.followed ? '<span class="win">Followed</span>' : '<span class="loss">Deviated</span>';
+  const actions = detail.actions || {};
+  const wagers = detail.wagers || {};
+  content.innerHTML = '';
+  content.appendChild(makeDetailSection('Result', `${detail.outcomeLabel} <span class="${profit>0?'win':profit<0?'loss':'push'}">${fmt(profit)}</span><br><span class="muted">Bankroll after hand: ${formatCurrency(detail.bankAfter)}</span>`, 'full'));
+  content.appendChild(makeDetailCardSection('Your Cards', detail.player));
+  content.appendChild(makeDetailCardSection('Dealer Cards', detail.dealer));
+  content.appendChild(makeDetailCardSection('Board', detail.board));
+  content.appendChild(makeDetailSection('Hand Matchup', `You: ${labelTextFromClass(result.pClass)}<br>Dealer: ${labelTextFromClass(result.dClass)}<br>${result.dealerQual ? 'Dealer qualifies' : 'Dealer does not qualify'}`));
+  const actionSection = document.createElement('div');
+  actionSection.className = 'last-hand-section full';
+  actionSection.innerHTML = `
+    <div class="last-hand-label">Action Path</div>
+    <div class="last-hand-actions-list">
+      <div class="last-hand-action"><div class="last-hand-label">Preflop</div><div class="last-hand-value">${actionDisplay(actions.preflop)}</div></div>
+      <div class="last-hand-action"><div class="last-hand-label">Flop</div><div class="last-hand-value">${actionDisplay(actions.flop)}</div></div>
+      <div class="last-hand-action"><div class="last-hand-label">River</div><div class="last-hand-value">${actionDisplay(actions.river)}</div></div>
+    </div>`;
+  content.appendChild(actionSection);
+  content.appendChild(makeDetailSection('Strategy', `${followed}<br>Recommended: ${recommendationDisplay(strategy.rec)}<br>Hypo profit: ${fmt(strategy.hypProfit||0)}<br>Difference: ${fmt(strategy.delta||0)}`, 'full'));
+  content.appendChild(makeDetailSection('Wagers', `Ante ${formatCurrency(wagers.Ante||0)}, Odds ${formatCurrency(wagers.Blind||0)}, Play ${formatCurrency(wagers.Play||0)}, Trips ${formatCurrency(wagers.Trips||0)}, Pocket ${formatCurrency(wagers.Pocket||0)}`, 'full'));
+  modal.style.display = 'block';
+}
+function closeLastHandModal(){
+  const modal = document.getElementById('lastHandModal');
+  if(modal) modal.style.display = 'none';
 }
 
 const DENOMS=[500,100,25,5,1];
@@ -1748,12 +1992,15 @@ function clearBetChips(){ Object.values(betChips).forEach(arr=>{ arr.forEach(el=
 
 function newHand(){
   if(chipSettlementInProgress) return;
+  if(!(state.stage==='waiting'||state.stage==='complete'||state.stage==='showdown')) return;
   state.ante=Number(el('ante').value)||0; state.trips=Number(el('trips').value)||0; state.pocket=Number(el('pocket').value)||0;
   const needed=state.ante*2+state.trips+state.pocket; if(state.bank<needed){alert("Not enough bank for Ante+Blind+Trips+Pocket.");return;}
   if(state.hands===0){ state.sessionStartBank = state.bank; if(!state.sessionStartTs) state.sessionStartTs=Date.now(); }
   state.deck=dealDeck(); state.player=state.deck.slice(0,2); state.dealer=state.deck.slice(2,4); state.board=state.deck.slice(4,9);
   state.playMult=0; state.wagers={Ante:state.ante,Blind:state.ante,Play:0,Trips:state.trips,Pocket:state.pocket}; state.actions={preflop:'check',flop:'check',river:null};
+  state.lastHandDetail = null;
   state.bank-=needed; state.hands+=1; el('handCount').textContent=state.hands; el('outcome').textContent=''; clearLabels();
+  clearResultBreakdown();
   refreshBankrollEditable();
   setStage('preflop'); updateBank(); renderAll(); enableButtons();
   logAdd(`<span class="muted">Hand #${state.hands} Bets:</span> Ante $${state.ante}, Odds $${state.ante}${state.trips>0?`, Trips $${state.trips}`:""}${state.pocket>0?`, Pocket $${state.pocket}`:""}`);
@@ -1769,7 +2016,7 @@ function goRiver(){ setStage('river'); renderAll(); enableButtons(); }
 
 async function showdown(){
   setChipSettlementInProgress(true);
-  setStage('showdown');
+  setStage('settling');
   renderAll();
   const res = settleAll();
   state.bank += res.playerNet;
@@ -1787,6 +2034,8 @@ async function showdown(){
   el('playerLabel').className = 'label ' + (cmp>0?'win':cmp<0?'loss':'push');
   el('dealerLabel').className = 'label ' + (cmp<0?'win':cmp>0?'loss':'push');
   logAdd(`${res.playerLogHtml}<br/><span class="muted">Bankroll: ${fmt(state.bank)}</span>`);
+  state.lastHandDetail = captureLastHandDetail(res, {outcomeLabel: res.cmp>0 ? 'Player win' : res.cmp<0 ? 'Dealer win' : 'Push'});
+  renderResultBreakdown(res, {outcomeLabel: res.cmp>0 ? 'Player win' : res.cmp<0 ? 'Dealer win' : 'Push'});
   enableButtons();
   try{
     await settleBetsSequential(res);
@@ -1795,7 +2044,9 @@ async function showdown(){
     // Big result popup
     if(typeof res.profit==='number') showBigResult(res.profit);
   }finally{
+    setStage('complete');
     setChipSettlementInProgress(false);
+    renderAdvice();
   }
 }
 
@@ -1827,7 +2078,7 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
   setChipSettlementInProgress(true);
   state.actions.river='fold';
   // Move to showdown visuals
-  setStage('showdown'); renderAll(); enableButtons(); el('outcome').innerHTML=`<span class="loss">fold</span>`;
+  setStage('settling'); renderAll(); enableButtons(); el('outcome').innerHTML=`<span class="loss">fold</span>`;
   el('playerLabel').textContent='Fold'; el('playerLabel').className='label loss';
 
   const res = HUHELogic.settleFold({
@@ -1848,6 +2099,8 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
   const outcomeHtml=`<span class="loss">fold</span>`;
   const detail=`Ante ${fmt(0)}, Odds ${fmt(0)}, Play ${fmt(0)}, Trips ${fmt(res.returns.tripsPay)}, Pocket ${fmt(res.returns.pocketPay)}, Net <b>${fmt(Profit)}</b> <span class="muted">(You: ${res.pClass}, Dealer: ${res.dClass}${res.dealerQual?" qualifies":", no-qual"})</span><br/><span class="muted">${strategyNote}</span>`;
   logAdd(`Result - ${outcomeHtml}: ${detail}<br/><span class="muted">Bankroll: ${fmt(state.bank)}</span>`);
+  state.lastHandDetail = captureLastHandDetail(res, {outcomeLabel:'Fold'});
+  renderResultBreakdown(res, {outcomeLabel:'Fold'});
 
   showBigResult(Profit);
 
@@ -1860,7 +2113,9 @@ function fold(){ if(state.stage!=='river'||state.playMult!==0) return; if(maybeP
   setTimeout(()=>{
     clearBetChips();
     try{ recordHand(Profit, !!res.strategy.followed, Number(res.strategy.hypProfit), res.pClass, 'loss', res.breakdown); }catch(e){}
+    setStage('complete');
     setChipSettlementInProgress(false);
+    renderAdvice();
   }, 800);
 }
 function handEval(cards){ return HUHELogic.handEval(cards); }
@@ -2116,6 +2371,7 @@ function getCssColor(varName, fallback){
 let miniPanelsClampFrame = null;
 let miniPanelsClampInit = false;
 let miniPanelsClampObserver = null;
+let miniPanelsClampApplying = false;
 
 function applyMiniPanelsClamp(){
   try{
@@ -2124,6 +2380,14 @@ function applyMiniPanelsClamp(){
     const panels = container.querySelector('.mini-panels');
     const sticky = document.querySelector('.sticky-actions');
     if(!panels || !sticky) return;
+
+    if(window.innerWidth >= 1100 && (container.classList.contains('show-result') || container.classList.contains('show-stats'))){
+      panels.style.removeProperty('max-height');
+      panels.style.removeProperty('overflow-y');
+      panels.style.removeProperty('-webkit-overflow-scrolling');
+      panels.removeAttribute('data-max-clamp');
+      return;
+    }
 
     const stickyRect = sticky.getBoundingClientRect();
     const panelRect = panels.getBoundingClientRect();
@@ -2162,8 +2426,10 @@ function scheduleMiniPanelsClamp(){
   }
 
   if(miniPanelsClampObserver === null && 'ResizeObserver' in window){
-    miniPanelsClampObserver = new ResizeObserver(()=> scheduleMiniPanelsClamp());
-    [container, panels, sticky].forEach(el=>{ if(el) miniPanelsClampObserver.observe(el); });
+    miniPanelsClampObserver = new ResizeObserver(()=>{
+      if(!miniPanelsClampApplying) scheduleMiniPanelsClamp();
+    });
+    [container, sticky].forEach(el=>{ if(el) miniPanelsClampObserver.observe(el); });
   }
 
   if(miniPanelsClampFrame !== null){
@@ -2172,7 +2438,9 @@ function scheduleMiniPanelsClamp(){
 
   miniPanelsClampFrame = requestAnimationFrame(()=>{
     miniPanelsClampFrame = null;
+    miniPanelsClampApplying = true;
     applyMiniPanelsClamp();
+    requestAnimationFrame(()=>{ miniPanelsClampApplying = false; });
   });
 }
 
@@ -2181,6 +2449,12 @@ scheduleMiniPanelsClamp();
 function drawMiniChart(){
   const c = document.getElementById('chartMini'); if(!c) return;
   const wrap = c.parentElement; if(!wrap) return;
+  const panelEl = wrap.closest('.chart-panel') || wrap.parentElement;
+  try{
+    if(panelEl && getComputedStyle(panelEl).display === 'none'){
+      return;
+    }
+  }catch(e){}
   let wrapExtras = 0;
   try{
     const wrapStyle = getComputedStyle(wrap);
@@ -2192,7 +2466,6 @@ function drawMiniChart(){
   const legendEl = document.getElementById('chartLegendMini');
   const tableEl = document.getElementById('table');
   const tableW = tableEl && tableEl.getBoundingClientRect ? Math.round(tableEl.getBoundingClientRect().width || 0) : 0;
-  const panelEl = wrap.closest('.chart-panel') || wrap.parentElement;
   const rowW = (panelEl && panelEl.clientWidth) ? panelEl.clientWidth : (wrap.clientWidth || 300);
   let panelInnerW = rowW;
   if(panelEl && panelEl.getBoundingClientRect){
@@ -2276,10 +2549,16 @@ function drawMiniChart(){
     const container = document.getElementById('bankrollBelowTable') || rowEl || wrap;
     const sticky = document.querySelector('.sticky-actions');
     const vpH = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 800;
-    const containerTop = (container && container.getBoundingClientRect) ? container.getBoundingClientRect().top : 0;
+    const isDesktopStats = window.innerWidth >= 1100 && container && container.classList && container.classList.contains('show-stats');
+    const heightAnchor = isDesktopStats && panelEl ? panelEl : container;
+    const containerTop = (heightAnchor && heightAnchor.getBoundingClientRect) ? heightAnchor.getBoundingClientRect().top : 0;
     const stickyTop = (sticky && sticky.getBoundingClientRect) ? sticky.getBoundingClientRect().top : vpH;
-    // Leave a small gap (12px) above the sticky bar
-    availH = Math.max(120, Math.floor(stickyTop - containerTop - 12));
+    // Leave a small gap above the sticky bar. Desktop stats can go shorter because the chart is paired with dense stats.
+    const minChartH = isDesktopStats ? 88 : 120;
+    availH = Math.max(minChartH, Math.floor(stickyTop - containerTop - 12));
+    if(isDesktopStats){
+      availH = Math.min(availH, 220);
+    }
     // Subtract wrapper vertical padding and title height so the canvas fits perfectly
     let padV = 0; let titleH = 0;
     try{
@@ -2298,7 +2577,7 @@ function drawMiniChart(){
         legendEl.style.overflowY = 'auto';
       }
     }catch(e){}
-    availH = Math.max(120, availH - padV - titleH);
+    availH = Math.max(minChartH, availH - padV - titleH);
   }catch(e){ availH = Number(c.dataset.h0)||162; }
   const h = availH || (Number(c.dataset.h0)||162);
 
@@ -2449,39 +2728,66 @@ function drawChartCore(canvas, mini){
 
 const miniContainer = document.getElementById('bankrollBelowTable');
 const miniSwapBtn = document.getElementById('miniSwapToggle');
-let miniViewMode = 'stats';
+const MINI_VIEW_MODES = ['result', 'stats', 'chart'];
+const MINI_DESKTOP_VIEW_MODES = ['result', 'stats'];
+const MINI_VIEW_LABELS = {result:'last result', stats:'stats', chart:'graph'};
+let miniViewMode = 'result';
+let miniPanelDrawFrame = null;
+
+function miniIsDesktopLayout(){
+  return window.innerWidth >= 1100;
+}
+
+function miniActiveModes(){
+  return miniIsDesktopLayout() ? MINI_DESKTOP_VIEW_MODES : MINI_VIEW_MODES;
+}
+
+function normalizeMiniView(view){
+  if(miniIsDesktopLayout() && view === 'chart') return 'stats';
+  return MINI_VIEW_MODES.includes(view) ? view : 'result';
+}
 
 function setMiniPanels(view){
-  miniViewMode = view === 'chart' ? 'chart' : 'stats';
+  miniViewMode = normalizeMiniView(view);
   if(miniSwapBtn){
-    const label = miniViewMode === 'chart' ? 'Show stats' : 'Show chart';
+    const modes = miniActiveModes();
+    const currentIdx = modes.indexOf(miniViewMode);
+    const nextMode = modes[((currentIdx >= 0 ? currentIdx : 0) + 1) % modes.length];
+    const label = 'Show ' + MINI_VIEW_LABELS[nextMode];
     miniSwapBtn.setAttribute('aria-label', label);
     miniSwapBtn.setAttribute('title', label);
   }
   if(!miniContainer) return;
-  if(window.innerWidth >= 1100){
-    miniContainer.classList.remove('show-stats','show-chart');
-    return;
+  miniContainer.classList.remove('show-result','show-stats','show-chart');
+  miniContainer.classList.add('show-' + miniViewMode);
+  if(miniPanelDrawFrame !== null){
+    cancelAnimationFrame(miniPanelDrawFrame);
+    miniPanelDrawFrame = null;
   }
-  miniContainer.classList.remove('show-stats','show-chart');
-  miniContainer.classList.add(miniViewMode === 'chart' ? 'show-chart' : 'show-stats');
-  if(miniViewMode === 'chart'){ drawMiniChart(); }
-  scheduleMiniPanelsClamp();
+  if(miniViewMode === 'chart' || (miniIsDesktopLayout() && miniViewMode === 'stats')){
+    miniPanelDrawFrame = requestAnimationFrame(()=>{
+      miniPanelDrawFrame = null;
+      if(miniViewMode === 'chart' || (miniIsDesktopLayout() && miniViewMode === 'stats')){
+        drawMiniChart();
+      }
+      scheduleMiniPanelsClamp();
+    });
+  }else{
+    scheduleMiniPanelsClamp();
+  }
 }
 
 function updateMiniLayout(){
   if(!miniContainer) return;
-  if(window.innerWidth >= 1100){
-    miniContainer.classList.remove('show-stats','show-chart');
-  }else{
-    setMiniPanels(miniViewMode);
-  }
+  setMiniPanels(miniViewMode);
   scheduleMiniPanelsClamp();
 }
 
 if(miniSwapBtn){
   miniSwapBtn.addEventListener('click', ()=>{
-    const next = miniViewMode === 'stats' ? 'chart' : 'stats';
+    const modes = miniActiveModes();
+    const currentIdx = modes.indexOf(miniViewMode);
+    const next = modes[((currentIdx >= 0 ? currentIdx : 0) + 1) % modes.length];
     setMiniPanels(next);
   });
 }
@@ -3151,6 +3457,7 @@ async function logSessionAndReset(options){
   state.handClasses = [];
   state.handOutcomes = [];
   state.handBetBreakdown = [];
+  state.lastHandDetail = null;
   state.metrics = {
     followed:0,
     deviated:0,
@@ -3167,6 +3474,7 @@ async function logSessionAndReset(options){
   renderAll();
   enableButtons();
   clearBetChips();
+  clearResultBreakdown();
   try{ drawMiniChart(); if(isChartOpen()) drawLargeChart(); }catch(e){}
   refreshBankrollEditable();
   updateMiniStats();
@@ -3275,6 +3583,8 @@ async function logSessionAndReset(options){
   const handLogModal = document.getElementById('handLogModal');
   const handLogClose = document.getElementById('handLogClose');
   const handLogContent = document.getElementById('handLogContent');
+  const lastHandModal = document.getElementById('lastHandModal');
+  const lastHandClose = document.getElementById('lastHandClose');
   const miniLog = document.getElementById('log');
 
 
@@ -3353,6 +3663,8 @@ async function logSessionAndReset(options){
 
   if(handLogClose) handLogClose.addEventListener('click', closeHandLog);
   if(handLogModal) handLogModal.addEventListener('click', function(e){ if(e.target === handLogModal) closeHandLog(); });
+  if(lastHandClose) lastHandClose.addEventListener('click', closeLastHandModal);
+  if(lastHandModal) lastHandModal.addEventListener('click', function(e){ if(e.target === lastHandModal) closeLastHandModal(); });
   if(miniLog){
     miniLog.style.cursor = 'pointer';
     if(!miniLog.hasAttribute('tabindex')) miniLog.setAttribute('tabindex','0');
