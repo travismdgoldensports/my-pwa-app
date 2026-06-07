@@ -34,6 +34,7 @@
     /* Card dimensions */
     --card-h:114px;
     --card-w:84px;
+    --card-br:10px;
     --mini-chart-max-width: 820px;
   }
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
@@ -382,6 +383,14 @@
   .chart-legend .swatch.line-hypo{ background: var(--push, #8db6ff); }
   .chart-title{ font-size:12px; color:var(--muted); text-align:center; margin:2px 0 4px; }
   .chart-canvas-wrap{ flex:1 1 auto; min-width:0; }
+  @media(max-width:640px){
+    #chartModal .inner{ inset:8px; max-height:calc(100dvh - 16px); height:calc(100dvh - 16px); padding:10px; gap:8px; }
+    #chartModal .head{ gap:8px; }
+    #chartModal .title{ font-size:15px; }
+    .chart-title{ font-size:10px; line-height:1.25; margin:0; }
+    .chart-row{ flex-direction:column; gap:8px; align-items:stretch; }
+    .chart-legend.right{ flex-direction:row; flex-wrap:wrap; font-size:10px; gap:6px 10px; }
+  }
 
   /* Sidebar toggle (hamburger) */
   .menu-toggle{
@@ -419,21 +428,16 @@
 
   /* Responsive tweaks for very narrow screens */
   @media(max-width:875px){
-    /* Make table ~50% taller for more vertical room */
-    #table{ height: calc(462px * 0.8); min-height: calc(418px * 0.8); }
-    /* Shrink cards ~25% via variables so layout adapts */
-    #table{ --card-w: calc(84px * .75); --card-h: calc(114px * .75); --card-br: calc(10px * .75);}
-    .grid{row-gap: calc(12px * .75);}
-    /* Shrink indices and suits ~25% */
-    .card .index{ font-size: calc(24px * .9); }
-    .card .index.wide{ font-size: calc(24px * .9); }
-    .card .index .suit{ font-size: calc(24x * .9); }
-    .card .index.wide .suit{ font-size: calc(24px * .9); }
-    .card .index.wide .rank{ font-size: calc(24px * .9); }
-    /* Ensure pip symbols also scale down */
-    .card .pip{ font-size: calc(9px * .75); }
-    .card .pips.rank-9 .pip{ font-size:calc(9px * .75); }
-    .card .pips.rank-10 .pip{ font-size:calc(9px * .75); }
+    #table{ height: 370px; min-height: 334px; --card-w: clamp(62px, 10vw, 84px); --card-h: calc(var(--card-w) * 1.36); --card-br: calc(var(--card-w) * .12);}
+    .grid{row-gap: 9px;}
+    .card .index{ font-size: clamp(20px, calc(var(--card-w) * .34), 24px); }
+    .card .index.wide{ font-size: clamp(18px, calc(var(--card-w) * .3), 24px); }
+    .card .index .suit{ font-size: clamp(18px, calc(var(--card-w) * .32), 24px); }
+    .card .index.wide .suit{ font-size: clamp(18px, calc(var(--card-w) * .32), 24px); }
+    .card .index.wide .rank{ font-size: clamp(20px, calc(var(--card-w) * .34), 24px); }
+    .card .pip{ font-size: clamp(8px, calc(var(--card-w) * .12), 9px); }
+    .card .pips.rank-9 .pip{ font-size:clamp(8px, calc(var(--card-w) * .12), 9px); }
+    .card .pips.rank-10 .pip{ font-size:clamp(8px, calc(var(--card-w) * .12), 9px); }
     /* Scale down paytables and bet circles ~25% while keeping them anchored to bottom */
     .felt-left{ transform-origin: left bottom; transform: scale(.75); }
     .bet-circles{ transform-origin: right bottom; transform: scale(.75); }
@@ -442,21 +446,18 @@
     /* Responsive tweaks for very very narrow screens */
   @media(max-width:640px){
     main{ padding: 8px;}
-    /* Make table ~50% taller for more vertical room */
-    #table{ height: calc(462px * 0.78); min-height: calc(418px * 0.78); }
-    /* Shrink cards ~50% via variables so layout adapts */
-    #table{ --card-w: calc(84px * .65); --card-h: calc(114px * .65);  --card-br: calc(10px * .65);}
-    .grid{top: 6px; row-gap: calc(12px * .65);}
-    /* Shrink indices and suits ~25% */
-    .card .index{ font-size: calc(24px * .8); }
-    .card .index.wide{ font-size: calc(24px * .8); }
-    .card .index .suit{ font-size: calc(24px * .8); }
-    .card .index.wide .suit{ font-size: calc(24px * .8); }
-    .card .index.wide .rank{ font-size: calc(24px * .8); }
-    /* Ensure pip symbols also scale down */
-    .card .pip{ font-size: calc(9px * .75); }
-    .card .pips.rank-9 .pip{ font-size:calc(9px * .75); }
-    .card .pips.rank-10 .pip{ font-size:calc(9px * .75); }
+    #table{ height: 360px; min-height: 326px; --card-w: clamp(54px, 16vw, 74px); --card-h: calc(var(--card-w) * 1.36); --card-br: calc(var(--card-w) * .12);}
+    .grid{top: 6px; left:8px; right:8px; row-gap: 8px;}
+    .cards{gap:3px;}
+    .card .pips,
+    .card .face-svg{ display:none; }
+    .card .index.br{ display:none; }
+    .card .index.tl{ left:50%; top:50%; transform:translate(-50%,-50%); }
+    .card .index,
+    .card .index.wide{ font-size: clamp(24px, calc(var(--card-w) * .48), 34px); }
+    .card .index .suit,
+    .card .index.wide .suit{ font-size: clamp(22px, calc(var(--card-w) * .44), 32px); margin-top:2px; }
+    .card .index.wide .rank{ font-size: clamp(24px, calc(var(--card-w) * .48), 34px); }
     /* Scale down paytables and bet circles ~25% while keeping them anchored to bottom */
     .felt-left{ transform-origin: left bottom; transform: scale(.65); }
     .bet-circles{ transform-origin: right bottom; transform: scale(.65); }
@@ -485,6 +486,25 @@
   .modal-woo .close-row button{ background:#22314f; border:1px solid #2e4470; }
   .modal-woo .woo-content{ font-size:13px; line-height:1.5; max-height:min(70vh,520px); overflow:auto; }
   .modal-woo ul{ margin:8px 0 12px 18px; }
+  .stats-modal-inner{ position:absolute; inset:12px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:8px; display:flex; flex-direction:column; gap:10px; }
+  .stats-table-wrap{ border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; overflow:auto; }
+  .stats-session-list{ display:none; flex-direction:column; gap:8px; }
+  .stats-session-card{ border:1px solid #24365d; border-radius:8px; background:#0e1930; padding:10px; display:grid; gap:8px; }
+  .stats-session-card .session-card-head{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+  .stats-session-card .session-title{ font-size:13px; font-weight:800; color:#d9e6ff; }
+  .stats-session-card .session-date{ font-size:11px; color:var(--muted); text-align:right; }
+  .stats-session-card .session-profit{ font-size:18px; font-weight:900; }
+  .stats-session-card .session-metrics{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px; }
+  .stats-session-card .session-detail{ border:1px solid rgba(36,54,93,.85); border-radius:8px; padding:6px; background:rgba(255,255,255,.02); }
+  .stats-session-card .session-label{ font-size:8px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.4px; margin-bottom:2px; }
+  .stats-session-card .session-value{ font-size:12px; color:#e9f0ff; font-weight:650; overflow-wrap:anywhere; }
+  @media(max-width:640px){
+    .stats-modal-inner{ inset:8px; max-height:calc(100dvh - 16px); padding:10px; }
+    #statsSummary{ grid-template-columns:repeat(2, minmax(0,1fr)) !important; gap:6px !important; }
+    #statsSummary .mini-stat-item:nth-child(n+7){ display:none; }
+    .stats-table-wrap{ display:none; }
+    .stats-session-list{ display:flex; }
+  }
 </style>
 </head>
 <body>
@@ -518,7 +538,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.5</div>
+    <div class="splash-version">Version 2.6</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -910,10 +930,11 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
-      <p class="muted"><b>Version 2.5.1</b></br>-Moved strategy and settlement logic into a tested module.</br>-Added automated checks for payouts and strategy recommendations.</p>
+      <p class="muted"><b>Version 2.6</b></br>-Updated to accomodate more screen sizes.</p>
+      <p class="muted"><b>Version 2.5</b></br>-Moved strategy and settlement logic into a tested module.</br>-Added automated checks for payouts and strategy recommendations.</p>
       <p class="muted"><b>Version 2.4</b></br>-Now you see bet-by-bet settlement and chip improved chip animation.</br>-Added the ability to drag the mini-stats to reorder them-keep your favorites on top.</p>
       <p class="muted"><b>Version 2.3</b></br>-Corrected settlement of side bets when player folds.</br>-More realistic chips.</p>
-      <p class="muted"></p><b>Version 2.2</b></br>-Even more stats, including player totals.</p>
+      <p class="muted"><b>Version 2.2</b></br>-Even more stats, including player totals.</p>
       <p class="muted"><b>Version 2.1</b></br>-More stats!</br>-Mini stat box on the main screen, swappable with the graph with the click of a button.</br>-Ability to delete player sessions.</p>
       <p class="muted"><b>Version 2.0</b></br>-Now tracks sessions and stats by player, on the local device only.  Note, you must end/restart the session in order to save it.</br>-Added a Strategy option: Correct Strategy Mistakes.  This allows the player to play without guidance, but will advise upon a strategy mistake and provide an option to correct the play.</br>-Now tracks more stats each session.</p>
     </div>
@@ -936,14 +957,15 @@
 
 <!-- Player Stats Modal -->
 <div id="statsModal" style="display:none; position:fixed; inset:0; background:rgba(6,12,24,.92); z-index:3450;">
-  <div style="position:absolute; inset:12px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:8px; display:flex; flex-direction:column; gap:10px;">
+  <div class="stats-modal-inner">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <div style="font-size:18px; font-weight:800; color:#d9e6ff;">Player Stats</div>
       <button id="statsClose" style="background:#22314f; border-color:#2e4470;">Close</button>
     </div>
     <div id="statsMeta" class="muted" style="font-size:12px;"></div>
     <div id="statsSummary" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(100px, 1fr)); gap:8px;"></div>
-    <div style="border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; overflow:auto;">
+    <div id="statsSessionList" class="stats-session-list"></div>
+    <div class="stats-table-wrap">
       <table id="statsTable" style="width:100%; font-size:9px; border-collapse:collapse; color:#d9e6ff;">
         <thead>
           <tr style="text-align:left; color:#b6c6ea;">
@@ -968,8 +990,8 @@
         </thead>
         <tbody></tbody>
       </table>
-      <div id="statsEmpty" class="muted" style="display:none; padding:12px;">No sessions found for this player yet.</div>
     </div>
+    <div id="statsEmpty" class="muted" style="display:none; padding:12px;">No sessions found for this player yet.</div>
   </div>
 </div>
 
@@ -2278,18 +2300,20 @@ function drawMiniChart(){
 function drawLargeChart(){
   const c = document.getElementById('chartLarge'); if(!c) return;
   const wrap = c.parentElement;
-  const w = Math.max(300, wrap.clientWidth - 0);
+  const w = Math.max(280, wrap.clientWidth - 0);
   // Limit large chart height to the viewport width (minus modal insets and header/title)
   const vpW = (window.innerWidth || (document.documentElement && document.documentElement.clientWidth) || 800);
   const vpH = (window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 800);
   // Modal insets are 24px top + 24px bottom
   const maxInnerH = Math.max(200, Math.min(vpH - 48, vpW));
-  let padV = 0, headH = 0, titleH = 0;
+  let padV = 0, headH = 0, titleH = 0, availableInnerH = maxInnerH;
   try{
     const inner = document.querySelector('#chartModal .inner');
     if(inner){
       const cs = getComputedStyle(inner);
       padV = (parseFloat(cs.paddingTop||'0')||0) + (parseFloat(cs.paddingBottom||'0')||0);
+      const innerRect = inner.getBoundingClientRect();
+      if(innerRect && innerRect.height > 0) availableInnerH = innerRect.height;
       const head = inner.querySelector('.head');
       if(head){ headH = Math.round(head.getBoundingClientRect().height||0); }
       const title = inner.querySelector('.chart-title');
@@ -2297,7 +2321,7 @@ function drawLargeChart(){
     }
   }catch(e){}
   // Target height: fit within inner's capped height; also cap to 540px baseline
-  let h = Math.min(540, Math.floor(maxInnerH - padV - headH - titleH - 8));
+  let h = Math.min(540, Math.floor(availableInnerH - padV - headH - titleH - 8));
   if(!isFinite(h) || h < 80) h = 80; // ensure sensible minimum without forcing overflow
   sizeCanvas(c, w, h);
   drawChartCore(c, false);
@@ -2568,11 +2592,13 @@ async function openStatsModal(playerOverride){
   const meta = document.getElementById('statsMeta');
   const statsSummaryEl = document.getElementById('statsSummary');
   const statsTotalsEl = document.getElementById('statsTotals');
+  const statsSessionList = document.getElementById('statsSessionList');
   const name = (playerOverride && playerOverride.trim()) || (state.playerName || localStorage.getItem('huhe.playerName') || '-');
   if(meta) meta.textContent = `Player: ${name}`;
   if(tbody) tbody.innerHTML = '';
   if(statsSummaryEl) statsSummaryEl.innerHTML = '';
   if(statsTotalsEl) statsTotalsEl.innerHTML = '';
+  if(statsSessionList) statsSessionList.innerHTML = '';
   if(empty) empty.style.display = 'none';
   try {
     const rows = await getSessions(name);
@@ -2580,12 +2606,14 @@ async function openStatsModal(playerOverride){
       if(empty) empty.style.display='block';
       if(statsSummaryEl) statsSummaryEl.innerHTML = '';
       if(statsTotalsEl) statsTotalsEl.innerHTML = '';
+      if(statsSessionList) statsSessionList.innerHTML = '';
     }else{
       if(empty) empty.style.display='none';
       const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'numeric', minute:'numeric' }); }catch(e){ return '-' ; } };
       const formatPercent = (value, denom)=> denom>0 ? `${((value/denom)*100).toFixed(1)}%` : '0.0%';
       const labelRank = { 'Royal Flush':9, 'Straight Flush':8, 'Four Kind':7, 'Full House':6, 'Flush':5, 'Straight':4, 'Three Kind':3, 'Two Pair':2, 'One Pair':1, 'High Card':0 };
       const frag = document.createDocumentFragment();
+      const cardFrag = document.createDocumentFragment();
       let totalSessions = rows.length;
       let totalHands=0,totalProfit=0,totalBaseBet=0,totalTripsBet=0,totalPocketBet=0,totalTotalBet=0,totalFollowed=0,totalHypo=0,totalWins=0,totalLosses=0,totalPushes=0,totalPlayProfit=0,totalTripsProfit=0,totalPocketProfit=0;
       const bestCounter = {};
@@ -2640,8 +2668,30 @@ async function openStatsModal(playerOverride){
           <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(hypoVal)}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.bestHandLabel||'-')} ${bestCountSession>0?("x "+bestCountSession):""}</td>`;
         frag.appendChild(tr);
+        const card = document.createElement('div');
+        card.className = 'stats-session-card';
+        card.innerHTML = `
+          <div class="session-card-head">
+            <div>
+              <div class="session-title">Session ${r.sessionNo||'-'}</div>
+              <div class="session-profit ${profitVal>0?'win':profitVal<0?'loss':'push'}">${fmt(profitVal)}</div>
+            </div>
+            <div class="session-date">${fmtDT(r.sessionStart)}</div>
+          </div>
+          <div class="session-metrics">
+            <div class="session-detail"><div class="session-label">Hands</div><div class="session-value">${handsVal}</div></div>
+            <div class="session-detail"><div class="session-label">Record</div><div class="session-value">${recordStr}</div></div>
+            <div class="session-detail"><div class="session-label">Bank</div><div class="session-value">$${r.startBank||0} to $${r.endBank||0}</div></div>
+            <div class="session-detail"><div class="session-label">Followed</div><div class="session-value">${followedVal}/${handsVal||0}</div></div>
+            <div class="session-detail"><div class="session-label">Best Hand</div><div class="session-value">${(r.bestHandLabel||'-')} ${bestCountSession>0?("x "+bestCountSession):""}</div></div>
+            <div class="session-detail"><div class="session-label">Total Bet</div><div class="session-value">${formatCurrency(totalBet)}</div></div>
+            <div class="session-detail"><div class="session-label">Play Profit</div><div class="session-value">${fmt(playProfit)}</div></div>
+            <div class="session-detail"><div class="session-label">Side Bets</div><div class="session-value">Trips ${fmt(tripsProfit)} / Pocket ${fmt(pocketProfit)}</div></div>
+          </div>`;
+        cardFrag.appendChild(card);
       });
       if(tbody) tbody.appendChild(frag);
+      if(statsSessionList) statsSessionList.appendChild(cardFrag);
       const avgHands = totalSessions ? totalHands / totalSessions : 0;
       const followRate = totalHands ? (totalFollowed / totalHands) * 100 : 0;
       const followDisplay = totalHands ? `${totalFollowed}/${totalHands} (${followRate.toFixed(1)}%)` : `${totalFollowed}/0 (0.0%)`;
