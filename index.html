@@ -73,6 +73,26 @@
   .sidebar-message{margin-top:6px;font-size:11px;color:#e9f0ff;background:rgba(53,196,141,0.12);border:1px solid rgba(53,196,141,0.35);border-radius:8px;padding:6px 8px;display:none;}
   .pulse-soft{animation:pulseSoft 2s ease-in-out infinite;}
   @keyframes pulseSoft{0%,100%{opacity:0.65;}50%{opacity:1;}}
+  .sidebar-section{margin-top:8px}
+  .sidebar-section h2{margin-bottom:6px}
+  .sidebar-actions-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .sidebar-actions-grid button{width:100%;padding:7px 8px;font-size:12px}
+  .sidebar-actions-grid .wide{grid-column:1 / -1}
+  .sidebar-secondary{background:#22314f;border-color:#2e4470;color:#d9e6ff}
+  .sidebar-danger{background:#3a1d28;border-color:#683243;color:#ffd7df}
+  .sidebar-disclosure{border:1px solid #24365d;border-radius:10px;background:rgba(255,255,255,.02);margin-top:8px}
+  .sidebar-disclosure > summary{list-style:none;cursor:pointer;padding:8px 10px;font-size:13px;font-weight:800;color:#d9e6ff;display:flex;justify-content:space-between;align-items:center}
+  .sidebar-disclosure > summary::-webkit-details-marker{display:none}
+  .sidebar-disclosure > summary::after{content:"+";color:#a9b6d3;font-weight:900}
+  .sidebar-disclosure[open] > summary::after{content:"-"}
+  .sidebar-disclosure-body{padding:0 10px 10px;display:grid;gap:6px}
+  .sidebar-compact-row{display:flex;gap:6px;align-items:center;justify-content:space-between}
+  .sidebar-compact-row label{margin-right:0}
+  .sidebar-compact-row select{flex:0 0 118px;min-width:0}
+  .sidebar-toggle-label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text);line-height:1.25}
+  .sidebar-status-row{display:flex;flex-wrap:wrap;gap:6px}
+  .sidebar-status-row .pill{font-size:11px;padding:5px 8px}
+  .sidebar-log-hint{font-size:11px;color:var(--muted);margin-bottom:2px}
   /* Compact inline-spaced blocks in sidebar */
   #sidebar > div[style*="margin-top:12px"]{ margin-top:6px !important; }
   #sidebar > div[style*="margin-top:8px"]{ margin-top:6px !important; }
@@ -329,7 +349,10 @@
   .mini-chart{ border:1px solid #24365d; border-radius:10px; padding:6px; background:#0c172a; cursor:pointer; overflow-x:auto; overflow-y:hidden; transition:width .3s ease; margin:2px auto 0; }
   .mini-chart canvas{ display:block; width:100%; height:162px; }
   #bankrollBelowTable{ position:relative; margin-top:4px; }
-  #bankrollBelowTable .mini-area-controls{ position:absolute; top:-20px; left:0; display:none; z-index:5; }
+  #bankrollBelowTable .mini-area-controls{ position:absolute; top:-20px; left:0; display:none; align-items:center; gap:6px; z-index:5; }
+  #bankrollBelowTable .mini-area-controls::after{ content:"Last Result"; display:inline-flex; align-items:center; min-height:22px; padding:2px 8px; border:1px solid #2e4470; border-radius:999px; background:#0c172a; color:#d9e6ff; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.35px; box-shadow:0 2px 6px rgba(0,0,0,0.25); }
+  #bankrollBelowTable.show-stats .mini-area-controls::after{ content:"Stats"; }
+  #bankrollBelowTable.show-chart .mini-area-controls::after{ content:"Graph"; }
   #miniSwapToggle{ display:none; align-items:center; justify-content:center; background:#22314f; border:1px solid #2e4470; color:#d9e6ff; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,0.35); }
   #miniSwapToggle:hover{ background:#2b3f63; }
   #miniSwapToggle:focus{ outline:2px solid #35c48d; outline-offset:2px; }
@@ -351,6 +374,10 @@
   .result-breakdown-title{ font-size:12px; font-weight:800; color:#d9e6ff; text-transform:uppercase; letter-spacing:.4px; }
   .result-breakdown-total{ font-size:18px; font-weight:900; line-height:1; white-space:nowrap; }
   .result-breakdown-sub{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .result-strategy-summary{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; margin-top:6px; }
+  .result-strategy-item{ border:1px solid rgba(52,92,155,0.45); border-radius:8px; background:rgba(255,255,255,0.025); padding:6px; min-width:0; }
+  .result-strategy-label{ font-size:8px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.35px; margin-bottom:3px; }
+  .result-strategy-value{ font-size:11px; color:#e9f0ff; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .result-breakdown-grid{ display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:6px; }
   .result-bet-item{ border:1px solid rgba(52,92,155,0.55); border-radius:8px; background:rgba(36,52,93,0.45); padding:7px; min-width:0; }
   .result-bet-name{ font-size:9px; color:#a9b6d3; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
@@ -360,6 +387,7 @@
   .result-breakdown-actions button{ background:#22314f; border-color:#2e4470; }
   @media(max-width:640px){
     .result-breakdown-grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .result-strategy-summary{ grid-template-columns:1fr; }
     .result-breakdown-head{ align-items:stretch; flex-direction:column; gap:6px; }
     .result-breakdown-actions{ justify-content:stretch; }
     .result-breakdown-actions button{ width:100%; }
@@ -367,12 +395,14 @@
   .chart-panel{ border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; }
   .chart-panel > .mini-chart{ margin:0; border:1px solid #24365d; }
   .chart-panel > #chartLegendMini{ margin-top:8px; }
+  .chart-range{ font-size:10px; color:#a9b6d3; text-align:center; min-height:14px; margin-top:4px; }
   .chart-key-toggle{ display:none; align-items:center; justify-content:center; position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:50%; background:#22314f; border:1px solid #2e4470; color:#d9e6ff; font-size:12px; font-weight:800; cursor:pointer; z-index:2; }
   .chart-key-toggle:focus{ outline:2px solid #35c48d; outline-offset:2px; }
   @media(min-width:1100px){
     #bankrollBelowTable{ display:flex; flex-direction:column; gap:10px; }
     #bankrollBelowTable .mini-panels{ display:grid; grid-template-columns:minmax(520px, 0.46fr) minmax(0, 1fr); gap:12px; align-items:stretch; }
-    #bankrollBelowTable .mini-area-controls{ display:block; }
+    #bankrollBelowTable .mini-area-controls{ display:flex; }
+    #bankrollBelowTable.show-stats .mini-area-controls::after{ content:"Stats + Graph"; }
     #miniSwapToggle{ display:inline-flex; }
     #bankrollBelowTable .mini-panel{ display:none; }
     #resultBreakdown{ grid-column:1 / -1; }
@@ -383,11 +413,15 @@
     #bankrollBelowTable.show-result .result-breakdown{ padding:8px 10px; }
     #bankrollBelowTable.show-result .result-breakdown-head{ align-items:center; margin-bottom:6px; }
     #bankrollBelowTable.show-result .result-breakdown-grid{ gap:6px; }
+    #bankrollBelowTable.show-result .result-strategy-summary{ gap:6px; }
+    #bankrollBelowTable.show-result .result-strategy-item{ padding:5px 6px; }
     #bankrollBelowTable.show-result .result-bet-item{ padding:6px; }
     #bankrollBelowTable.show-result .result-bet-net{ font-size:13px; margin-bottom:2px; }
     #bankrollBelowTable.show-result .result-bet-detail{ font-size:9px; line-height:1.2; }
     #bankrollBelowTable.show-result .result-breakdown-actions{ margin-top:6px; }
     #bankrollBelowTable.show-result .result-breakdown-actions button{ padding:6px 12px; }
+    #bankrollBelowTable.show-result .result-breakdown{ position:relative; padding-right:104px; }
+    #bankrollBelowTable.show-result .result-breakdown-actions{ position:absolute; top:8px; right:10px; margin-top:0; }
     #bankrollBelowTable.show-stats .mini-panels{ overflow-y:visible; }
     #bankrollBelowTable.show-stats #miniStatPanel{ padding:3px; align-self:start; }
     #bankrollBelowTable.show-stats .mini-stat-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); gap:4px; }
@@ -416,7 +450,7 @@
     #bankrollBelowTable.show-stats .chart-panel:focus-within #chartLegendMini{ display:flex; }
   }
   @media(max-width:1099px){
-    #bankrollBelowTable .mini-area-controls{ display:block; }
+    #bankrollBelowTable .mini-area-controls{ display:flex; }
     #miniSwapToggle{ display:inline-flex; }
     #bankrollBelowTable .mini-panels{ flex-direction:column; }
     #bankrollBelowTable .mini-panel{ display:none; }
@@ -719,46 +753,67 @@
     <div class="row"><label for="ante">Ante / Odds (each)</label><input id="ante" title="Ante / Odds bet amount" type="number" value="10" min="1" step="1"></div>
     <div class="row"><label for="trips">Trips Plus (opt)</label><input id="trips" title="Trips Plus bet amount" type="number" value="0" min="0" step="1"></div>
     <div class="row"><label for="pocket">Pocket Bonus (opt)</label><input id="pocket" title="Pocket Bonus bet amount" type="number" value="0" min="0" step="1"></div>
-    <h2>Game Controls</h2> 
-    <button id="newHand">➕ New Hand</button>
-    <div class="row mt-6"><button id="startNewGame">Start New Session</button></div>
-    <div class="row mt-6 mb-6"><button id="endGameExit">End Session and Exit</button></div>
-    <h2>View Stats</h2>
-    <div class="row mt-6"><button id="viewSessionStats">Session</button></div>
-    <div class="row mt-6 mb-6"><button id="viewStats">Player</button></div>
-    <div class="row" style="margin-top:12px; margin-bottom: 12px; justify-content:space-between; display:none;"></div>
-    <div style="margin-top:12px;"><h2>Status</h2><div class="row"><span class="pill">Stage: <span id="stage">Waiting</span></span><span class="pill">Outcome: <span id="outcome">—</span></span></div></div>
-      <h2>Strategy</h2>
-      <div class="row">
-        <label for="cardStyle">Card Style</label>
-        <select id="cardStyle" title="Card display style">
-          <option value="typical">Typical</option>
-          <option value="simple">Simple</option>
-        </select>
+
+    <div class="sidebar-section">
+      <h2>Game Controls</h2>
+      <div class="sidebar-actions-grid">
+        <button id="newHand" class="wide">➕ New Hand</button>
+        <button id="startNewGame" class="sidebar-secondary">New Session</button>
+        <button id="endGameExit" class="sidebar-danger">End + Exit</button>
       </div>
-      <div class="row">
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+    </div>
+
+    <div class="sidebar-section">
+      <h2>Stats</h2>
+      <div class="sidebar-actions-grid">
+        <button id="viewSessionStats" class="sidebar-secondary">Session</button>
+        <button id="viewStats" class="sidebar-secondary">Player</button>
+      </div>
+    </div>
+
+    <details class="sidebar-disclosure" id="settingsDisclosure">
+      <summary>Settings</summary>
+      <div class="sidebar-disclosure-body">
+        <div class="sidebar-compact-row">
+          <label for="cardStyle">Card Style</label>
+          <select id="cardStyle" title="Card display style">
+            <option value="typical">Typical</option>
+            <option value="simple">Simple</option>
+          </select>
+        </div>
+        <label class="sidebar-toggle-label">
           <input id="togglePlayerHand" type="checkbox"> Show Hand Ranking During Play
         </label>
-      </div>
-      <div class="row">
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <label class="sidebar-toggle-label">
           <input id="toggleAdvice" type="checkbox"> Show Play Advice (live)
         </label>
-      </div>
-      <div class="row">
-        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <label class="sidebar-toggle-label">
           <input id="toggleCorrectMistakes" type="checkbox"> Correct Strategy Mistakes
         </label>
+        <div id="adviceWrap" style="display:none; margin-top:6px;">
+          <div id="adviceLine" class="pill" style="display:inline-block; font-size:12px;">Advice</div>
+          <div id="adviceWhy" class="muted" style="font-size:12px; margin-top:4px;"></div>
+        </div>
       </div>
-      <div id="adviceWrap" style="display:none; margin-top:6px;">
-        <div id="adviceLine" class="pill" style="display:inline-block; font-size:12px;">Advice</div>
-        <div id="adviceWhy" class="muted" style="font-size:12px; margin-top:4px;"></div>
+    </details>
+
+    <details class="sidebar-disclosure" id="statusDisclosure">
+      <summary>Status</summary>
+      <div class="sidebar-disclosure-body">
+        <div class="sidebar-status-row">
+          <span class="pill">Stage: <span id="stage">Waiting</span></span>
+          <span class="pill">Outcome: <span id="outcome">—</span></span>
+        </div>
       </div>
-      <div style="margin-top:12px;"></div>
-      
-      <div style="margin-top:12px;"><h2>Log</h2><div id="log" class="log"></div></div>
-    </div>
+    </details>
+
+    <details class="sidebar-disclosure" id="logDisclosure">
+      <summary>Log</summary>
+      <div class="sidebar-disclosure-body">
+        <div class="sidebar-log-hint">Click the log to open the full hand log.</div>
+        <div id="log" class="log"></div>
+      </div>
+    </details>
   </section>
 
   <section id="tableWrap">
@@ -982,6 +1037,16 @@
               <div class="mini-stat-label">Hypo Record</div>
               <div class="mini-stat-value" id="miniStatHypRecord">0-0-0</div>
             </div>
+
+            <div class="mini-stat-item" data-stat-key="actualHypo">
+              <div class="mini-stat-label">Actual / Hypo</div>
+              <div class="mini-stat-value" id="miniStatActualHypo">$0 / $0</div>
+            </div>
+
+            <div class="mini-stat-item" data-stat-key="strategyCost">
+              <div class="mini-stat-label">Strategy Cost</div>
+              <div class="mini-stat-value" id="miniStatStrategyCost">$0</div>
+            </div>
             
             <div class="mini-stat-item" data-stat-key="followed">
               <div class="mini-stat-label">Strategy Followed</div>
@@ -998,6 +1063,7 @@
           <div id="chartMiniWrap" class="mini-chart" title="Click to expand">
             <canvas id="chartMini"></canvas>
           </div>
+          <div id="chartRangeMini" class="chart-range" aria-live="polite"></div>
           <button id="chartKeyToggle" class="chart-key-toggle" type="button" aria-label="Show graph key" title="Show graph key">Key</button>
           <div id="chartLegendMini" class="chart-legend right" aria-hidden="true">
             <div class="item"><span class="swatch line-actual"></span> Bankroll</div>
@@ -1540,6 +1606,8 @@ function updateMiniStats(){
   const pocketEl = document.getElementById('miniStatPocket');
   const recordEl = document.getElementById('miniStatRecord');
   const hypRecordEl = document.getElementById('miniStatHypRecord');
+  const actualHypoEl = document.getElementById('miniStatActualHypo');
+  const strategyCostEl = document.getElementById('miniStatStrategyCost');
   const followEl = document.getElementById('miniStatFollow');
   const bestEl = document.getElementById('miniStatBest');
 
@@ -1573,8 +1641,15 @@ function updateMiniStats(){
   const hypWins = hypValues.filter(value=>Number(value) > 0).length;
   const hypLosses = hypValues.filter(value=>Number(value) < 0).length;
   const hypPushes = hypValues.filter(value=>Number(value) === 0).length;
+  const strategyCost = hypTotalProfit - totalProfit;
   if(hypProfitEl){ hypProfitEl.textContent = formatCurrency(hypTotalProfit); }
   if(hypRecordEl){ hypRecordEl.textContent = `${hypWins}-${hypLosses}-${hypPushes}`; }
+  if(actualHypoEl){
+    const actualHypoText = `${formatCurrency(totalProfit)} / ${formatCurrency(hypTotalProfit)}`;
+    actualHypoEl.textContent = actualHypoText;
+    actualHypoEl.setAttribute('title', actualHypoText);
+  }
+  if(strategyCostEl){ strategyCostEl.textContent = formatCurrency(strategyCost); }
   if(baseBetEl){ baseBetEl.textContent = formatCurrency(baseBetTotal); }
   if(baseProfitEl){ baseProfitEl.textContent = formatCurrency(Number(betProfit.play||0)); }
   if(tripsBetEl){ tripsBetEl.textContent = formatCurrency(tripsBetTotal); }
@@ -1813,6 +1888,15 @@ function renderResultBreakdown(result, options={}){
   const dealer = result.dClass ? labelTextFromClass(result.dClass) : '';
   const dealerQual = result.dealerQual ? 'dealer qualifies' : 'dealer no-qual';
   const detail = hand ? `${hand}${dealer ? ` vs ${dealer}` : ''}${dealer ? `, ${dealerQual}` : ''}` : '';
+  const strategy = result.strategy || {};
+  const strategyKnown = strategy && typeof strategy.followed === 'boolean';
+  const strategyStatus = strategyKnown ? (strategy.followed ? 'Followed' : 'Deviated') : '-';
+  const strategyClass = strategyKnown ? (strategy.followed ? 'win' : 'loss') : 'push';
+  const recText = recommendationDisplay(strategy.rec);
+  const strategyDelta = Number(strategy.delta||0);
+  const cost = strategyKnown ? -strategyDelta : 0;
+  const costLabel = cost > 0 ? 'Cost' : cost < 0 ? 'Gain' : 'Impact';
+  const costClass = cost > 0 ? 'loss' : cost < 0 ? 'win' : 'push';
   const itemHtml = rows.map(([name,data])=>{
     const wager = data && typeof data.wager==='number' ? data.wager : 0;
     const returned = data && typeof data.returned==='number' ? data.returned : 0;
@@ -1831,6 +1915,11 @@ function renderResultBreakdown(result, options={}){
         <div class="result-breakdown-sub">${outcome}${detail ? ` - ${detail}` : ''}</div>
       </div>
       <div class="result-breakdown-total ${totalClass}">${fmt(profit)}</div>
+    </div>
+    <div class="result-strategy-summary">
+      <div class="result-strategy-item"><div class="result-strategy-label">Strategy</div><div class="result-strategy-value ${strategyClass}">${strategyStatus}</div></div>
+      <div class="result-strategy-item"><div class="result-strategy-label">Recommended</div><div class="result-strategy-value" title="${recText}">${recText}</div></div>
+      <div class="result-strategy-item"><div class="result-strategy-label">${costLabel}</div><div class="result-strategy-value ${costClass}">${fmt(Math.abs(cost))}</div></div>
     </div>
     <div class="result-breakdown-grid">${itemHtml}</div>
     <div class="result-breakdown-actions"><button id="lastHandDetailsBtn" type="button">Details</button></div>`;
@@ -2340,6 +2429,7 @@ function setupCharts(){
     const h0 = Math.round((mini.getBoundingClientRect().height)||162);
     if(h0>0) mini.dataset.h0 = String(h0);
     miniWrap.onclick = openChartModal;
+    miniWrap.addEventListener('scroll', updateMiniChartRange, {passive:true});
   }
   const closeBtn = document.getElementById('chartClose');
   if(closeBtn){ closeBtn.onclick = closeChartModal; }
@@ -2349,6 +2439,32 @@ function setupCharts(){
 function isChartOpen(){ const m=document.getElementById('chartModal'); return m && m.style.display==='block'; }
 function openChartModal(){ const m=document.getElementById('chartModal'); if(!m) return; m.style.display='block'; drawLargeChart(); }
 function closeChartModal(){ const m=document.getElementById('chartModal'); if(!m) return; m.style.display='none'; }
+
+function updateMiniChartRange(){
+  const rangeEl = document.getElementById('chartRangeMini');
+  const wrap = document.getElementById('chartMiniWrap');
+  const canvas = document.getElementById('chartMini');
+  if(!rangeEl || !wrap || !canvas) return;
+  const count = Array.isArray(state.handProfits) ? state.handProfits.length : 0;
+  if(count <= 0){
+    rangeEl.textContent = 'No hands yet';
+    return;
+  }
+  const canvasW = parseFloat(canvas.style.width) || canvas.clientWidth || wrap.clientWidth || 0;
+  const visibleW = wrap.clientWidth || canvasW;
+  if(canvasW <= visibleW + 2){
+    rangeEl.textContent = `Hands 1-${count}`;
+    return;
+  }
+  const leftPad = 38;
+  const rightPad = 48;
+  const plotW = Math.max(1, canvasW - leftPad - rightPad);
+  const visibleStartX = Math.max(0, wrap.scrollLeft - leftPad);
+  const visibleEndX = Math.min(plotW, wrap.scrollLeft + visibleW - leftPad);
+  const start = Math.max(1, Math.floor((visibleStartX / plotW) * count) + 1);
+  const end = Math.min(count, Math.ceil((visibleEndX / plotW) * count));
+  rangeEl.textContent = `Hands ${start}-${Math.max(start, end)} of ${count}`;
+}
 
 function recordHand(profit, followed, hypProfit, pClass, outcome, breakdown){
   // Append profit and resulting bank to histories
@@ -2622,6 +2738,7 @@ function drawMiniChart(){
   // Keep the newest games in view by default
   try{ if(wCanvas > wWrap){ wrap.scrollLeft = wrap.scrollWidth; } }catch(e){}
   drawChartCore(c, true);
+  updateMiniChartRange();
   scheduleMiniPanelsClamp();
 }
 function drawLargeChart(){
@@ -2703,15 +2820,15 @@ function drawChartCore(canvas, mini){
   // Labels style
   ctx.fillStyle = textColor; ctx.font = (mini?'10px':'12px')+"/1 system-ui,Segoe UI,Arial";
   const midB = (y1min+y1max)/2; ctx.textAlign='left'; ctx.textBaseline='middle';
-  ctx.fillText('$'+Math.round(y1max), 4, y1(y1max));
-  ctx.fillText('$'+Math.round(midB), 4, y1(midB));
-  ctx.fillText('$'+Math.round(y1min), 4, y1(y1min));
+  ctx.fillText(formatCurrency(y1max), 4, y1(y1max));
+  ctx.fillText(formatCurrency(midB), 4, y1(midB));
+  ctx.fillText(formatCurrency(y1min), 4, y1(y1min));
   // Right-side profit axis labels: render inside right padding and prefix with $
   ctx.textAlign='left';
   const rx = W - rightPad + 2;
-  ctx.fillText('$'+Math.round(y2max), rx, y2(y2max));
-  ctx.fillText('$0', rx, y2zero);
-  ctx.fillText('$'+Math.round(y2min), rx, y2(y2min));
+  ctx.fillText(formatCurrency(y2max), rx, y2(y2max));
+  ctx.fillText(formatCurrency(0), rx, y2zero);
+  ctx.fillText(formatCurrency(y2min), rx, y2(y2min));
   // ctx.fillText('0', W-4, y2zero); // duplicate label removed
   // Bankroll line
   if(banks.length>=1){
@@ -2740,7 +2857,7 @@ function drawChartCore(canvas, mini){
     // X-axis hand number labels (sparse to avoid clutter)
     ctx.save();
     ctx.fillStyle = textColor; ctx.textAlign='center'; ctx.textBaseline='top';
-    const maxLabels = mini ? 8 : 14;
+    const maxLabels = mini ? (n > 100 ? 5 : (n > 50 ? 6 : 8)) : (n > 120 ? 10 : 14);
     const step = Math.max(1, Math.ceil(n / maxLabels));
     const yLabel = topPad + ch + 2; // inside bottom padding
     for(let i=0;i<n;i+=step){ const cx= leftPad + (cw*((i+0.5)/Math.max(n,1))); ctx.fillText(String(i+1), cx, yLabel); }
