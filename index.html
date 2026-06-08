@@ -666,7 +666,7 @@
   <rect x="22" y="22" width="556" height="196" rx="98" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
 </svg>
     <div id="splashTitle" class="splash-title">Heads Up Hold Em</div>
-    <div class="splash-version">Version 2.7.1</div>
+    <div class="splash-version" id="splashVersion">Version 2.8</div>
     <div class="splash-actions">
       <button id="splashClose">Start Playing</button>
       <button id="splashShowRules">How to Play / Rules</button>
@@ -1123,6 +1123,7 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
+      <p class="muted"><b>Version 2.8</b></br>-Added shared app/game configuration for future multi-game support.</br>-Updated saved session metadata with game and schema information.</br>-Prepared local storage and session database versioning for safer future upgrades.</p>
       <p class="muted"><b>Version 2.7</b></br>-Polished the results, stats, and graph panels for desktop and mobile views.</br>-Added a last-hand detail view and improved end-of-hand flow.</p>
       <p class="muted"><b>Version 2.6</b></br>-Updated to accomodate more screen sizes.</p>
       <p class="muted"><b>Version 2.5</b></br>-Moved strategy and settlement logic into a tested module.</br>-Added automated checks for payouts and strategy recommendations.</p>
@@ -1259,8 +1260,19 @@
   </div>
 </div>
 
+<script src="app-config.js"></script>
 <script src="game-logic.js"></script>
 <script>
+const APP_CONFIG = window.HUHEAppConfig || {};
+const APP_STORAGE = APP_CONFIG.storage || {};
+const LOCAL_STORAGE_KEYS = APP_STORAGE.local || {};
+const SESSION_DB_CONFIG = APP_STORAGE.sessionDb || {};
+const CURRENT_GAME_ID = APP_CONFIG.currentGameId || 'heads-up-hold-em';
+try{ if(APP_CONFIG.migrateLocalStorage) APP_CONFIG.migrateLocalStorage(window.localStorage); }catch(e){}
+try{
+  const splashVersionEl = document.getElementById('splashVersion');
+  if(splashVersionEl && APP_CONFIG.appVersion) splashVersionEl.textContent = `Version ${APP_CONFIG.appVersion}`;
+}catch(e){}
 const RANKS="23456789TJQKA", SUITS="cdhs";
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
 function dealDeck(){const d=[...Array(52).keys()];return shuffle(d)}
@@ -1420,7 +1432,8 @@ const state={
 };
 
 function updateBank(){el('bankVal').textContent=Math.round(Number(state.bank)||0).toLocaleString('en-US')}
-const CARD_STYLE_KEY = 'huhe.cardStyle';
+const PLAYER_NAME_KEY = LOCAL_STORAGE_KEYS.playerName || 'huhe.playerName';
+const CARD_STYLE_KEY = LOCAL_STORAGE_KEYS.cardStyle || 'huhe.cardStyle';
 function setCardStyle(value){
   const style = value === 'simple' ? 'simple' : 'typical';
   state.cardStyle = style;
@@ -1452,7 +1465,7 @@ function formatCurrency(value){
   const amount = absVal.toLocaleString('en-US');
   return rounded < 0 ? `$(${amount})` : `$${amount}`;
 }
-const MINI_STAT_ORDER_KEY = 'huhe.miniStatsOrder';
+const MINI_STAT_ORDER_KEY = LOCAL_STORAGE_KEYS.miniStatsOrder || 'huhe.miniStatsOrder';
 const miniStatDragState = { grid:null, dragging:null };
 
 function initMiniStatDrag(){
@@ -2937,15 +2950,30 @@ updateMiniLayout();
 
 
 // IndexedDB helpers for persisting session summaries
+const SESSION_DB_NAME = SESSION_DB_CONFIG.name || 'HeadsUpHoldEmDB';
+const SESSION_DB_VERSION = SESSION_DB_CONFIG.version || 2;
+const SESSION_STORE = SESSION_DB_CONFIG.sessionsStore || 'sessions';
+const SESSION_INDEXES = SESSION_DB_CONFIG.indexes || {};
+const SESSION_BY_PLAYER = SESSION_INDEXES.byPlayer || 'byPlayer';
+const SESSION_BY_GAME_PLAYER = SESSION_INDEXES.byGamePlayer || 'byGamePlayer';
+
 async function _openSessionDB(){
   return new Promise((resolve, reject)=>{
     try{
-      const req = window.indexedDB.open('HeadsUpHoldEmDB', 1);
+      const req = window.indexedDB.open(SESSION_DB_NAME, SESSION_DB_VERSION);
       req.onupgradeneeded = (e)=>{
         const db = req.result;
-        if(!db.objectStoreNames.contains('sessions')){
-          const store = db.createObjectStore('sessions', { keyPath: 'id' });
-          store.createIndex('byPlayer', 'player', { unique:false });
+        let store = null;
+        if(!db.objectStoreNames.contains(SESSION_STORE)){
+          store = db.createObjectStore(SESSION_STORE, { keyPath: 'id' });
+        }else{
+          store = req.transaction.objectStore(SESSION_STORE);
+        }
+        if(store && !store.indexNames.contains(SESSION_BY_PLAYER)){
+          store.createIndex(SESSION_BY_PLAYER, 'player', { unique:false });
+        }
+        if(store && !store.indexNames.contains(SESSION_BY_GAME_PLAYER)){
+          store.createIndex(SESSION_BY_GAME_PLAYER, 'gamePlayer', { unique:false });
         }
       };
       req.onsuccess = ()=> resolve(req.result);
@@ -2957,16 +2985,20 @@ async function _nextSessionNo(player){
   const db = await _openSessionDB();
   return new Promise((resolve, reject)=>{
     try{
-      const tx = db.transaction('sessions','readonly');
-      const store = tx.objectStore('sessions');
-      const idx = store.index('byPlayer');
+      const tx = db.transaction(SESSION_STORE,'readonly');
+      const store = tx.objectStore(SESSION_STORE);
+      const idx = store.index(SESSION_BY_PLAYER);
       const req = idx.openCursor(IDBKeyRange.only(player));
       let maxNo = 0;
       req.onsuccess = (e)=>{
         const cur = e.target.result;
         if(cur){
-          const v = cur.value && typeof cur.value.sessionNo==='number' ? cur.value.sessionNo : 0;
-          if(v>maxNo) maxNo=v; cur.continue();
+          const value = cur.value || {};
+          if((value.gameId || CURRENT_GAME_ID) === CURRENT_GAME_ID){
+            const v = typeof value.sessionNo==='number' ? value.sessionNo : 0;
+            if(v>maxNo) maxNo=v;
+          }
+          cur.continue();
         }else{ resolve(maxNo+1); }
       };
       req.onerror = ()=> reject(req.error||new Error('cursor failed'));
@@ -2974,18 +3006,21 @@ async function _nextSessionNo(player){
   });
 }
 async function saveSessionSummary(summary){
+  if(APP_CONFIG.normalizeSessionSummary){
+    summary = APP_CONFIG.normalizeSessionSummary(summary, CURRENT_GAME_ID);
+  }
   const player = summary.player || '-';
   if(!summary.sessionNo || !(summary.sessionNo>0)){
     try{ summary.sessionNo = await _nextSessionNo(player); }catch(e){ summary.sessionNo = 1; }
   }
-  summary.id = `${player}::${String(summary.sessionNo).padStart(6,'0')}`;
+  summary.id = `${summary.gameId || CURRENT_GAME_ID}::${player}::${String(summary.sessionNo).padStart(6,'0')}`;
   const db = await _openSessionDB();
   return new Promise((resolve, reject)=>{
     try{
-      const tx = db.transaction('sessions','readwrite');
+      const tx = db.transaction(SESSION_STORE,'readwrite');
       tx.oncomplete = ()=> resolve(summary);
       tx.onerror = ()=> reject(tx.error||new Error('tx failed'));
-      tx.objectStore('sessions').put(summary);
+      tx.objectStore(SESSION_STORE).put(summary);
     }catch(err){ reject(err); }
   });
 }
@@ -2996,13 +3031,22 @@ async function listPlayers(){
     const db = await _openSessionDB();
     return new Promise((resolve, reject)=>{
       try{
-        const tx = db.transaction('sessions','readonly');
-        const idx = tx.objectStore('sessions').index('byPlayer');
+        const tx = db.transaction(SESSION_STORE,'readonly');
+        const idx = tx.objectStore(SESSION_STORE).index(SESSION_BY_PLAYER);
         const out = [];
-        const req = idx.openKeyCursor(null, 'nextunique');
+        const seen = new Set();
+        const req = idx.openCursor();
         req.onsuccess = (e)=>{
           const cur = e.target.result;
-          if(cur){ out.push(cur.key); cur.continue(); }
+          if(cur){
+            const value = cur.value || {};
+            const gameId = value.gameId || CURRENT_GAME_ID;
+            if(gameId === CURRENT_GAME_ID && !seen.has(value.player)){
+              seen.add(value.player);
+              out.push(value.player);
+            }
+            cur.continue();
+          }
           else resolve(out);
         };
         req.onerror = ()=> reject(req.error||new Error('listPlayers failed'));
@@ -3016,11 +3060,11 @@ async function getSessions(player){
   const db = await _openSessionDB();
   return new Promise((resolve, reject)=>{
     try{
-      const tx = db.transaction('sessions','readonly');
-      const idx = tx.objectStore('sessions').index('byPlayer');
+      const tx = db.transaction(SESSION_STORE,'readonly');
+      const idx = tx.objectStore(SESSION_STORE).index(SESSION_BY_PLAYER);
       const req = idx.getAll(player);
       req.onsuccess = ()=>{
-        const arr = Array.isArray(req.result)?req.result:[];
+        const arr = (Array.isArray(req.result)?req.result:[]).filter(row => (row.gameId || CURRENT_GAME_ID) === CURRENT_GAME_ID);
         arr.sort((a,b)=> (a.sessionNo||0) - (b.sessionNo||0));
         resolve(arr);
       };
@@ -3034,17 +3078,20 @@ async function deletePlayer(name){
   const db = await _openSessionDB();
   return new Promise((resolve, reject)=>{
     try{
-      const tx = db.transaction('sessions','readwrite');
-      const store = tx.objectStore('sessions');
-      const idx = store.index('byPlayer');
+      const tx = db.transaction(SESSION_STORE,'readwrite');
+      const store = tx.objectStore(SESSION_STORE);
+      const idx = store.index(SESSION_BY_PLAYER);
       let removed = 0;
       const req = idx.openCursor(IDBKeyRange.only(name));
       req.onsuccess = (e)=>{
         const cur = e.target.result;
         if(cur){
           try{
-            cur.delete();
-            removed += 1;
+            const value = cur.value || {};
+            if((value.gameId || CURRENT_GAME_ID) === CURRENT_GAME_ID){
+              cur.delete();
+              removed += 1;
+            }
             cur.continue();
           }catch(err){ reject(err); return; }
         }else{ resolve(removed); }
@@ -3064,7 +3111,7 @@ async function openStatsModal(playerOverride){
   const statsSummaryEl = document.getElementById('statsSummary');
   const statsTotalsEl = document.getElementById('statsTotals');
   const statsSessionList = document.getElementById('statsSessionList');
-  const name = (playerOverride && playerOverride.trim()) || (state.playerName || localStorage.getItem('huhe.playerName') || '-');
+  const name = (playerOverride && playerOverride.trim()) || (state.playerName || localStorage.getItem(PLAYER_NAME_KEY) || '-');
   if(meta) meta.textContent = `Player: ${name}`;
   if(tbody) tbody.innerHTML = '';
   if(statsSummaryEl) statsSummaryEl.innerHTML = '';
@@ -3516,8 +3563,9 @@ function captureSessionSummary(){
     bestHandCount: bestCount,
     createdAt: new Date().toISOString()
   };
-  state._lastSummary = persist;
-  summary.persist = persist;
+  const normalizedPersist = APP_CONFIG.normalizeSessionSummary ? APP_CONFIG.normalizeSessionSummary(persist, CURRENT_GAME_ID) : persist;
+  state._lastSummary = normalizedPersist;
+  summary.persist = normalizedPersist;
   return summary;
 }
 
@@ -3759,7 +3807,7 @@ async function logSessionAndReset(options){
     try{
       if(!playerSel) return;
       const names = await listPlayers();
-      const chosen = (localStorage.getItem('huhe.playerName')||'').trim();
+      const chosen = (localStorage.getItem(PLAYER_NAME_KEY)||'').trim();
       playerSel.innerHTML = '<option value="">-- new player --</option>' +
         (names||[]).map(n=>`<option value="${String(n).replace(/"/g,'&quot;')}">${n}</option>`).join('');
       if(chosen){
@@ -3837,8 +3885,8 @@ async function logSessionAndReset(options){
       playerDeleteBtn.disabled = true;
       await deletePlayer(selected);
       try{
-        const stored = (localStorage.getItem('huhe.playerName')||'').trim();
-        if(stored === selected){ localStorage.removeItem('huhe.playerName'); }
+        const stored = (localStorage.getItem(PLAYER_NAME_KEY)||'').trim();
+        if(stored === selected){ localStorage.removeItem(PLAYER_NAME_KEY); }
       }catch(e){}
       if(state.playerName === selected){ state.playerName = '-'; }
       if(playerInp){ playerInp.value=''; }
@@ -3861,7 +3909,7 @@ async function logSessionAndReset(options){
       const name = (!selected ? inputVal : selected).trim();
       if(!name){ if(playerErr){ playerErr.textContent='Please enter or select a player name.'; } return; }
       state.playerName = name;
-      try{ localStorage.setItem('huhe.playerName', name); }catch(e){}
+      try{ localStorage.setItem(PLAYER_NAME_KEY, name); }catch(e){}
       closePlayer();
       closeSplash();
     }catch(e){}

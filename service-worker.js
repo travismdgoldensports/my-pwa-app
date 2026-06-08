@@ -1,9 +1,12 @@
-const VERSION = "v2.7.1";
+importScripts("app-config.js");
+
+const VERSION = self.HUHEAppConfig?.cacheVersion || "v2.8";
 const STATIC_CACHE = `heads-up-static-${VERSION}`;
 const HTML_CACHE = `heads-up-html-${VERSION}`;
 const OFFLINE_PAGE = "index.html";
 const ASSETS = [
   "index.html",
+  "app-config.js",
   "game-logic.js",
   "app.js",
   "manifest.webmanifest",

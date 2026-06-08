@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const logic = require('../game-logic');
+const appConfig = require('../app-config');
 
 const rankIndex = {
   '2':0, '3':1, '4':2, '5':3, '6':4, '7':5, '8':6,
@@ -25,6 +26,18 @@ test('hand evaluator classifies a royal flush', () => {
     card('2', 'd'), card('3', 'h')
   ];
   assert.equal(logic.handEval(hand).cls, 'royal_flush');
+});
+
+test('app config exposes game metadata and normalizes saved session summaries', () => {
+  assert.equal(appConfig.appVersion, '2.8');
+  assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
+  assert.ok(appConfig.games[appConfig.currentGameId]);
+
+  const summary = appConfig.normalizeSessionSummary({player:'Ada', profit:25});
+  assert.equal(summary.gameId, 'heads-up-hold-em');
+  assert.equal(summary.schemaVersion, 2);
+  assert.equal(summary.gamePlayer, 'heads-up-hold-em::Ada');
+  assert.equal(summary.profit, 25);
 });
 
 test('settlement pays winning straight odds while ante pushes against non-qualifying dealer', () => {
