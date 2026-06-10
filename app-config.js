@@ -9,7 +9,7 @@
   const CURRENT_GAME_ID = 'heads-up-hold-em';
 
   const config = {
-    appName: "Heads Up Hold 'Em",
+    appName: "Golden Table Games",
     appVersion: APP_VERSION,
     cacheVersion: `v${APP_VERSION}`,
     currentGameId: CURRENT_GAME_ID,

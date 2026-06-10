@@ -1,7 +1,7 @@
 {
-  "name": "Heads Up Hold Em",
-  "short_name": "Heads Up",
-  "description": "A mobile-friendly Heads Up Hold Em trainer with strategy guidance, bankroll tracking, and offline play.",
+  "name": "Golden Table Games",
+  "short_name": "Golden Table",
+  "description": "A mobile-friendly table games casino app with strategy guidance, bankroll tracking, and offline play.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

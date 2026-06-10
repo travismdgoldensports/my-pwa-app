@@ -30,6 +30,7 @@ test('hand evaluator classifies a royal flush', () => {
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
   assert.equal(appConfig.appVersion, '2.8');
+  assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
 

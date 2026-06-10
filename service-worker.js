@@ -1,8 +1,8 @@
 importScripts("app-config.js");
 
 const VERSION = self.HUHEAppConfig?.cacheVersion || "v2.8";
-const STATIC_CACHE = `heads-up-static-${VERSION}`;
-const HTML_CACHE = `heads-up-html-${VERSION}`;
+const STATIC_CACHE = `golden-table-static-${VERSION}`;
+const HTML_CACHE = `golden-table-html-${VERSION}`;
 const OFFLINE_PAGE = "index.html";
 const ASSETS = [
   "index.html",
