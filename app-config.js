@@ -5,7 +5,7 @@
     root.HUHEAppConfig = factory();
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function(){
-  const APP_VERSION = '3.0';
+  const APP_VERSION = '3.1';
   const CURRENT_GAME_ID = 'heads-up-hold-em';
   const VIDEO_POKER_GAME_ID = 'video-poker-jacks-or-better';
   const DEUCES_WILD_GAME_ID = 'video-poker-deuces-wild';
@@ -19,20 +19,20 @@
       [CURRENT_GAME_ID]: {
         id: CURRENT_GAME_ID,
         name: "Heads Up Hold 'Em",
-        version: '2.8',
+        version: '2.9',
         sessionSchemaVersion: 2
       },
       [VIDEO_POKER_GAME_ID]: {
         id: VIDEO_POKER_GAME_ID,
         name: 'Jacks or Better Video Poker',
-        version: '0.1',
+        version: '0.2',
         status: 'beta',
         sessionSchemaVersion: 1
       },
       [DEUCES_WILD_GAME_ID]: {
         id: DEUCES_WILD_GAME_ID,
         name: 'Deuces Wild Video Poker',
-        version: '0.1',
+        version: '0.2',
         status: 'beta',
         sessionSchemaVersion: 1
       }

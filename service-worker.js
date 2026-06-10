@@ -1,6 +1,6 @@
 importScripts("app-config.js");
 
-const VERSION = self.HUHEAppConfig?.cacheVersion || "v3.0";
+const VERSION = self.HUHEAppConfig?.cacheVersion || "v3.1";
 const STATIC_CACHE = `golden-table-static-${VERSION}`;
 const HTML_CACHE = `golden-table-html-${VERSION}`;
 const OFFLINE_PAGE = "index.html";
