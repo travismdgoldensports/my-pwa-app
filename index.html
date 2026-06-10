@@ -596,7 +596,10 @@
   .lobby-game-status{ justify-self:end; padding:5px 8px; border-radius:999px; background:#174234; border:1px solid #2c7a5e; color:#d8ffee; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.3px; white-space:nowrap; }
   .lobby-game-actions{ grid-column:1 / -1; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-top:2px; }
   .lobby-game-actions button{ background:#22314f; border:1px solid #2e4470; padding:7px 8px; font-size:11px; }
-  .lobby-game-actions #splashClose{ background:#174234; border-color:#2c7a5e; }
+  .lobby-game-actions #splashClose,
+  .lobby-game-actions #vpLobbyPlay,
+  .lobby-game-actions #dwLobbyPlay{ background:#174234; border-color:#2c7a5e; }
+  .lobby-game-status.beta{ background:#4a3110; border-color:#8f6b27; color:#ffd36d; }
   .splash-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0 10px; }
   .splash-actions button{ background:#22314f; border:1px solid #2e4470; }
   .splash-actions #installBtn{ display:none; background:#174234; border-color:#2c7a5e; }
@@ -643,6 +646,77 @@
   .last-hand-card-row .pip{ font-size:7px; }
   .last-hand-actions-list{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; }
   .last-hand-action{ border:1px solid rgba(52,92,155,0.55); border-radius:8px; background:rgba(36,52,93,0.45); padding:7px; }
+  .vp-screen{display:none;padding:14px;background:#07101f;min-height:calc(100vh - 58px);box-sizing:border-box;}
+  .vp-shell{display:grid;grid-template-columns:280px minmax(0,1fr);gap:12px;max-width:1320px;margin:0 auto;}
+  .vp-panel,.vp-table{background:#0b172a;border:1px solid #203a63;border-radius:8px;box-shadow:0 10px 28px #0006;}
+  .vp-panel{padding:14px;display:flex;flex-direction:column;gap:12px;}
+  .vp-panel h2,.vp-table h2{margin:0;color:#f7fbff;font-size:20px;}
+  .vp-beta{display:inline-flex;align-items:center;margin-left:6px;padding:2px 6px;border-radius:999px;background:#4a3110;border:1px solid #8f6b27;color:#ffd36d;font-size:10px;text-transform:uppercase;letter-spacing:.4px;vertical-align:middle;}
+  .vp-controls{display:grid;gap:9px;}
+  .vp-controls label{display:grid;gap:4px;color:#cfe2ff;font-size:13px;}
+  .vp-controls input[type="number"],
+  .vp-controls select{width:100%;box-sizing:border-box;background:#0b172a;border:1px solid #28466f;border-radius:8px;color:#fff;padding:10px 12px;font-size:16px;}
+  .vp-check{display:flex!important;grid-template-columns:none!important;align-items:center;gap:8px;}
+  .vp-check input{width:18px;height:18px;}
+  .vp-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .vp-action-grid .wide{grid-column:1 / -1;}
+  .vp-action-grid button,.vp-table-actions button{background:#174234;border:1px solid #2c7a5e;}
+  .vp-action-grid button.secondary,.vp-table-actions button.secondary{background:#22314f;border-color:#2e4470;}
+  .vp-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+  .vp-stat{background:#172846;border:1px solid #315184;border-radius:8px;padding:8px;}
+  .vp-stat-label{display:block;color:#aac2e7;font-size:10px;text-transform:uppercase;letter-spacing:.35px;}
+  .vp-stat strong{display:block;margin-top:2px;color:#f3f7ff;font-size:18px;}
+  .vp-log{min-height:96px;max-height:160px;overflow:auto;background:#081326;border:1px solid #203a63;border-radius:8px;padding:9px;font-size:12px;color:#cfe2ff;line-height:1.35;}
+  .vp-strategy-ref{position:relative;border:1px solid #203a63;border-radius:8px;background:#081326;color:#cfe2ff;overflow:visible;}
+  .vp-strategy-ref summary{cursor:pointer;list-style:none;padding:10px 11px;font-weight:900;color:#f3f7ff;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .vp-strategy-ref summary::-webkit-details-marker{display:none;}
+  .vp-strategy-ref summary::after{content:"+";display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:1px solid #315184;color:#ffd36d;background:#13233d;font-weight:900;}
+  .vp-strategy-ref[open] summary::after{content:"-";}
+  .vp-strategy-popover{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;max-height:210px;overflow:auto;border:1px solid #315184;border-radius:8px;background:#071326;box-shadow:0 14px 28px rgba(0,0,0,.45);padding-top:8px;}
+  .vp-strategy-ref[open] .vp-strategy-popover{display:block;}
+  .vp-strategy-list{margin:0;padding:0 10px 8px 28px;font-size:10px;line-height:1.25;}
+  .vp-strategy-list li{padding:2px 0;}
+  .vp-strategy-list li::marker{color:#ffd36d;font-weight:900;}
+  .vp-strategy-source{padding:0 10px 10px;color:#8fa6ca;font-size:9px;line-height:1.25;}
+  .vp-table{padding:14px;display:grid;grid-template-rows:auto auto auto minmax(160px,1fr);gap:12px;}
+  .vp-topline{display:flex;justify-content:space-between;gap:12px;align-items:start;flex-wrap:wrap;}
+  .vp-paytable{display:grid;grid-template-columns:repeat(5,minmax(110px,1fr));gap:6px;}
+  .vp-pay{background:#192b4b;border:1px solid #315184;border-radius:8px;padding:7px 8px;display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#d9e6ff;}
+  .vp-cards{display:grid;grid-template-columns:repeat(5,minmax(86px,132px));gap:10px;justify-content:center;align-items:start;}
+  .vp-card-button{position:relative;min-height:178px;border-radius:12px;border:2px solid transparent;background:transparent;color:#101827;box-shadow:none;cursor:pointer;font-weight:900;font-size:32px;display:flex;align-items:center;justify-content:center;padding:8px;--card-w:112px;--card-h:152px;--card-br:10px;}
+  .vp-card-button .card{box-shadow:0 8px 18px #0007;}
+  .vp-card-button.empty{color:#6d7890;}
+  .vp-card-button.held{border-color:#25d39b;box-shadow:0 0 0 3px #25d39b55,0 8px 18px #0007;transform:translateY(-6px);}
+  .vp-card-button.held::after{content:"HELD";position:absolute;left:50%;bottom:8px;transform:translateX(-50%);background:#123d32;border:1px solid #25d39b;color:#bfffea;border-radius:999px;padding:3px 9px;font-size:10px;letter-spacing:.5px;}
+  .vp-card-corner{position:absolute;top:8px;left:9px;font-size:20px;line-height:1.05;text-align:center;}
+  .vp-card-corner.bottom{top:auto;left:auto;right:9px;bottom:8px;transform:rotate(180deg);}
+  .vp-outcome{display:none;border:1px solid #315184;border-radius:10px;background:#101f37;padding:12px 14px;text-align:center;color:#d9e6ff;}
+  .vp-outcome.show{display:block;}
+  .vp-outcome.win{border-color:#2c7a5e;background:#102d28;}
+  .vp-outcome.loss{border-color:#6a2e37;background:#2b1420;}
+  .vp-outcome.push{border-color:#8f6b27;background:#2d2410;}
+  .vp-outcome-label{font-size:30px;line-height:1.05;font-weight:900;color:#f7fbff;}
+  .vp-outcome-detail{margin-top:5px;font-size:13px;color:#cfe2ff;}
+  .vp-advice{background:#101f37;border:1px solid #315184;border-radius:8px;padding:10px;color:#d9e6ff;min-height:44px;}
+  .vp-advice strong{color:#25d39b;}
+  .vp-rule{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:7px;color:#cfe2ff;font-size:12px;}
+  .vp-rule-rank{display:inline-flex;align-items:center;justify-content:center;min-width:34px;padding:3px 7px;border-radius:999px;background:#4a3110;border:1px solid #8f6b27;color:#ffd36d;font-weight:900;}
+  .vp-rule-note{color:#aac2e7;}
+  .vp-table-actions{display:grid;grid-template-columns:1.2fr 1fr;gap:8px;align-items:center;}
+  .vp-result{font-size:24px;font-weight:900;text-align:right;color:#f3f7ff;}
+  .vp-chart-wrap{min-height:190px;background:#07101f;border:1px solid #203a63;border-radius:8px;padding:10px;}
+  #vpChart{display:block;width:100%;height:190px;}
+  @media (max-width:900px){
+    .vp-shell{grid-template-columns:1fr;}
+    .vp-panel{order:2;}
+    .vp-paytable{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .vp-cards{grid-template-columns:repeat(5,minmax(52px,1fr));gap:6px;}
+    .vp-card-button{min-height:126px;font-size:22px;border-radius:8px;padding:4px;--card-w:72px;--card-h:98px;--card-br:8px;}
+    .vp-card-corner{font-size:15px;}
+    .vp-outcome-label{font-size:24px;}
+    .vp-table-actions{grid-template-columns:1fr;}
+    .vp-result{text-align:left;}
+  }
   @media(max-width:640px){
     .last-hand-inner{ inset:8px; left:8px; right:8px; transform:none; max-height:calc(100dvh - 16px); padding:10px; width:auto; box-sizing:border-box; }
     .last-hand-grid{ grid-template-columns:1fr; }
@@ -699,7 +773,7 @@
         <span>
           <span class="lobby-game-name">Heads Up Hold 'Em</span>
           <span class="lobby-game-meta">Poker table game with strategy tracking, session stats, and bankroll graph.</span>
-          <span class="lobby-game-version" id="splashVersion">Version 2.8</span>
+          <span class="lobby-game-version" id="splashVersion">Heads Up v2.8</span>
         </span>
         <span class="lobby-game-status">Ready</span>
         <span class="lobby-game-actions">
@@ -707,6 +781,42 @@
           <button id="splashShowRules">Rules</button>
           <button id="splashShowWoo">Strategy</button>
           <button id="splashShowVersion" class="button-small-muted">Version</button>
+        </span>
+      </div>
+      <div class="lobby-game">
+        <span class="lobby-game-art" aria-hidden="true">
+          <span class="lobby-mini-card red">J♥</span>
+          <span class="lobby-mini-card black">J♣</span>
+        </span>
+        <span>
+          <span class="lobby-game-name">Jacks or Better Video Poker</span>
+          <span class="lobby-game-meta">Beta trainer with optimal hold advice, correction, bankroll tracking, and graphing.</span>
+          <span class="lobby-game-version" id="vpLobbyVersionText">Jacks or Better v0.1 beta</span>
+        </span>
+        <span class="lobby-game-status beta">Beta</span>
+        <span class="lobby-game-actions">
+          <button id="vpLobbyPlay">Play</button>
+          <button id="vpLobbyRules">Rules</button>
+          <button id="vpLobbyStrategy">Strategy</button>
+          <button id="vpLobbyVersion" class="button-small-muted">Version</button>
+        </span>
+      </div>
+      <div class="lobby-game">
+        <span class="lobby-game-art" aria-hidden="true">
+          <span class="lobby-mini-card red">2♦</span>
+          <span class="lobby-mini-card black">2♣</span>
+        </span>
+        <span>
+          <span class="lobby-game-name">Deuces Wild Video Poker</span>
+          <span class="lobby-game-meta">Beta trainer for 20/12/9/5/3/2 Deuces Wild with wild-card EV advice.</span>
+          <span class="lobby-game-version" id="dwLobbyVersionText">Deuces Wild v0.1 beta</span>
+        </span>
+        <span class="lobby-game-status beta">Beta</span>
+        <span class="lobby-game-actions">
+          <button id="dwLobbyPlay">Play</button>
+          <button id="dwLobbyRules">Rules</button>
+          <button id="dwLobbyStrategy">Strategy</button>
+          <button id="dwLobbyVersion" class="button-small-muted">Version</button>
         </span>
       </div>
     </div>
@@ -1278,7 +1388,100 @@
     </div>
   </div>
 
+</div>
+
+<section id="videoPokerScreen" class="vp-screen" aria-label="Jacks or Better Video Poker beta">
+  <div class="vp-shell">
+    <aside class="vp-panel">
+      <h2>Jacks or Better <span class="vp-beta">Beta</span></h2>
+      <div class="vp-controls">
+        <label>Starting Bankroll
+          <input id="vpStartingBankroll" type="number" min="1" step="1" value="500" inputmode="numeric">
+        </label>
+        <label>Bet Per Hand
+          <input id="vpBet" type="number" min="1" step="1" value="5" inputmode="numeric">
+        </label>
+        <label>Card Style
+          <select id="vpCardStyle" title="Video Poker card display style">
+            <option value="typical">Typical</option>
+            <option value="simple">Simple</option>
+          </select>
+        </label>
+        <label class="vp-check"><input id="vpShowAdvice" type="checkbox" checked> Show Hold Advice</label>
+        <label class="vp-check"><input id="vpCorrectMistakes" type="checkbox"> Correct Strategy Mistakes</label>
+      </div>
+      <div class="vp-action-grid">
+        <button id="vpStartSession" type="button">Start Session</button>
+        <button id="vpExitLobby" type="button" class="secondary">Lobby</button>
+        <button id="vpEndSession" type="button" class="secondary wide">End Session</button>
+      </div>
+      <div class="vp-stats" aria-label="Video Poker session stats">
+        <div class="vp-stat"><span class="vp-stat-label">Bank</span><strong id="vpBankStat">$500</strong></div>
+        <div class="vp-stat"><span class="vp-stat-label">Profit</span><strong id="vpProfitStat">$0</strong></div>
+        <div class="vp-stat"><span class="vp-stat-label">Hands</span><strong id="vpHandsStat">0</strong></div>
+        <div class="vp-stat"><span class="vp-stat-label">Record</span><strong id="vpRecordStat">0-0-0</strong></div>
+        <div class="vp-stat"><span class="vp-stat-label">Strategy</span><strong id="vpStrategyStat">0/0</strong></div>
+        <div class="vp-stat"><span class="vp-stat-label">Best Hand</span><strong id="vpBestStat">-</strong></div>
+      </div>
+      <details class="vp-strategy-ref">
+        <summary>Wizard Basic Strategy</summary>
+        <div class="vp-strategy-popover">
+          <ol class="vp-strategy-list">
+            <li>Four of a kind, straight flush, royal flush</li>
+            <li>4 to a royal flush</li>
+            <li>Three of a kind, straight, flush, full house</li>
+            <li>4 to a straight flush</li>
+            <li>Two pair</li>
+            <li>High pair</li>
+            <li>3 to a royal flush</li>
+            <li>4 to a flush</li>
+            <li>Low pair</li>
+            <li>4 to an outside straight</li>
+            <li>2 suited high cards</li>
+            <li>3 to a straight flush</li>
+            <li>2 unsuited high cards</li>
+            <li>Suited 10/J, 10/Q, or 10/K</li>
+            <li>One high card</li>
+            <li>Discard everything</li>
+          </ol>
+          <div class="vp-strategy-source">Wizard of Odds 9/6 Jacks or Better simple strategy. High card means J or higher.</div>
+        </div>
+      </details>
+      <div id="vpLog" class="vp-log">Beta ready. Start a session, deal, choose holds, then draw.</div>
+    </aside>
+    <section class="vp-table">
+      <div class="vp-topline">
+        <div>
+          <h2>Jacks or Better</h2>
+          <div class="muted">Optimal hold trainer. Bet is deducted on deal; wins return on draw.</div>
+        </div>
+        <div id="vpResult" class="vp-result">$0</div>
+      </div>
+      <div class="vp-paytable" aria-label="Jacks or Better pay table">
+        <div class="vp-pay"><span>Royal Flush</span><b>800x</b></div>
+        <div class="vp-pay"><span>Straight Flush</span><b>50x</b></div>
+        <div class="vp-pay"><span>Four of a Kind</span><b>25x</b></div>
+        <div class="vp-pay"><span>Full House</span><b>9x</b></div>
+        <div class="vp-pay"><span>Flush</span><b>6x</b></div>
+        <div class="vp-pay"><span>Straight</span><b>4x</b></div>
+        <div class="vp-pay"><span>Three of a Kind</span><b>3x</b></div>
+        <div class="vp-pay"><span>Two Pair</span><b>2x</b></div>
+        <div class="vp-pay"><span>Jacks or Better</span><b>1x</b></div>
+        <div class="vp-pay"><span>All Others</span><b>0x</b></div>
+      </div>
+      <div id="vpCards" class="vp-cards" aria-label="Video Poker hand"></div>
+      <div id="vpOutcome" class="vp-outcome" aria-live="polite"></div>
+      <div id="vpAdvice" class="vp-advice">Advice appears after the deal.</div>
+      <div class="vp-table-actions">
+        <button id="vpDealDraw" type="button">Deal</button>
+        <button id="vpApplyAdvice" type="button" class="secondary">Apply Advice</button>
+      </div>
+      <div class="vp-chart-wrap">
+        <canvas id="vpChart" aria-label="Video Poker bankroll graph"></canvas>
+      </div>
+    </section>
   </div>
+</section>
 
 <div class="sticky-actions">
   <div class="bar-row">
@@ -1310,7 +1513,14 @@ const CURRENT_GAME_ID = APP_CONFIG.currentGameId || 'heads-up-hold-em';
 try{ if(APP_CONFIG.migrateLocalStorage) APP_CONFIG.migrateLocalStorage(window.localStorage); }catch(e){}
 try{
   const splashVersionEl = document.getElementById('splashVersion');
-  if(splashVersionEl && APP_CONFIG.appVersion) splashVersionEl.textContent = `Version ${APP_CONFIG.appVersion}`;
+  const currentGame = APP_CONFIG.games && APP_CONFIG.games[CURRENT_GAME_ID];
+  if(splashVersionEl && currentGame && currentGame.version) splashVersionEl.textContent = `Heads Up v${currentGame.version}`;
+  const vpVersionEl = document.getElementById('vpLobbyVersionText');
+  const vpGame = APP_CONFIG.games && APP_CONFIG.games['video-poker-jacks-or-better'];
+  if(vpVersionEl && vpGame && vpGame.version) vpVersionEl.textContent = `Jacks or Better v${vpGame.version}${vpGame.status ? ' ' + vpGame.status : ''}`;
+  const dwVersionEl = document.getElementById('dwLobbyVersionText');
+  const dwGame = APP_CONFIG.games && APP_CONFIG.games['video-poker-deuces-wild'];
+  if(dwVersionEl && dwGame && dwGame.version) dwVersionEl.textContent = `Deuces Wild v${dwGame.version}${dwGame.status ? ' ' + dwGame.status : ''}`;
 }catch(e){}
 const RANKS="23456789TJQKA", SUITS="cdhs";
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
@@ -3020,7 +3230,8 @@ async function _openSessionDB(){
     }catch(err){ reject(err); }
   });
 }
-async function _nextSessionNo(player){
+async function _nextSessionNo(player, gameId){
+  const resolvedGameId = gameId || CURRENT_GAME_ID;
   const db = await _openSessionDB();
   return new Promise((resolve, reject)=>{
     try{
@@ -3033,7 +3244,7 @@ async function _nextSessionNo(player){
         const cur = e.target.result;
         if(cur){
           const value = cur.value || {};
-          if((value.gameId || CURRENT_GAME_ID) === CURRENT_GAME_ID){
+          if((value.gameId || CURRENT_GAME_ID) === resolvedGameId){
             const v = typeof value.sessionNo==='number' ? value.sessionNo : 0;
             if(v>maxNo) maxNo=v;
           }
@@ -3045,12 +3256,13 @@ async function _nextSessionNo(player){
   });
 }
 async function saveSessionSummary(summary){
+  const requestedGameId = summary && summary.gameId ? summary.gameId : CURRENT_GAME_ID;
   if(APP_CONFIG.normalizeSessionSummary){
-    summary = APP_CONFIG.normalizeSessionSummary(summary, CURRENT_GAME_ID);
+    summary = APP_CONFIG.normalizeSessionSummary(summary, requestedGameId);
   }
   const player = summary.player || '-';
   if(!summary.sessionNo || !(summary.sessionNo>0)){
-    try{ summary.sessionNo = await _nextSessionNo(player); }catch(e){ summary.sessionNo = 1; }
+    try{ summary.sessionNo = await _nextSessionNo(player, summary.gameId || requestedGameId); }catch(e){ summary.sessionNo = 1; }
   }
   summary.id = `${summary.gameId || CURRENT_GAME_ID}::${player}::${String(summary.sessionNo).padStart(6,'0')}`;
   const db = await _openSessionDB();
@@ -3420,6 +3632,7 @@ if(_cardStyleSelect){
     setCardStyle(e.target.value);
     try{ localStorage.setItem(CARD_STYLE_KEY, state.cardStyle); }catch(err){}
     renderCards();
+    if(window.videoPokerRefresh) window.videoPokerRefresh();
   });
 }
 const _advToggle= document.getElementById('toggleAdvice');
@@ -3788,9 +4001,819 @@ async function logSessionAndReset(options){
 </script>
 <script>
 (function(){
+  const VP_RANKS = '23456789TJQKA';
+  const VP_SUITS = 'cdhs';
+  const JACKS_OR_BETTER_GAME_ID = 'video-poker-jacks-or-better';
+  const DEUCES_WILD_GAME_ID = 'video-poker-deuces-wild';
+  const VIDEO_POKER_GAMES = {
+    [JACKS_OR_BETTER_GAME_ID]: {
+      id: JACKS_OR_BETTER_GAME_ID,
+      name: 'Jacks or Better',
+      subtitle: 'Optimal hold trainer. Bet is deducted on deal; wins return on draw.',
+      status: 'beta',
+      startLog: 'Started beta Jacks or Better session.',
+      sessionNote: 'Jacks or Better Video Poker beta',
+      emptyBestHand: 'No Win',
+      pay: {
+        royal_flush:800, straight_flush:50, four_kind:25, full_house:9, flush:6,
+        straight:4, three_kind:3, two_pair:2, jacks_or_better:1, nothing:0
+      },
+      labels: {
+        royal_flush:'Royal Flush', straight_flush:'Straight Flush', four_kind:'Four of a Kind',
+        full_house:'Full House', flush:'Flush', straight:'Straight', three_kind:'Three of a Kind',
+        two_pair:'Two Pair', jacks_or_better:'Jacks or Better', nothing:'No Win'
+      },
+      payTable: [
+        ['Royal Flush', 800], ['Straight Flush', 50], ['Four of a Kind', 25], ['Full House', 9], ['Flush', 6],
+        ['Straight', 4], ['Three of a Kind', 3], ['Two Pair', 2], ['Jacks or Better', 1], ['All Others', 0]
+      ],
+      strategySummary: 'Wizard of Odds 9/6 Jacks or Better simple strategy. High card means J or higher.',
+      strategyRules: [
+        'Four of a kind, straight flush, royal flush',
+        '4 to a royal flush',
+        'Three of a kind, straight, flush, full house',
+        '4 to a straight flush',
+        'Two pair',
+        'High pair',
+        '3 to a royal flush',
+        '4 to a flush',
+        'Low pair',
+        '4 to an outside straight',
+        '2 suited high cards',
+        '3 to a straight flush',
+        '2 unsuited high cards',
+        'Suited 10/J, 10/Q, or 10/K',
+        'One high card',
+        'Discard everything'
+      ],
+      evaluate: vpEvaluateJacksOrBetter,
+      wizardRule: vpJacksOrBetterWizardRule,
+      rulesText: 'Jacks or Better Video Poker beta\n\nBet, receive five cards, choose cards to hold, then draw replacements. Payouts use the 9/6 Jacks or Better table shown in game. A pair of Jacks, Queens, Kings, or Aces is the lowest paying hand.',
+      strategyText: 'Jacks or Better strategy beta\n\nThe trainer evaluates every possible hold/discard pattern and every possible draw outcome, then recommends the hold with the highest expected return. This is intended to match optimal Wizard-style Jacks or Better play.'
+    },
+    [DEUCES_WILD_GAME_ID]: {
+      id: DEUCES_WILD_GAME_ID,
+      name: 'Deuces Wild',
+      subtitle: '20/12/9/5/3/2 wild-card trainer. Deuces are wild.',
+      status: 'beta',
+      startLog: 'Started beta Deuces Wild session.',
+      sessionNote: '20/12/9/5/3/2 Deuces Wild Video Poker beta',
+      emptyBestHand: 'No Win',
+      pay: {
+        natural_royal:800, four_deuces:200, wild_royal:20, five_kind:12, straight_flush:9,
+        four_kind:5, full_house:3, flush:2, straight:2, three_kind:1, nothing:0
+      },
+      labels: {
+        natural_royal:'Natural Royal Flush', four_deuces:'Four Deuces', wild_royal:'Wild Royal Flush',
+        five_kind:'Five of a Kind', straight_flush:'Straight Flush', four_kind:'Four of a Kind',
+        full_house:'Full House', flush:'Flush', straight:'Straight', three_kind:'Three of a Kind', nothing:'No Win'
+      },
+      payTable: [
+        ['Natural Royal', 800], ['Four Deuces', 200], ['Wild Royal', 20], ['Five of a Kind', 12], ['Straight Flush', 9],
+        ['Four of a Kind', 5], ['Full House', 3], ['Flush', 2], ['Straight', 2], ['Three of a Kind', 1]
+      ],
+      strategySummary: 'Wizard of Odds 20/12/9/5/3/2 Deuces Wild simple strategy. Locate the section by number of deuces dealt.',
+      strategyRules: [
+        'No deuces: Royal flush; 4 to royal; quads; straight/flush/full house/straight flush; trips; 4 to straight flush; 3 to royal; pair; selected 4-straights; 4-flush; selected 3-straight-flushes; selected 2-royals; discard.',
+        'One deuce: Full house or better; 4 to wild royal; selected 4-straight-flushes; flush; straight; trips; other 4-straight-flushes; selected 3-wild-royals/straight-flushes; deuce only.',
+        'Two deuces: Four of a kind or better; 4 to wild royal; selected 4-straight-flushes; deuces only.',
+        'Three deuces: Wild royal flush; deuces only.',
+        'Four deuces: Four deuces.'
+      ],
+      evaluate: vpEvaluateDeucesWild,
+      wizardRule: vpDeucesWildWizardRule,
+      rulesText: 'Deuces Wild Video Poker beta\n\nThis is the 20/12/9/5/3/2 Deuces Wild pay table. All 2s are wild. Bet, receive five cards, hold cards, then draw replacements. The lowest paying hand is three of a kind.',
+      strategyText: 'Deuces Wild strategy beta\n\nThe sidebar and advice reference the Wizard of Odds 20/12/9/5/3/2 simple strategy. The trainer still computes exhaustive EV for every hold, using Deuces Wild hand evaluation.'
+    }
+  };
+  let activeVideoPokerGameId = JACKS_OR_BETTER_GAME_ID;
+  function vpGame(){ return VIDEO_POKER_GAMES[activeVideoPokerGameId] || VIDEO_POKER_GAMES[JACKS_OR_BETTER_GAME_ID]; }
+  const vpEls = {};
+  const vpAdviceCache = new Map();
+  const vp = {
+    started:false, stage:'ready', startBank:500, bank:500, bet:5, deck:[], hand:[], held:[false,false,false,false,false],
+    hands:0, wins:0, losses:0, pushes:0, followed:0, totalBet:0, profit:0, bestKey:'nothing',
+    history:[500], sessionStart:null, adviceMask:0, lastResult:'$0', outcome:null, busy:false, busyTimer:null
+  };
+
+  function vpMoney(v){ const n = Math.round(Number(v)||0); return `${n<0?'$(':'$'}${Math.abs(n).toLocaleString('en-US')}${n<0?')':''}`; }
+  function vpCardFace(c){ return VP_RANKS[c%13] + ({c:'♣',d:'♦',h:'♥',s:'♠'}[VP_SUITS[Math.floor(c/13)]]); }
+  function vpCardHtml(c){
+    if(c == null) return '<span class="vp-card-corner">-</span>';
+    const faceText = vpCardFace(c);
+    return `<span class="vp-card-corner">${faceText[0]}<br>${faceText[1]}</span><span>${faceText}</span><span class="vp-card-corner bottom">${faceText[0]}<br>${faceText[1]}</span>`;
+  }
+  function vpShuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  function vpNewDeck(){ return vpShuffle([...Array(52).keys()]); }
+  function vpRank(c){ return c % 13; }
+  function vpSuit(c){ return Math.floor(c / 13); }
+  function vpEvaluateJacksOrBetter(hand){
+    const ranks = hand.map(vpRank).sort((a,b)=>a-b);
+    const suits = hand.map(vpSuit);
+    const counts = new Map();
+    ranks.forEach(r=>counts.set(r,(counts.get(r)||0)+1));
+    const groups = Array.from(counts.entries()).sort((a,b)=>b[1]-a[1] || b[0]-a[0]);
+    const flush = suits.every(s=>s===suits[0]);
+    const unique = Array.from(new Set(ranks)).sort((a,b)=>a-b);
+    const wheel = unique.length===5 && unique.join(',') === '0,1,2,3,12';
+    const straight = unique.length===5 && (wheel || unique[4]-unique[0]===4);
+    const royal = flush && unique.join(',') === '8,9,10,11,12';
+    let key = 'nothing';
+    if(royal) key = 'royal_flush';
+    else if(flush && straight) key = 'straight_flush';
+    else if(groups[0][1] === 4) key = 'four_kind';
+    else if(groups[0][1] === 3 && groups[1] && groups[1][1] === 2) key = 'full_house';
+    else if(flush) key = 'flush';
+    else if(straight) key = 'straight';
+    else if(groups[0][1] === 3) key = 'three_kind';
+    else if(groups[0][1] === 2 && groups[1] && groups[1][1] === 2) key = 'two_pair';
+    else if(groups[0][1] === 2 && groups[0][0] >= 9) key = 'jacks_or_better';
+    const game = vpGame();
+    return {key, label:game.labels[key], pay:game.pay[key]};
+  }
+  function vpEvaluate5(hand){ return vpGame().evaluate(hand); }
+  function vpDeuceCount(hand){ return hand.filter(c=>vpRank(c) === 0).length; }
+  function vpNaturalCards(hand){ return hand.filter(c=>vpRank(c) !== 0); }
+  function vpRankCounts(cards){
+    const counts = new Map();
+    cards.forEach(c=>counts.set(vpRank(c), (counts.get(vpRank(c)) || 0) + 1));
+    return counts;
+  }
+  function vpHasNaturalRoyal(cards){
+    if(cards.length !== 5 || !cards.every(c=>vpSuit(c) === vpSuit(cards[0]))) return false;
+    return cards.map(vpRank).sort((a,b)=>a-b).join(',') === '8,9,10,11,12';
+  }
+  function vpCanMakeRoyalWithWilds(naturals, wilds){
+    if(!naturals.length) return wilds >= 5;
+    const royal = new Set([8,9,10,11,12]);
+    for(let s=0; s<4; s++){
+      const suited = naturals.filter(c=>vpSuit(c) === s);
+      if(suited.length !== naturals.length) continue;
+      const ranks = new Set(suited.map(vpRank));
+      if(Array.from(ranks).some(r=>!royal.has(r))) continue;
+      if(5 - ranks.size <= wilds) return true;
+    }
+    return false;
+  }
+  function vpCanMakeStraightWithWilds(ranks, wilds){
+    const unique = Array.from(new Set(ranks)).sort((a,b)=>a-b);
+    const sequences = [[0,1,2,3,12]];
+    for(let a=0; a<=8; a++) sequences.push([a,a+1,a+2,a+3,a+4]);
+    return sequences.some(seq=>unique.every(r=>seq.includes(r)) && (5 - unique.length) <= wilds);
+  }
+  function vpCanMakeFlushWithWilds(naturals){
+    return !naturals.length || naturals.every(c=>vpSuit(c) === vpSuit(naturals[0]));
+  }
+  function vpCanMakeFullHouseWithWilds(counts, wilds){
+    const ranks = Array.from({length:12}, (_,i)=>i+1);
+    for(const tripRank of ranks){
+      const needTrip = Math.max(0, 3 - (counts.get(tripRank) || 0));
+      if(needTrip > wilds) continue;
+      const left = wilds - needTrip;
+      for(const pairRank of ranks){
+        if(pairRank === tripRank) continue;
+        const needPair = Math.max(0, 2 - (counts.get(pairRank) || 0));
+        if(needPair <= left) return true;
+      }
+    }
+    return false;
+  }
+  function vpEvaluateDeucesWild(hand){
+    const game = vpGame();
+    const wilds = vpDeuceCount(hand);
+    const naturals = vpNaturalCards(hand);
+    const counts = vpRankCounts(naturals);
+    const maxCount = Math.max(0, ...Array.from(counts.values()));
+    let key = 'nothing';
+    if(wilds === 0 && vpHasNaturalRoyal(hand)) key = 'natural_royal';
+    else if(wilds === 4) key = 'four_deuces';
+    else if(vpCanMakeRoyalWithWilds(naturals, wilds)) key = 'wild_royal';
+    else if(maxCount + wilds >= 5) key = 'five_kind';
+    else if(vpCanMakeFlushWithWilds(naturals) && vpCanMakeStraightWithWilds(naturals.map(vpRank), wilds)) key = 'straight_flush';
+    else if(maxCount + wilds >= 4) key = 'four_kind';
+    else if(vpCanMakeFullHouseWithWilds(counts, wilds)) key = 'full_house';
+    else if(vpCanMakeFlushWithWilds(naturals)) key = 'flush';
+    else if(vpCanMakeStraightWithWilds(naturals.map(vpRank), wilds)) key = 'straight';
+    else if(maxCount + wilds >= 3) key = 'three_kind';
+    return {key, label:game.labels[key], pay:game.pay[key]};
+  }
+  function vpCombinations(arr, k, fn, start=0, picked=[]){
+    if(k===0){ fn(picked); return; }
+    for(let i=start;i<=arr.length-k;i++){ picked.push(arr[i]); vpCombinations(arr,k-1,fn,i+1,picked); picked.pop(); }
+  }
+  function vpAdviceForHand(hand){
+    const key = `${vpGame().id}::${hand.slice().sort((a,b)=>a-b).join('-')}`;
+    if(vpAdviceCache.has(key)) return vpAdviceCache.get(key);
+    const remaining = [...Array(52).keys()].filter(c=>!hand.includes(c));
+    let best = {mask:0, ev:-1, samples:0};
+    for(let mask=0; mask<32; mask++){
+      const kept = hand.filter((_,i)=>mask & (1<<i));
+      const drawCount = 5 - kept.length;
+      let total = 0, samples = 0;
+      if(drawCount===0){
+        total = vpEvaluate5(kept).pay; samples = 1;
+      }else{
+        vpCombinations(remaining, drawCount, combo=>{
+          total += vpEvaluate5(kept.concat(combo)).pay;
+          samples++;
+        });
+      }
+      const ev = samples ? total / samples : 0;
+      if(ev > best.ev + 0.000001){ best = {mask, ev, samples}; }
+    }
+    vpAdviceCache.set(key, best);
+    return best;
+  }
+  function vpExpectedValueForMask(hand, mask){
+    const remaining = [...Array(52).keys()].filter(c=>!hand.includes(c));
+    const kept = hand.filter((_,i)=>mask & (1<<i));
+    const drawCount = 5 - kept.length;
+    let total = 0, samples = 0;
+    if(drawCount === 0){
+      total = vpEvaluate5(kept).pay;
+      samples = 1;
+    }else{
+      vpCombinations(remaining, drawCount, combo=>{
+        total += vpEvaluate5(kept.concat(combo)).pay;
+        samples++;
+      });
+    }
+    return samples ? total / samples : 0;
+  }
+  function vpBitCount(mask){ let n=0; while(mask){ n += mask & 1; mask >>= 1; } return n; }
+  function vpMaskCards(hand, mask){ return hand.filter((_,i)=>mask & (1<<i)); }
+  function vpMasksOfSize(size){
+    const out = [];
+    for(let mask=0; mask<32; mask++){ if(vpBitCount(mask) === size) out.push(mask); }
+    return out;
+  }
+  function vpIsStraightRanks(ranks){
+    const unique = Array.from(new Set(ranks)).sort((a,b)=>a-b);
+    return unique.length === 5 && (unique.join(',') === '0,1,2,3,12' || unique[4] - unique[0] === 4);
+  }
+  function vpIsOutsideStraight4(ranks){
+    const unique = Array.from(new Set(ranks)).sort((a,b)=>a-b);
+    if(unique.length !== 4) return false;
+    if(unique[3] - unique[0] !== 3) return false;
+    return unique[3] < 12;
+  }
+  function vpCanCompleteStraightDraw(ranks){
+    const unique = Array.from(new Set(ranks)).sort((a,b)=>a-b);
+    if(unique.length !== ranks.length) return false;
+    const sequences = [[0,1,2,3,12]];
+    for(let a=0; a<=8; a++) sequences.push([a,a+1,a+2,a+3,a+4]);
+    return sequences.some(seq=>unique.every(r=>seq.includes(r)));
+  }
+  function vpIsStraightFlushDraw3(cards){
+    if(cards.length !== 3 || !cards.every(c=>vpSuit(c) === vpSuit(cards[0]))) return false;
+    return vpCanCompleteStraightDraw(cards.map(vpRank));
+  }
+  function vpJacksOrBetterWizardRule(hand, preferredMask){
+    const high = r => r >= 9;
+    const royalRanks = new Set([8,9,10,11,12]);
+    const choose = (num, label, masks)=>{
+      if(!masks.length) return null;
+      const match = masks.find(m=>m === preferredMask) || masks[0];
+      return {num, label, mask:match};
+    };
+    const byRank = new Map();
+    hand.forEach((c,i)=>{ const r=vpRank(c); if(!byRank.has(r)) byRank.set(r, []); byRank.get(r).push(i); });
+    const maskForCount = count => {
+      const found = Array.from(byRank.values()).find(idxs=>idxs.length === count);
+      return found ? found.reduce((m,i)=>m | (1<<i), 0) : 0;
+    };
+    const made = vpEvaluate5(hand);
+    if(made.key === 'four_kind') return choose(1, 'Four of a kind, straight flush, or royal flush', [maskForCount(4)]);
+    if(['straight_flush','royal_flush'].includes(made.key)) return choose(1, 'Four of a kind, straight flush, or royal flush', [31]);
+
+    let masks = vpMasksOfSize(4).filter(mask=>{
+      const cards = vpMaskCards(hand, mask);
+      return cards.every(c=>vpSuit(c) === vpSuit(cards[0]) && royalRanks.has(vpRank(c)));
+    });
+    let found = choose(2, '4 to a royal flush', masks); if(found) return found;
+
+    if(made.key === 'three_kind') return choose(3, 'Three of a kind, straight, flush, or full house', [maskForCount(3)]);
+    if(['straight','flush','full_house'].includes(made.key)) return choose(3, 'Three of a kind, straight, flush, or full house', [31]);
+
+    masks = vpMasksOfSize(4).filter(mask=>{
+      const cards = vpMaskCards(hand, mask);
+      return cards.every(c=>vpSuit(c) === vpSuit(cards[0])) && vpCanCompleteStraightDraw(cards.map(vpRank));
+    });
+    found = choose(4, '4 to a straight flush', masks); if(found) return found;
+
+    const pairs = Array.from(byRank.entries()).filter(([,idxs])=>idxs.length===2);
+    if(pairs.length >= 2){
+      const mask = pairs.slice(0,2).flatMap(([,idxs])=>idxs).reduce((m,i)=>m | (1<<i), 0);
+      return choose(5, 'Two pair', [mask]);
+    }
+    masks = pairs.filter(([r])=>high(r)).map(([,idxs])=>idxs.reduce((m,i)=>m | (1<<i), 0));
+    found = choose(6, 'High pair', masks); if(found) return found;
+
+    masks = vpMasksOfSize(3).filter(mask=>{
+      const cards = vpMaskCards(hand, mask);
+      return cards.every(c=>vpSuit(c) === vpSuit(cards[0]) && royalRanks.has(vpRank(c)));
+    });
+    found = choose(7, '3 to a royal flush', masks); if(found) return found;
+
+    masks = vpMasksOfSize(4).filter(mask=>{
+      const cards = vpMaskCards(hand, mask);
+      return cards.every(c=>vpSuit(c) === vpSuit(cards[0]));
+    });
+    found = choose(8, '4 to a flush', masks); if(found) return found;
+
+    masks = pairs.filter(([r])=>!high(r)).map(([,idxs])=>idxs.reduce((m,i)=>m | (1<<i), 0));
+    found = choose(9, 'Low pair', masks); if(found) return found;
+
+    masks = vpMasksOfSize(4).filter(mask=>vpIsOutsideStraight4(vpMaskCards(hand, mask).map(vpRank)));
+    found = choose(10, '4 to an outside straight', masks); if(found) return found;
+
+    masks = vpMasksOfSize(2).filter(mask=>{
+      const cards = vpMaskCards(hand, mask);
+      return cards.every(c=>high(vpRank(c))) && vpSuit(cards[0]) === vpSuit(cards[1]);
+    });
+    found = choose(11, '2 suited high cards', masks); if(found) return found;
+
+    masks = vpMasksOfSize(3).filter(mask=>vpIsStraightFlushDraw3(vpMaskCards(hand, mask)));
+    found = choose(12, '3 to a straight flush', masks); if(found) return found;
+
+    const highIdx = hand.map((c,i)=>high(vpRank(c)) ? i : -1).filter(i=>i>=0);
+    masks = [];
+    for(let a=0;a<highIdx.length;a++){
+      for(let b=a+1;b<highIdx.length;b++){
+        if(vpSuit(hand[highIdx[a]]) !== vpSuit(hand[highIdx[b]])) masks.push((1<<highIdx[a]) | (1<<highIdx[b]));
+      }
+    }
+    found = choose(13, '2 unsuited high cards', masks); if(found) return found;
+
+    masks = vpMasksOfSize(2).filter(mask=>{
+      const cards = vpMaskCards(hand, mask);
+      const ranks = cards.map(vpRank).sort((a,b)=>a-b);
+      return vpSuit(cards[0]) === vpSuit(cards[1]) && ranks[0] === 8 && [9,10,11].includes(ranks[1]);
+    });
+    found = choose(14, 'Suited 10 with J, Q, or K', masks); if(found) return found;
+
+    masks = hand.map((c,i)=>high(vpRank(c)) ? (1<<i) : 0).filter(Boolean);
+    found = choose(15, 'One high card', masks); if(found) return found;
+
+    return {num:16, label:'Discard everything', mask:0};
+  }
+  function vpMaskForCards(hand, predicate){
+    return hand.reduce((mask,c,i)=>predicate(c,i) ? (mask | (1<<i)) : mask, 0);
+  }
+  function vpDeuceMask(hand){ return vpMaskForCards(hand, c=>vpRank(c) === 0); }
+  function vpNonDeuceMasksOfSize(hand, size){
+    return vpMasksOfSize(size).filter(mask=>vpMaskCards(hand, mask).every(c=>vpRank(c) !== 0));
+  }
+  function vpMaskRanks(hand, mask){ return vpMaskCards(hand, mask).map(vpRank).sort((a,b)=>a-b); }
+  function vpRanksKey(ranks){ return ranks.map(r=>VP_RANKS[r]).join(''); }
+  function vpIsSpecificRanks(maskRanks, allowed){
+    return allowed.includes(vpRanksKey(maskRanks));
+  }
+  function vpBestMask(masks, preferredMask){ return masks.find(m=>m === preferredMask) || masks[0] || 0; }
+  function vpDeucesRule(num, section, label, masks, preferredMask){
+    return {num, section, label, mask:vpBestMask(masks, preferredMask)};
+  }
+  function vpDeucesWildWizardRule(hand, preferredMask){
+    const wilds = vpDeuceCount(hand);
+    const deuceMask = vpDeuceMask(hand);
+    const made = vpEvaluateDeucesWild(hand);
+    const fullMask = 31;
+    const royalRanks = new Set([8,9,10,11,12]);
+    const byRank = new Map();
+    hand.forEach((c,i)=>{ const r=vpRank(c); if(!byRank.has(r)) byRank.set(r, []); byRank.get(r).push(i); });
+    const countMask = count => {
+      const found = Array.from(byRank.entries()).find(([r,idxs])=>r !== 0 && idxs.length === count);
+      return found ? found[1].reduce((m,i)=>m | (1<<i), 0) : 0;
+    };
+    const pairMasks = Array.from(byRank.entries()).filter(([r,idxs])=>r !== 0 && idxs.length === 2).map(([,idxs])=>idxs.reduce((m,i)=>m | (1<<i), 0));
+    const suitedRoyalMasks = size => vpMasksOfSize(size).filter(mask=>{
+      const cards = vpMaskCards(hand, mask);
+      const naturals = cards.filter(c=>vpRank(c)!==0);
+      if(cards.filter(c=>vpRank(c)===0).length !== Math.max(0, size - naturals.length)) return false;
+      return naturals.length && naturals.every(c=>royalRanks.has(vpRank(c)) && vpSuit(c) === vpSuit(naturals[0]));
+    });
+    const straightFlushMasks = size => vpMasksOfSize(size).filter(mask=>{
+      const cards = vpMaskCards(hand, mask);
+      const naturals = cards.filter(c=>vpRank(c)!==0);
+      const maskWilds = cards.length - naturals.length;
+      return naturals.length && vpCanMakeFlushWithWilds(naturals) && vpCanMakeStraightWithWilds(naturals.map(vpRank), maskWilds);
+    });
+    const flushMasks = size => vpMasksOfSize(size).filter(mask=>{
+      const cards = vpMaskCards(hand, mask).filter(c=>vpRank(c)!==0);
+      return cards.length && cards.every(c=>vpSuit(c)===vpSuit(cards[0]));
+    });
+    const straightMasks = size => vpMasksOfSize(size).filter(mask=>vpCanMakeStraightWithWilds(vpMaskCards(hand, mask).filter(c=>vpRank(c)!==0).map(vpRank), vpMaskCards(hand, mask).filter(c=>vpRank(c)===0).length));
+
+    if(wilds === 0){
+      if(made.key === 'natural_royal') return vpDeucesRule(1, 'No deuces', 'Royal Flush', [fullMask], preferredMask);
+      let masks = suitedRoyalMasks(4); if(masks.length) return vpDeucesRule(2, 'No deuces', '4 to a Royal Flush', masks, preferredMask);
+      if(made.key === 'four_kind') return vpDeucesRule(3, 'No deuces', '4 of a kind', [countMask(4)], preferredMask);
+      if(['straight','flush','full_house','straight_flush'].includes(made.key)) return vpDeucesRule(4, 'No deuces', 'Straight, Flush, Full House, or Straight Flush', [fullMask], preferredMask);
+      if(made.key === 'three_kind') return vpDeucesRule(5, 'No deuces', '3 of a kind', [countMask(3)], preferredMask);
+      masks = straightFlushMasks(4); if(masks.length) return vpDeucesRule(6, 'No deuces', '4 to a Straight Flush', masks, preferredMask);
+      masks = suitedRoyalMasks(3); if(masks.length) return vpDeucesRule(7, 'No deuces', '3 to a Royal Flush', masks, preferredMask);
+      if(pairMasks.length) return vpDeucesRule(8, 'No deuces', '1 pair', pairMasks, preferredMask);
+      const outside4 = ['4567','5678','6789','789T','89TJ','9TJQ','TJQK'];
+      masks = vpNonDeuceMasksOfSize(hand,4).filter(mask=>vpIsSpecificRanks(vpMaskRanks(hand, mask), outside4));
+      if(masks.length) return vpDeucesRule(9, 'No deuces', '4 to a Straight', masks, preferredMask);
+      masks = flushMasks(4); if(masks.length) return vpDeucesRule(10, 'No deuces', '4 to a Flush', masks, preferredMask);
+      masks = straightFlushMasks(3); if(masks.length) return vpDeucesRule(11, 'No deuces', '3 to a Straight Flush', masks, preferredMask);
+      masks = vpNonDeuceMasksOfSize(hand,2).filter(mask=>{
+        const cards = vpMaskCards(hand, mask);
+        return cards.every(c=>royalRanks.has(vpRank(c)) && vpSuit(c)===vpSuit(cards[0])) && ['TJ','TQ','JQ'].includes(vpRanksKey(cards.map(vpRank).sort((a,b)=>a-b)));
+      });
+      if(masks.length) return vpDeucesRule(14, 'No deuces', '2 to a Royal Flush', masks, preferredMask);
+      masks = straightMasks(4);
+      if(masks.length) return vpDeucesRule(16, 'No deuces', '4 to a Straight', masks, preferredMask);
+      return vpDeucesRule(18, 'No deuces', 'Discard everything', [0], preferredMask);
+    }
+
+    if(wilds === 1){
+      if(['wild_royal','five_kind','straight_flush','four_kind','full_house'].includes(made.key)) return vpDeucesRule(1, 'One deuce', 'Full House or better', [fullMask], preferredMask);
+      let masks = vpMasksOfSize(4).filter(mask=>(mask & deuceMask) && vpCanMakeRoyalWithWilds(vpMaskCards(hand, mask).filter(c=>vpRank(c)!==0), 1));
+      if(masks.length) return vpDeucesRule(2, 'One deuce', '4 to a Wild Royal Flush', masks, preferredMask);
+      masks = straightFlushMasks(4).filter(mask=>mask & deuceMask); if(masks.length) return vpDeucesRule(3, 'One deuce', '4 to a Straight Flush', masks, preferredMask);
+      if(made.key === 'flush') return vpDeucesRule(4, 'One deuce', 'Flush', [fullMask], preferredMask);
+      if(made.key === 'straight') return vpDeucesRule(5, 'One deuce', 'Straight', [fullMask], preferredMask);
+      if(made.key === 'three_kind') return vpDeucesRule(6, 'One deuce', '3 of a kind', [deuceMask | countMask(2)], preferredMask);
+      masks = vpMasksOfSize(3).filter(mask=>(mask & deuceMask) && vpCanMakeRoyalWithWilds(vpMaskCards(hand, mask).filter(c=>vpRank(c)!==0), 1));
+      if(masks.length) return vpDeucesRule(8, 'One deuce', '3 to a Wild Royal Flush', masks, preferredMask);
+      masks = straightFlushMasks(3).filter(mask=>mask & deuceMask); if(masks.length) return vpDeucesRule(9, 'One deuce', '3 to a Straight Flush', masks, preferredMask);
+      return vpDeucesRule(11, 'One deuce', 'Deuce only', [deuceMask], preferredMask);
+    }
+
+    if(wilds === 2){
+      if(['wild_royal','five_kind','straight_flush','four_kind'].includes(made.key)) return vpDeucesRule(1, 'Two deuces', '4 of a kind or better', [fullMask], preferredMask);
+      let masks = vpMasksOfSize(4).filter(mask=>(mask & deuceMask) === deuceMask && vpCanMakeRoyalWithWilds(vpMaskCards(hand, mask).filter(c=>vpRank(c)!==0), 2));
+      if(masks.length) return vpDeucesRule(2, 'Two deuces', '4 to a Wild Royal Flush', masks, preferredMask);
+      masks = straightFlushMasks(4).filter(mask=>(mask & deuceMask) === deuceMask); if(masks.length) return vpDeucesRule(3, 'Two deuces', '4 to a Straight Flush', masks, preferredMask);
+      return vpDeucesRule(4, 'Two deuces', 'Deuces only', [deuceMask], preferredMask);
+    }
+
+    if(wilds === 3){
+      if(made.key === 'wild_royal') return vpDeucesRule(1, 'Three deuces', 'Wild Royal Flush', [fullMask], preferredMask);
+      return vpDeucesRule(2, 'Three deuces', 'Deuces only', [deuceMask], preferredMask);
+    }
+
+    return vpDeucesRule(1, 'Four deuces', 'Four Deuces', [deuceMask], preferredMask);
+  }
+  function vpWizardRuleForHand(hand, preferredMask){ return vpGame().wizardRule(hand, preferredMask); }
+  function vpMaskFromHeld(){ return vp.held.reduce((m,on,i)=>on ? (m | (1<<i)) : m, 0); }
+  function vpHoldText(mask){
+    const cards = vp.hand.filter((_,i)=>mask & (1<<i)).map(vpCardFace);
+    return cards.length ? `Hold ${cards.join(', ')}` : 'Draw five new cards';
+  }
+  function vpReadInputs(){
+    const bank = Math.max(1, Math.round(Number(vpEls.startBank?.value)||500));
+    const bet = Math.max(1, Math.round(Number(vpEls.bet?.value)||5));
+    vpEls.startBank.value = bank;
+    vpEls.bet.value = bet;
+    vp.startBank = bank;
+    vp.bet = bet;
+  }
+  function vpRenderGameChrome(){
+    const game = vpGame();
+    const screen = document.getElementById('videoPokerScreen');
+    if(screen) screen.setAttribute('aria-label', `${game.name} Video Poker ${game.status || ''}`.trim());
+    const panelTitle = document.querySelector('#videoPokerScreen .vp-panel h2');
+    if(panelTitle) panelTitle.innerHTML = `${game.name}${game.status ? ` <span class="vp-beta">${game.status}</span>` : ''}`;
+    const tableTitle = document.querySelector('#videoPokerScreen .vp-topline h2');
+    if(tableTitle) tableTitle.textContent = game.name;
+    const subtitle = document.querySelector('#videoPokerScreen .vp-topline .muted');
+    if(subtitle) subtitle.textContent = game.subtitle || '';
+    const paytable = document.querySelector('#videoPokerScreen .vp-paytable');
+    if(paytable){
+      paytable.setAttribute('aria-label', `${game.name} pay table`);
+      paytable.innerHTML = (game.payTable || []).map(([label,pay])=>`<div class="vp-pay"><span>${label}</span><b>${pay}x</b></div>`).join('');
+    }
+    const list = document.querySelector('#videoPokerScreen .vp-strategy-list');
+    if(list) list.innerHTML = (game.strategyRules || []).map(rule=>`<li>${rule}</li>`).join('');
+    const source = document.querySelector('#videoPokerScreen .vp-strategy-source');
+    if(source) source.textContent = game.strategySummary || '';
+  }
+  function vpResetForGame(){
+    if(vp.busyTimer){ clearTimeout(vp.busyTimer); vp.busyTimer = null; }
+    Object.assign(vp, {
+      started:false, stage:'ready', deck:[], hand:[], held:[false,false,false,false,false],
+      hands:0, wins:0, losses:0, pushes:0, followed:0, totalBet:0, profit:0, bestKey:'nothing',
+      history:[vp.startBank || 500], sessionStart:null, adviceMask:0, lastResult:'$0', outcome:null, busy:false
+    });
+    if(vpEls.log) vpEls.log.textContent = 'Beta ready. Start a session, deal, choose holds, then draw.';
+  }
+  function vpSetGame(gameId){
+    if(!VIDEO_POKER_GAMES[gameId]) return false;
+    if(activeVideoPokerGameId !== gameId){
+      activeVideoPokerGameId = gameId;
+      vpResetForGame();
+    }else{
+      activeVideoPokerGameId = gameId;
+    }
+    if(vp.bound) vpRender();
+    return true;
+  }
+  function vpLog(msg){
+    if(!vpEls.log) return;
+    const div = document.createElement('div');
+    div.textContent = msg;
+    vpEls.log.prepend(div);
+  }
+  function vpSetBusy(on, holdMs=0){
+    if(vp.busyTimer){ clearTimeout(vp.busyTimer); vp.busyTimer = null; }
+    vp.busy = !!on;
+    vpRender();
+    if(on && holdMs > 0){
+      vp.busyTimer = setTimeout(()=>{
+        vp.busy = false;
+        vp.busyTimer = null;
+        vpRender();
+      }, holdMs);
+    }
+  }
+  function vpRenderCards(){
+    if(!vpEls.cards) return;
+    vpEls.cards.innerHTML = '';
+    for(let i=0;i<5;i++){
+      const c = vp.hand[i];
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = `vp-card-button${c==null?' empty':''}${vp.held[i]?' held':''}`;
+      b.appendChild(makeCardWithPips(c == null ? '' : vpCardFace(c), c == null));
+      b.disabled = vp.busy || vp.stage !== 'dealt';
+      b.addEventListener('click', ()=>{ if(!vp.busy && vp.stage==='dealt'){ vp.held[i]=!vp.held[i]; vpRender(); } });
+      vpEls.cards.appendChild(b);
+    }
+  }
+  function vpRenderAdvice(){
+    if(!vpEls.advice) return;
+    if(vp.stage !== 'dealt' || !vp.hand.length){
+      vpEls.advice.textContent = 'Advice appears after the deal.';
+      return;
+    }
+    const advice = vpAdviceForHand(vp.hand);
+    vp.adviceMask = advice.mask;
+    const msg = `${vpHoldText(advice.mask)}. Expected return: ${(advice.ev * vp.bet).toFixed(2)} credits.`;
+    const rule = vpWizardRuleForHand(vp.hand, advice.mask);
+    const wizardEv = rule.mask === advice.mask ? advice.ev : vpExpectedValueForMask(vp.hand, rule.mask);
+    const ruleNote = rule.mask === advice.mask
+      ? 'Matches this EV-optimal hold.'
+      : `Simple-strategy hold: ${vpHoldText(rule.mask)}. Wizard EV: ${(wizardEv * vp.bet).toFixed(2)} credits.`;
+    const ruleSection = rule.section ? `${rule.section}: ` : '';
+    const ruleHtml = `<div class="vp-rule"><span class="vp-rule-rank">#${rule.num}</span><span><strong>Wizard simple:</strong> ${ruleSection}${rule.label}</span><span class="vp-rule-note">${ruleNote}</span></div>`;
+    vpEls.advice.innerHTML = vpEls.showAdvice?.checked
+      ? `<strong>Advice:</strong> ${msg}${ruleHtml}`
+      : `Advice is hidden. Correction can still enforce optimal holds.${ruleHtml}`;
+  }
+  function vpRenderOutcome(){
+    if(!vpEls.outcome) return;
+    if(vp.stage !== 'complete' || !vp.outcome){
+      vpEls.outcome.className = 'vp-outcome';
+      vpEls.outcome.innerHTML = '';
+      return;
+    }
+    const tone = vp.outcome.net > 0 ? 'win' : (vp.outcome.net < 0 ? 'loss' : 'push');
+    vpEls.outcome.className = `vp-outcome show ${tone}`;
+    vpEls.outcome.innerHTML = `
+      <div class="vp-outcome-label">${vp.outcome.label}</div>
+      <div class="vp-outcome-detail">Paid ${vpMoney(vp.outcome.win)} • Net ${vpMoney(vp.outcome.net)} • Bet ${vpMoney(vp.bet)}</div>`;
+  }
+  function vpDrawChart(){
+    const canvas = vpEls.chart;
+    if(!canvas) return;
+    const wrap = canvas.parentElement;
+    const cssW = Math.max(260, wrap ? wrap.clientWidth - 20 : canvas.clientWidth || 320);
+    const cssH = 190;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(cssW*dpr); canvas.height = Math.floor(cssH*dpr);
+    canvas.style.width = `${cssW}px`; canvas.style.height = `${cssH}px`;
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+    ctx.fillStyle = '#07101f'; ctx.fillRect(0,0,cssW,cssH);
+    const vals = vp.history.length ? vp.history : [vp.bank];
+    const min = Math.min(...vals, vp.startBank);
+    const max = Math.max(...vals, vp.startBank);
+    const pad = 28, span = Math.max(1, max-min);
+    ctx.strokeStyle = '#203a63'; ctx.lineWidth = 1;
+    for(let i=0;i<4;i++){ const y=pad+i*(cssH-pad*2)/3; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(cssW-pad,y); ctx.stroke(); }
+    ctx.strokeStyle = '#d6a84d'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    vals.forEach((v,i)=>{
+      const x = pad + (vals.length===1 ? 0 : i*(cssW-pad*2)/(vals.length-1));
+      const y = cssH-pad - ((v-min)/span)*(cssH-pad*2);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    ctx.fillStyle = '#cfe2ff'; ctx.font = '11px sans-serif';
+    ctx.fillText(vpMoney(max), 4, 14);
+    ctx.fillText(vpMoney(min), 4, cssH-8);
+  }
+  function vpRender(){
+    vpRenderGameChrome();
+    if(vpEls.bank) vpEls.bank.textContent = vpMoney(vp.bank);
+    if(vpEls.profit) vpEls.profit.textContent = vpMoney(vp.bank - vp.startBank);
+    if(vpEls.hands) vpEls.hands.textContent = String(vp.hands);
+    if(vpEls.record) vpEls.record.textContent = `${vp.wins}-${vp.losses}-${vp.pushes}`;
+    if(vpEls.strategy) vpEls.strategy.textContent = `${vp.followed}/${vp.hands}`;
+    if(vpEls.best) vpEls.best.textContent = vpGame().labels[vp.bestKey] || vpGame().emptyBestHand || '-';
+    if(vpEls.result) vpEls.result.textContent = vp.lastResult;
+    if(vpEls.cardStyle) vpEls.cardStyle.value = state.cardStyle || 'typical';
+    if(vpEls.dealDraw) vpEls.dealDraw.textContent = vp.stage === 'dealt' ? 'Draw' : 'Deal';
+    if(vpEls.dealDraw) vpEls.dealDraw.disabled = vp.busy;
+    if(vpEls.applyAdvice) vpEls.applyAdvice.disabled = vp.busy || vp.stage !== 'dealt';
+    if(vpEls.startSession) vpEls.startSession.disabled = vp.busy;
+    if(vpEls.endSession) vpEls.endSession.disabled = vp.busy;
+    if(vpEls.exitLobby) vpEls.exitLobby.disabled = vp.busy;
+    vpRenderCards();
+    vpRenderOutcome();
+    vpRenderAdvice();
+    vpDrawChart();
+  }
+  function vpStartSession(){
+    if(vp.busy) return;
+    vpReadInputs();
+    if(vp.busyTimer){ clearTimeout(vp.busyTimer); vp.busyTimer = null; }
+    Object.assign(vp, {
+      started:true, stage:'ready', bank:vp.startBank, deck:[], hand:[], held:[false,false,false,false,false],
+      hands:0, wins:0, losses:0, pushes:0, followed:0, totalBet:0, profit:0, bestKey:'nothing',
+      history:[vp.startBank], sessionStart:new Date().toISOString(), adviceMask:0, lastResult:'$0', outcome:null, busy:false
+    });
+    if(vpEls.log) vpEls.log.textContent = '';
+    vpLog(vpGame().startLog);
+    vpRender();
+  }
+  function vpDeal(){
+    if(vp.busy) return;
+    if(!vp.started) vpStartSession();
+    vpSetBusy(true);
+    try{
+      vpReadInputs();
+      if(vp.bank < vp.bet){ vpLog('Not enough bankroll for the selected bet.'); vpSetBusy(false); return; }
+      vp.deck = vpNewDeck();
+      vp.hand = vp.deck.splice(0,5);
+      vp.held = [false,false,false,false,false];
+      vp.stage = 'dealt';
+      vp.outcome = null;
+      vp.bank -= vp.bet;
+      vp.totalBet += vp.bet;
+      vp.lastResult = `-${vpMoney(vp.bet).slice(1)}`;
+      vpAdviceForHand(vp.hand);
+    }finally{
+      vpSetBusy(true, 180);
+    }
+  }
+  function vpDraw(){
+    if(vp.busy) return;
+    if(vp.stage !== 'dealt') return vpDeal();
+    vpSetBusy(true);
+    try{
+      const chosen = vpMaskFromHeld();
+      const advice = vpAdviceForHand(vp.hand);
+      let finalMask = chosen;
+      if(vpEls.correct?.checked && chosen !== advice.mask){
+        finalMask = advice.mask;
+        vp.held = vp.held.map((_,i)=>!!(finalMask & (1<<i)));
+        vpLog(`Corrected hold: ${vpHoldText(finalMask)}.`);
+      }
+      const followed = finalMask === advice.mask;
+      for(let i=0;i<5;i++){ if(!(finalMask & (1<<i))) vp.hand[i] = vp.deck.shift(); }
+      const result = vpEvaluate5(vp.hand);
+      const win = result.pay * vp.bet;
+      const net = win - vp.bet;
+      vp.bank += win;
+      vp.hands++;
+      if(net > 0) vp.wins++; else if(net < 0) vp.losses++; else vp.pushes++;
+      if(followed) vp.followed++;
+      if(vpGame().pay[result.key] > vpGame().pay[vp.bestKey]) vp.bestKey = result.key;
+      vp.history.push(vp.bank);
+      vp.stage = 'complete';
+      vp.lastResult = net >= 0 ? vpMoney(net) : vpMoney(net);
+      vp.outcome = {label:result.label, win, net, key:result.key};
+      vpLog(`${result.label}: paid ${vpMoney(win)} (${net>=0?'+':''}${vpMoney(net)} net).`);
+    }finally{
+      vpSetBusy(true, 180);
+    }
+  }
+  async function vpSaveSession(){
+    if(!vp.started || !vp.hands) return;
+    const player = (localStorage.getItem(PLAYER_NAME_KEY)||'').trim() || (state && state.playerName) || '-';
+    const profit = vp.bank - vp.startBank;
+    const summary = {
+      gameId: vpGame().id,
+      player,
+      sessionStart: vp.sessionStart || new Date().toISOString(),
+      sessionEnd: new Date().toISOString(),
+      startBank: vp.startBank,
+      endBank: vp.bank,
+      hands: vp.hands,
+      wins: vp.wins,
+      losses: vp.losses,
+      pushes: vp.pushes,
+      totalBet: vp.totalBet,
+      profit,
+      totalProfit: profit,
+      followed: vp.followed,
+      decisions: vp.hands,
+      bestHand: vpGame().labels[vp.bestKey] || '-',
+      notes: vpGame().sessionNote
+    };
+    try{ await saveSessionSummary(summary); vpLog('Session saved.'); }catch(e){ vpLog('Unable to save session.'); }
+  }
+  async function vpEndSession(){
+    if(vp.busy) return;
+    await vpSaveSession();
+    vp.started = false;
+    vp.stage = 'ready';
+    vpRender();
+  }
+  function vpApplyAdvice(){
+    if(vp.busy || vp.stage !== 'dealt') return;
+    const advice = vpAdviceForHand(vp.hand);
+    vp.held = vp.held.map((_,i)=>!!(advice.mask & (1<<i)));
+    vpRender();
+  }
+  function vpBind(){
+    if(vp.bound) return;
+    vp.bound = true;
+    vpEls.startBank = document.getElementById('vpStartingBankroll');
+    vpEls.bet = document.getElementById('vpBet');
+    vpEls.showAdvice = document.getElementById('vpShowAdvice');
+    vpEls.correct = document.getElementById('vpCorrectMistakes');
+    vpEls.cardStyle = document.getElementById('vpCardStyle');
+    vpEls.cards = document.getElementById('vpCards');
+    vpEls.outcome = document.getElementById('vpOutcome');
+    vpEls.advice = document.getElementById('vpAdvice');
+    vpEls.chart = document.getElementById('vpChart');
+    vpEls.log = document.getElementById('vpLog');
+    vpEls.bank = document.getElementById('vpBankStat');
+    vpEls.profit = document.getElementById('vpProfitStat');
+    vpEls.hands = document.getElementById('vpHandsStat');
+    vpEls.record = document.getElementById('vpRecordStat');
+    vpEls.strategy = document.getElementById('vpStrategyStat');
+    vpEls.best = document.getElementById('vpBestStat');
+    vpEls.result = document.getElementById('vpResult');
+    vpEls.dealDraw = document.getElementById('vpDealDraw');
+    vpEls.applyAdvice = document.getElementById('vpApplyAdvice');
+    vpEls.startSession = document.getElementById('vpStartSession');
+    vpEls.endSession = document.getElementById('vpEndSession');
+    vpEls.exitLobby = document.getElementById('vpExitLobby');
+    vpEls.startSession?.addEventListener('click', vpStartSession);
+    vpEls.endSession?.addEventListener('click', vpEndSession);
+    vpEls.exitLobby?.addEventListener('click', async ()=>{ if(vp.busy) return; await vpEndSession(); window.activateGame(CURRENT_GAME_ID); document.getElementById('splashOverlay').style.display='flex'; document.body.classList.add('splash-open'); });
+    vpEls.dealDraw?.addEventListener('click', ()=>{ vp.stage === 'dealt' ? vpDraw() : vpDeal(); });
+    vpEls.applyAdvice?.addEventListener('click', vpApplyAdvice);
+    vpEls.showAdvice?.addEventListener('change', vpRender);
+    vpEls.cardStyle?.addEventListener('change', (e)=>{
+      setCardStyle(e.target.value);
+      try{ localStorage.setItem(CARD_STYLE_KEY, state.cardStyle); }catch(err){}
+      renderCards();
+      vpRender();
+    });
+    window.addEventListener('resize', vpDrawChart);
+    vpRender();
+  }
+  window.videoPokerInit = function(){ vpBind(); vpRender(); };
+  window.videoPokerRefresh = function(){ if(vp.bound) vpRender(); };
+  window.setVideoPokerGame = function(gameId){ return vpSetGame(gameId); };
+  window.activateGame = function(gameId){
+    const vpScreen = document.getElementById('videoPokerScreen');
+    const huheMain = document.querySelector('main');
+    const sticky = document.querySelector('.sticky-actions');
+    const menuToggle = document.getElementById('menuToggle');
+    if(VIDEO_POKER_GAMES[gameId]){
+      vpSetGame(gameId);
+      if(huheMain) huheMain.style.display = 'none';
+      if(sticky) sticky.style.display = 'none';
+      if(menuToggle) menuToggle.style.display = 'none';
+      if(vpScreen) vpScreen.style.display = 'block';
+      window.videoPokerInit();
+    }else{
+      if(vpScreen) vpScreen.style.display = 'none';
+      if(huheMain) huheMain.style.display = '';
+      if(sticky) sticky.style.display = '';
+      if(menuToggle) menuToggle.style.display = '';
+    }
+  };
+  window.openVideoPokerRules = function(){
+    alert(vpGame().rulesText);
+  };
+  window.openVideoPokerStrategy = function(){
+    alert(vpGame().strategyText);
+  };
+})();
+</script>
+<script>
+(function(){
   const body = document.body;
   const splash = document.getElementById("splashOverlay");
   const splashClose = document.getElementById("splashClose");
+  const vpLobbyPlay = document.getElementById("vpLobbyPlay");
+  const vpLobbyRules = document.getElementById("vpLobbyRules");
+  const vpLobbyStrategy = document.getElementById("vpLobbyStrategy");
+  const vpLobbyVersion = document.getElementById("vpLobbyVersion");
+  const dwLobbyPlay = document.getElementById("dwLobbyPlay");
+  const dwLobbyRules = document.getElementById("dwLobbyRules");
+  const dwLobbyStrategy = document.getElementById("dwLobbyStrategy");
+  const dwLobbyVersion = document.getElementById("dwLobbyVersion");
   const splashShowWoo = document.getElementById("splashShowWoo");
   const splashShowRules = document.getElementById("splashShowRules");
   const splashShowVersion = document.getElementById("splashShowVersion");
@@ -3814,6 +4837,9 @@ async function logSessionAndReset(options){
   const lastHandModal = document.getElementById('lastHandModal');
   const lastHandClose = document.getElementById('lastHandClose');
   const miniLog = document.getElementById('log');
+  const VIDEO_POKER_GAME_ID = 'video-poker-jacks-or-better';
+  const DEUCES_WILD_GAME_ID = 'video-poker-deuces-wild';
+  let selectedGameId = CURRENT_GAME_ID;
 
 
   function updatePlayerInputState(){
@@ -3878,7 +4904,15 @@ async function logSessionAndReset(options){
 
   updatePlayerInputState();
 
-  if(splashClose) splashClose.addEventListener("click", function(){ openPlayer(); });
+  if(splashClose) splashClose.addEventListener("click", function(){ selectedGameId = CURRENT_GAME_ID; openPlayer(); });
+  if(vpLobbyPlay) vpLobbyPlay.addEventListener("click", function(){ selectedGameId = VIDEO_POKER_GAME_ID; openPlayer(); });
+  if(vpLobbyRules) vpLobbyRules.addEventListener("click", function(){ selectedGameId = VIDEO_POKER_GAME_ID; if(window.setVideoPokerGame) window.setVideoPokerGame(VIDEO_POKER_GAME_ID); if(window.openVideoPokerRules) window.openVideoPokerRules(); });
+  if(vpLobbyStrategy) vpLobbyStrategy.addEventListener("click", function(){ selectedGameId = VIDEO_POKER_GAME_ID; if(window.setVideoPokerGame) window.setVideoPokerGame(VIDEO_POKER_GAME_ID); if(window.openVideoPokerStrategy) window.openVideoPokerStrategy(); });
+  if(vpLobbyVersion) vpLobbyVersion.addEventListener("click", function(){ openVersion(); });
+  if(dwLobbyPlay) dwLobbyPlay.addEventListener("click", function(){ selectedGameId = DEUCES_WILD_GAME_ID; openPlayer(); });
+  if(dwLobbyRules) dwLobbyRules.addEventListener("click", function(){ selectedGameId = DEUCES_WILD_GAME_ID; if(window.setVideoPokerGame) window.setVideoPokerGame(DEUCES_WILD_GAME_ID); if(window.openVideoPokerRules) window.openVideoPokerRules(); });
+  if(dwLobbyStrategy) dwLobbyStrategy.addEventListener("click", function(){ selectedGameId = DEUCES_WILD_GAME_ID; if(window.setVideoPokerGame) window.setVideoPokerGame(DEUCES_WILD_GAME_ID); if(window.openVideoPokerStrategy) window.openVideoPokerStrategy(); });
+  if(dwLobbyVersion) dwLobbyVersion.addEventListener("click", function(){ openVersion(); });
   if(splashShowWoo) splashShowWoo.addEventListener("click", function(){ openWoo(); });
   if(splashShowVersion) splashShowVersion.addEventListener("click", function(){ openVersion(); });
   if(wooClose) wooClose.addEventListener("click", closeWoo);
@@ -3951,6 +4985,7 @@ async function logSessionAndReset(options){
       try{ localStorage.setItem(PLAYER_NAME_KEY, name); }catch(e){}
       closePlayer();
       closeSplash();
+      if(window.activateGame) window.activateGame(selectedGameId);
     }catch(e){}
   });
 })();

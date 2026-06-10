@@ -29,16 +29,32 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '2.8');
+  assert.equal(appConfig.appVersion, '3.0');
+  assert.equal(appConfig.cacheVersion, 'v3.0');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
+  assert.equal(appConfig.games[appConfig.currentGameId].version, '2.8');
+  assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.1');
+  assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
+  assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.1');
+  assert.equal(appConfig.games['video-poker-deuces-wild'].status, 'beta');
 
   const summary = appConfig.normalizeSessionSummary({player:'Ada', profit:25});
   assert.equal(summary.gameId, 'heads-up-hold-em');
   assert.equal(summary.schemaVersion, 2);
   assert.equal(summary.gamePlayer, 'heads-up-hold-em::Ada');
   assert.equal(summary.profit, 25);
+
+  const vpSummary = appConfig.normalizeSessionSummary({player:'Ada'}, 'video-poker-jacks-or-better');
+  assert.equal(vpSummary.gameId, 'video-poker-jacks-or-better');
+  assert.equal(vpSummary.schemaVersion, 1);
+  assert.equal(vpSummary.gamePlayer, 'video-poker-jacks-or-better::Ada');
+
+  const dwSummary = appConfig.normalizeSessionSummary({player:'Ada'}, 'video-poker-deuces-wild');
+  assert.equal(dwSummary.gameId, 'video-poker-deuces-wild');
+  assert.equal(dwSummary.schemaVersion, 1);
+  assert.equal(dwSummary.gamePlayer, 'video-poker-deuces-wild::Ada');
 });
 
 test('settlement pays winning straight odds while ante pushes against non-qualifying dealer', () => {
