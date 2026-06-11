@@ -5,7 +5,7 @@
     root.HUHEAppConfig = factory();
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function(){
-  const APP_VERSION = '3.1';
+  const APP_VERSION = '3.2';
   const CURRENT_GAME_ID = 'heads-up-hold-em';
   const VIDEO_POKER_GAME_ID = 'video-poker-jacks-or-better';
   const DEUCES_WILD_GAME_ID = 'video-poker-deuces-wild';
