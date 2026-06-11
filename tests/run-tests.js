@@ -35,9 +35,9 @@ test('app config exposes game metadata and normalizes saved session summaries', 
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
   assert.equal(appConfig.games[appConfig.currentGameId].version, '2.9');
-  assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.2');
+  assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.3');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
-  assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.2');
+  assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.3');
   assert.equal(appConfig.games['video-poker-deuces-wild'].status, 'beta');
 
   const summary = appConfig.normalizeSessionSummary({player:'Ada', profit:25});

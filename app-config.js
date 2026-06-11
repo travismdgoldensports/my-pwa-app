@@ -25,14 +25,14 @@
       [VIDEO_POKER_GAME_ID]: {
         id: VIDEO_POKER_GAME_ID,
         name: 'Jacks or Better Video Poker',
-        version: '0.2',
+        version: '0.3',
         status: 'beta',
         sessionSchemaVersion: 1
       },
       [DEUCES_WILD_GAME_ID]: {
         id: DEUCES_WILD_GAME_ID,
         name: 'Deuces Wild Video Poker',
-        version: '0.2',
+        version: '0.3',
         status: 'beta',
         sessionSchemaVersion: 1
       }
