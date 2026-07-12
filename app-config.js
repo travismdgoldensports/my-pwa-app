@@ -5,10 +5,11 @@
     root.HUHEAppConfig = factory();
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function(){
-  const APP_VERSION = '3.2';
+  const APP_VERSION = '3.3';
   const CURRENT_GAME_ID = 'heads-up-hold-em';
   const VIDEO_POKER_GAME_ID = 'video-poker-jacks-or-better';
   const DEUCES_WILD_GAME_ID = 'video-poker-deuces-wild';
+  const BLACKJACK_GAME_ID = 'blackjack';
 
   const config = {
     appName: "Golden Table Games",
@@ -33,6 +34,13 @@
         id: DEUCES_WILD_GAME_ID,
         name: 'Deuces Wild Video Poker',
         version: '0.3',
+        status: 'beta',
+        sessionSchemaVersion: 1
+      },
+      [BLACKJACK_GAME_ID]: {
+        id: BLACKJACK_GAME_ID,
+        name: 'Blackjack',
+        version: '0.1',
         status: 'beta',
         sessionSchemaVersion: 1
       }
