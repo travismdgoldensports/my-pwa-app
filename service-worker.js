@@ -40,6 +40,21 @@ self.addEventListener("fetch", e => {
 
   if (url.origin !== self.location.origin) return;
 
+  // App identity metadata should prefer the network so installed clients do
+  // not remain pinned to an older cached name or description.
+  if (url.pathname.endsWith("/manifest.webmanifest")) {
+    e.respondWith(
+      fetch(req)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(STATIC_CACHE).then(cache => cache.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
   if (req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html")) {
     e.respondWith(
       fetch(req)
