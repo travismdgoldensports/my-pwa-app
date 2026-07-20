@@ -574,6 +574,12 @@
   .lobby-game-actions #dwLobbyPlay,
   .lobby-game-actions #bjLobbyPlay{ background:#174234; border-color:#2c7a5e; }
   .lobby-game-status.beta{ background:#4a3110; border-color:#8f6b27; color:#ffd36d; }
+  .lobby-share{max-width:520px;margin:0 auto 10px;padding:9px 10px;border:1px solid #38598f;border-radius:10px;background:#0e1930;text-align:left;box-sizing:border-box;}
+  .lobby-share-label{display:block;margin-bottom:6px;color:#d9e6ff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+  .lobby-share-row{display:flex;align-items:center;gap:7px;min-width:0;}
+  .lobby-share-link{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#b9d4ff;font-size:11px;text-decoration:underline;}
+  .lobby-share-copy{flex:0 0 auto;background:#22314f;border:1px solid #2e4470;padding:7px 10px;font-size:11px;}
+  .lobby-share-status{min-height:16px;margin-top:4px;color:#9fe8cb;font-size:10px;line-height:1.3;}
   .splash-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:12px 0 10px; }
   .splash-actions button{ background:#22314f; border:1px solid #2e4470; }
   .splash-actions #installBtn{ display:none; background:#174234; border-color:#2c7a5e; }
@@ -608,6 +614,9 @@
     .lobby-game-status{ padding:3px 6px; font-size:8px; }
     .lobby-game-actions{ gap:5px; }
     .lobby-game-actions button{ padding:6px; font-size:10px; border-radius:9px; }
+    .lobby-share{padding:7px 8px;margin-bottom:8px;}
+    .lobby-share-label,.lobby-share-link,.lobby-share-copy{font-size:10px;}
+    .lobby-share-copy{padding:6px 8px;}
   }
   .modal-woo{ display:none; position:fixed; inset:0; padding:24px; background:rgba(6,12,24,.92); z-index:2800; }
   .modal-woo .woo-box{ background:var(--panel); border:1px solid #203355; border-radius:14px; max-width:800px; margin:0 auto; padding:14px; color:var(--text); }
@@ -981,6 +990,14 @@
           <button id="bjLobbyVersion" class="button-small-muted">Version</button>
         </span>
       </div>
+    </div>
+    <div class="lobby-share" aria-labelledby="lobbyShareLabel">
+      <span id="lobbyShareLabel" class="lobby-share-label">Game download link</span>
+      <div class="lobby-share-row">
+        <a id="lobbyShareLink" class="lobby-share-link" href="./">Open Golden Table Games</a>
+        <button id="lobbyShareCopy" class="lobby-share-copy" type="button">Copy link</button>
+      </div>
+      <div id="lobbyShareStatus" class="lobby-share-status" role="status" aria-live="polite"></div>
     </div>
     <div class="splash-actions">
       <button id="installBtn" type="button">Install App</button>
@@ -5867,6 +5884,9 @@ async function logSessionAndReset(options){
   const bjLobbyRules = document.getElementById("bjLobbyRules");
   const bjLobbyStrategy = document.getElementById("bjLobbyStrategy");
   const bjLobbyVersion = document.getElementById("bjLobbyVersion");
+  const lobbyShareLink = document.getElementById("lobbyShareLink");
+  const lobbyShareCopy = document.getElementById("lobbyShareCopy");
+  const lobbyShareStatus = document.getElementById("lobbyShareStatus");
   const splashShowWoo = document.getElementById("splashShowWoo");
   const splashShowRules = document.getElementById("splashShowRules");
   const splashShowVersion = document.getElementById("splashShowVersion");
@@ -5897,6 +5917,56 @@ async function logSessionAndReset(options){
   const DEUCES_WILD_GAME_ID = 'video-poker-deuces-wild';
   const BLACKJACK_GAME_ID = 'blackjack';
   let selectedGameId = CURRENT_GAME_ID;
+
+  function lobbyDownloadUrl(){
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.hash = '';
+    return url.href;
+  }
+
+  function fallbackCopyText(value){
+    const field = document.createElement('textarea');
+    field.value = value;
+    field.setAttribute('readonly', '');
+    field.style.position = 'fixed';
+    field.style.opacity = '0';
+    document.body.appendChild(field);
+    field.select();
+    field.setSelectionRange(0, field.value.length);
+    let copied = false;
+    try{ copied = document.execCommand('copy'); }catch(e){}
+    field.remove();
+    return copied;
+  }
+
+  async function copyLobbyDownloadUrl(){
+    const value = lobbyDownloadUrl();
+    let copied = false;
+    try{
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(value);
+        copied = true;
+      }else{
+        copied = fallbackCopyText(value);
+      }
+    }catch(e){
+      copied = fallbackCopyText(value);
+    }
+    if(lobbyShareStatus){
+      lobbyShareStatus.textContent = copied ? 'Link copied—ready to send to a friend.' : 'Unable to copy automatically. Press and hold the link to copy it.';
+    }
+    if(lobbyShareCopy && copied){
+      lobbyShareCopy.textContent = 'Copied!';
+      window.setTimeout(()=>{ lobbyShareCopy.textContent = 'Copy link'; }, 1800);
+    }
+  }
+
+  if(lobbyShareLink){
+    const downloadUrl = lobbyDownloadUrl();
+    lobbyShareLink.href = downloadUrl;
+    lobbyShareLink.textContent = downloadUrl;
+  }
 
 
   function updatePlayerInputState(){
@@ -6014,6 +6084,7 @@ async function logSessionAndReset(options){
   if(bjLobbyRules) bjLobbyRules.addEventListener("click", function(){ selectedGameId = BLACKJACK_GAME_ID; if(window.openBlackjackRules) window.openBlackjackRules(); });
   if(bjLobbyStrategy) bjLobbyStrategy.addEventListener("click", function(){ selectedGameId = BLACKJACK_GAME_ID; if(window.openBlackjackStrategy) window.openBlackjackStrategy(); });
   if(bjLobbyVersion) bjLobbyVersion.addEventListener("click", function(){ openVersion(BLACKJACK_GAME_ID); });
+  if(lobbyShareCopy) lobbyShareCopy.addEventListener("click", copyLobbyDownloadUrl);
   if(splashShowWoo) splashShowWoo.addEventListener("click", function(){ openWoo(); });
   if(splashShowVersion) splashShowVersion.addEventListener("click", function(){ openVersion(CURRENT_GAME_ID); });
   if(wooClose) wooClose.addEventListener("click", closeWoo);
