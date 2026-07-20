@@ -29,15 +29,15 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '3.4');
-  assert.equal(appConfig.cacheVersion, 'v3.4');
+  assert.equal(appConfig.appVersion, '3.5');
+  assert.equal(appConfig.cacheVersion, 'v3.5');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
   assert.equal(appConfig.games[appConfig.currentGameId].version, '2.9');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.3');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
-  assert.equal(appConfig.games.blackjack.version, '0.1');
+  assert.equal(appConfig.games.blackjack.version, '0.2');
   assert.equal(appConfig.games.blackjack.status, 'beta');
   assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.3');
   assert.equal(appConfig.games['video-poker-deuces-wild'].status, 'beta');

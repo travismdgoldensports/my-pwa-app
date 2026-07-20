@@ -784,8 +784,9 @@
   .bj-lane.dealer{top:26px;}
   .bj-lane.player{bottom:78px;}
   .bj-label{color:#d9e6ff;font-size:12px;text-transform:uppercase;letter-spacing:.45px;background:rgba(8,19,38,.7);border:1px solid rgba(207,226,255,.22);border-radius:999px;padding:4px 10px;}
-  .bj-cards{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:118px;--card-w:82px;--card-h:115px;--card-br:9px;}
-  .bj-cards .card{box-shadow:0 8px 18px #0007;}
+  .bj-cards{display:flex;gap:0;justify-content:center;align-items:center;flex-wrap:nowrap;min-height:118px;--card-w:82px;--card-h:115px;--card-br:9px;--bj-card-overlap:55px;}
+  .bj-cards .card{flex:0 0 auto;box-shadow:0 8px 18px #0007;}
+  .bj-cards>.card+.card{margin-left:calc(0px - var(--bj-card-overlap));}
   .bj-cards .card.bj-card-reveal{animation:bjCardReveal .5s ease both;transform-origin:center;backface-visibility:hidden;}
   .bj-cards .card.bj-card-draw{animation:bjCardDraw .4s ease both;}
   @keyframes bjCardReveal{0%{transform:rotateY(90deg) scale(.94);opacity:.35}100%{transform:rotateY(0) scale(1);opacity:1}}
@@ -851,7 +852,7 @@
     .bj-table::before{font-size:18px;}
     .bj-lane{left:8px;right:8px;}
     .bj-lane.player{bottom:66px;}
-    .bj-cards{gap:5px;--card-w:58px;--card-h:82px;--card-br:7px;min-height:86px;}
+    .bj-cards{--card-w:58px;--card-h:82px;--card-br:7px;--bj-card-overlap:39px;min-height:86px;}
     .bj-hand{min-width:128px;padding:6px;}
     .bj-hands{gap:6px;}
     .bj-play-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}
@@ -970,7 +971,7 @@
         <span>
           <span class="lobby-game-name">Blackjack</span>
           <span class="lobby-game-meta">Beta trainer with configurable rules, basic strategy, shoe tracking, and chip settlement.</span>
-          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v0.1 beta</span>
+          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v0.2 beta</span>
         </span>
         <span class="lobby-game-status beta">Beta</span>
         <span class="lobby-game-actions">
@@ -5962,6 +5963,7 @@ async function logSessionAndReset(options){
       ['0.1', ['Initial Deuces Wild beta release.']]
     ],
     [BLACKJACK_GAME_ID]: [
+      ['0.2', ['Kept dealer and player cards on a single row with responsive overlapping card stacks.', 'Improved Blackjack hand readability on narrow screens and for hands with several cards.']],
       ['0.1', ['Initial Blackjack beta with configurable table rules and basic-strategy advice.', 'Added strategy charts, warning-based mistake guidance, animated dealer play, wager controls, and visual shoe progress.']]
     ]
   };
