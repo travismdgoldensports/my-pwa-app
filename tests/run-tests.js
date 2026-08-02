@@ -1,6 +1,9 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const logic = require('../game-logic');
 const appConfig = require('../app-config');
+const indexSource = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
 const rankIndex = {
   '2':0, '3':1, '4':2, '5':3, '6':4, '7':5, '8':6,
@@ -29,16 +32,16 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '3.5');
-  assert.equal(appConfig.cacheVersion, 'v3.5');
+  assert.equal(appConfig.appVersion, '3.9');
+  assert.equal(appConfig.cacheVersion, 'v3.9');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
   assert.equal(appConfig.games[appConfig.currentGameId].version, '2.9');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.3');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
-  assert.equal(appConfig.games.blackjack.version, '0.2');
-  assert.equal(appConfig.games.blackjack.status, 'beta');
+  assert.equal(appConfig.games.blackjack.version, '1.0');
+  assert.equal(appConfig.games.blackjack.status, undefined);
   assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.3');
   assert.equal(appConfig.games['video-poker-deuces-wild'].status, 'beta');
 
@@ -57,6 +60,94 @@ test('app config exposes game metadata and normalizes saved session summaries', 
   assert.equal(dwSummary.gameId, 'video-poker-deuces-wild');
   assert.equal(dwSummary.schemaVersion, 1);
   assert.equal(dwSummary.gamePlayer, 'video-poker-deuces-wild::Ada');
+});
+
+test('lobby consolidates video poker variants behind one selector', () => {
+  assert.match(indexSource, /id="videoPokerLobbyVariant"/);
+  assert.match(indexSource, /option value="video-poker-jacks-or-better"/);
+  assert.match(indexSource, /option value="video-poker-deuces-wild"/);
+  assert.match(indexSource, /function selectedVideoPokerGameId\(\)/);
+  assert.doesNotMatch(indexSource, /id="(?:vp|dw)Lobby(?:Play|Rules|Strategy|Version)"/);
+});
+
+test('blackjack totals handle soft hands and multiple aces', () => {
+  assert.deepEqual(logic.blackjackTotal([card('A','c'), card('6','d')]), {total:17, soft:true});
+  assert.deepEqual(logic.blackjackTotal([card('A','c'), card('A','d'), card('9','h')]), {total:21, soft:true});
+  assert.deepEqual(logic.blackjackTotal([card('A','c'), card('A','d'), card('9','h'), card('K','s')]), {total:21, soft:false});
+  assert.equal(logic.blackjackTotal([card('K','c'), card('Q','d'), card('2','h')]).total, 22);
+});
+
+test('blackjack recognizes naturals but not a split-hand 21', () => {
+  assert.equal(logic.blackjackIsNatural({cards:[card('A','c'), card('K','d')], split:false}), true);
+  assert.equal(logic.blackjackIsNatural({cards:[card('A','c'), card('K','d')], split:true}), false);
+  assert.equal(logic.blackjackIsNatural({cards:[card('7','c'), card('7','d'), card('7','h')], split:false}), false);
+});
+
+test('blackjack wager eligibility enforces bankroll and table rules', () => {
+  const pair = {cards:[card('8','c'), card('8','d')], bet:20, split:false, splitAces:false, doubled:false};
+  assert.equal(logic.blackjackCanPlaceBet(19, 20), false);
+  assert.equal(logic.blackjackCanPlaceBet(20, 20), true);
+  assert.equal(logic.blackjackCanPlaceBet(100, 0), false);
+  assert.equal(logic.blackjackCanSplit(pair, 3, 20), true);
+  assert.equal(logic.blackjackCanSplit(pair, 4, 20), false);
+  assert.equal(logic.blackjackCanSplit(pair, 3, 19), false);
+  assert.equal(logic.blackjackCanDouble(pair, 20, {das:true}), true);
+  assert.equal(logic.blackjackCanDouble({...pair, split:true}, 20, {das:false}), false);
+  assert.equal(logic.blackjackCanDouble({...pair, split:true, splitAces:true}, 20, {das:true}), false);
+  assert.equal(logic.blackjackCanSurrender(pair, {surrender:true}), true);
+  assert.equal(logic.blackjackCanSurrender({...pair, split:true}, {surrender:true}), false);
+});
+
+test('blackjack dealer logic respects S17 and H17', () => {
+  const soft17 = [card('A','c'), card('6','d')];
+  assert.equal(logic.blackjackShouldDealerHit(soft17, {soft17:'stand'}), false);
+  assert.equal(logic.blackjackShouldDealerHit(soft17, {soft17:'hit'}), true);
+  assert.equal(logic.blackjackShouldDealerHit([card('T','c'), card('6','d')], {soft17:'hit'}), true);
+  assert.equal(logic.blackjackShouldDealerHit([card('T','c'), card('7','d')], {soft17:'hit'}), false);
+});
+
+test('blackjack surrender strategy distinguishes soft totals, pairs, S17, and H17', () => {
+  const hand = cards => ({cards, bet:10, status:'active', split:false, splitAces:false, doubled:false});
+  const advice = (cards, dealer, soft17) => logic.blackjackAdvice({hand:hand(cards), dealerUpCard:card(dealer,'s'), rules:{soft17, das:true, surrender:true}, bank:100, handCount:1}).action;
+  assert.equal(advice([card('A','c'), card('5','d')], 'A', 'hit'), 'hit');
+  assert.equal(advice([card('8','c'), card('8','d')], 'T', 'stand'), 'split');
+  assert.equal(advice([card('8','c'), card('8','d')], 'A', 'hit'), 'surrender');
+  assert.equal(advice([card('T','c'), card('6','d')], 'A', 'stand'), 'surrender');
+  assert.equal(advice([card('T','c'), card('5','d')], 'T', 'stand'), 'surrender');
+  assert.equal(advice([card('T','c'), card('7','d')], 'A', 'hit'), 'surrender');
+});
+
+test('blackjack natural payouts return the original wager plus winnings', () => {
+  const natural = {cards:[card('A','c'), card('K','d')], split:false};
+  assert.deepEqual(logic.blackjackNaturalOutcome(natural, [card('9','c'), card('7','d')], 10), {returned:25, net:15, label:'Blackjack pays 3:2'});
+  assert.deepEqual(logic.blackjackNaturalOutcome(natural, [card('A','h'), card('T','s')], 10), {returned:10, net:0, label:'Blackjack push'});
+  assert.deepEqual(logic.blackjackNaturalOutcome({cards:[card('T','c'), card('9','d')], split:false}, [card('A','h'), card('T','s')], 10), {returned:0, net:-10, label:'Dealer blackjack'});
+});
+
+test('blackjack settlement covers wins, pushes, doubles, busts, and surrender', () => {
+  const dealer20 = [card('K','c'), card('Q','d')];
+  assert.deepEqual(logic.blackjackSettleHand({cards:[card('T','h'), card('A','s')], bet:10, status:'stand'}, dealer20), {returned:20, net:10, label:'Win', playerTotal:21, dealerTotal:20});
+  assert.equal(logic.blackjackSettleHand({cards:[card('K','h'), card('Q','s')], bet:10, status:'stand'}, dealer20).net, 0);
+  assert.equal(logic.blackjackSettleHand({cards:[card('T','h'), card('9','s')], bet:20, status:'stand', doubled:true}, dealer20).net, -20);
+  assert.equal(logic.blackjackSettleHand({cards:[card('K','h'), card('Q','s'), card('2','c')], bet:10, status:'bust'}, dealer20).label, 'Bust');
+  assert.deepEqual(logic.blackjackSettleHand({cards:[card('T','h'), card('6','s')], bet:10, status:'surrender'}, dealer20), {returned:5, net:-5, label:'Surrender', playerTotal:16, dealerTotal:20});
+});
+
+test('blackjack split hands settle independently', () => {
+  const dealer = [card('T','c'), card('8','d')];
+  const first = logic.blackjackSettleHand({cards:[card('8','c'), card('K','h')], bet:10, status:'stand', split:true}, dealer);
+  const second = logic.blackjackSettleHand({cards:[card('8','s'), card('3','h'), card('T','d')], bet:10, status:'stand', split:true}, dealer);
+  assert.equal(first.net, 0);
+  assert.equal(second.net, 10);
+  assert.equal(first.net + second.net, 10);
+});
+
+test('blackjack blocks session exit until the active round resolves', () => {
+  assert.equal(logic.blackjackCanExitRound('ready', false), true);
+  assert.equal(logic.blackjackCanExitRound('complete', false), true);
+  assert.equal(logic.blackjackCanExitRound('player', false), false);
+  assert.equal(logic.blackjackCanExitRound('dealer', true), false);
+  assert.equal(logic.blackjackCanExitRound('complete', true), false);
 });
 
 test('settlement pays winning straight odds while ante pushes against non-qualifying dealer', () => {

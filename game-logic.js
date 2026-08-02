@@ -473,6 +473,130 @@
     };
   }
 
+  function blackjackRank(card){ return card % 13; }
+  function blackjackRankValue(card){
+    const rank = blackjackRank(card);
+    return rank === 12 ? 11 : Math.min(10, rank + 2);
+  }
+  function blackjackTotal(cards){
+    let total = 0, aces = 0;
+    (cards || []).forEach(card=>{
+      if(blackjackRank(card) === 12) aces++;
+      total += blackjackRankValue(card);
+    });
+    while(total > 21 && aces > 0){ total -= 10; aces--; }
+    return {total, soft:aces > 0};
+  }
+  function blackjackIsNatural(hand){
+    return !!hand && hand.cards.length === 2 && blackjackTotal(hand.cards).total === 21 && !hand.split;
+  }
+  function blackjackCanPlaceBet(bank, bet){
+    const available = Number(bank), wager = Number(bet);
+    return Number.isFinite(available) && Number.isFinite(wager) && wager > 0 && available >= wager;
+  }
+  function blackjackCanSplit(hand, handCount, bank){
+    return !!hand && hand.cards.length === 2 && blackjackRank(hand.cards[0]) === blackjackRank(hand.cards[1]) && handCount < 4 && blackjackCanPlaceBet(bank, hand.bet);
+  }
+  function blackjackCanDouble(hand, bank, rules={}){
+    if(!hand || hand.cards.length !== 2 || !blackjackCanPlaceBet(bank, hand.bet)) return false;
+    if(hand.split && !rules.das) return false;
+    return !hand.splitAces;
+  }
+  function blackjackCanSurrender(hand, rules={}){
+    return !!(rules.surrender && hand && hand.cards.length === 2 && !hand.split && !hand.doubled);
+  }
+  function blackjackDealerUpValue(card){
+    if(card === undefined || card === null) return 0;
+    const rank = blackjackRank(card);
+    return rank === 12 ? 11 : Math.min(10, rank + 2);
+  }
+  function blackjackShouldDealerHit(cards, rules={}){
+    const total = blackjackTotal(cards);
+    return total.total < 17 || (total.total === 17 && total.soft && rules.soft17 === 'hit');
+  }
+  function blackjackAdvice({hand, dealerUpCard, rules={}, bank=Infinity, handCount=1}){
+    const up = blackjackDealerUpValue(dealerUpCard);
+    if(!hand || hand.status !== 'active' || !up) return {action:'-', why:'No active decision.'};
+    const total = blackjackTotal(hand.cards);
+    const pairRank = hand.cards.length === 2 && blackjackRank(hand.cards[0]) === blackjackRank(hand.cards[1]) ? blackjackRank(hand.cards[0]) : null;
+    const canDouble = blackjackCanDouble(hand, bank, rules);
+    const canSplit = blackjackCanSplit(hand, handCount, bank);
+    const canSurrender = blackjackCanSurrender(hand, rules);
+    const doubleOrHit = ()=> canDouble ? 'double' : 'hit';
+    const doubleOrStand = ()=> canDouble ? 'double' : 'stand';
+
+    // H17 late-surrender exceptions against an ace take priority over pair play.
+    if(canSurrender && !total.soft && rules.soft17 === 'hit' && up === 11 && [15,16,17].includes(total.total)){
+      return {action:'surrender', why:`Late surrender hard ${total.total} against an ace when the dealer hits soft 17.`};
+    }
+    // Otherwise preserve pair and soft-hand strategy before considering hard-total surrender.
+    if(pairRank !== null && canSplit){
+      const value = pairRank === 12 ? 11 : Math.min(10, pairRank + 2);
+      if(value === 11 || value === 8) return {action:'split', why:'Always split aces and eights.'};
+      if(value === 10) return {action:'stand', why:'Never split tens.'};
+      if(value === 9) return {action:([2,3,4,5,6,8,9].includes(up) ? 'split' : 'stand'), why:'Split 9s except against 7, 10, or ace.'};
+      if(value === 7) return {action:(up <= 7 ? 'split' : 'hit'), why:'Split 7s against 2 through 7.'};
+      if(value === 6) return {action:((rules.das ? up>=2&&up<=6 : up>=3&&up<=6) ? 'split' : 'hit'), why:'Split 6s against dealer weakness.'};
+      if(value === 5) return {action:([2,3,4,5,6,7,8,9].includes(up) ? doubleOrHit() : 'hit'), why:'Play paired 5s as hard 10.'};
+      if(value === 4) return {action:(rules.das && (up===5 || up===6) ? 'split' : 'hit'), why:'Split 4s only with DAS against 5 or 6.'};
+      if(value === 3 || value === 2) return {action:((rules.das ? up>=2&&up<=7 : up>=4&&up<=7) ? 'split' : 'hit'), why:'Split small pairs against weak dealer cards.'};
+    }
+    if(total.soft && total.total <= 20 && hand.cards.length >= 2){
+      if(total.total >= 20) return {action:'stand', why:'Stand on soft 20 or better.'};
+      if(total.total === 19) return {action:(rules.soft17==='hit' && up===6 ? doubleOrStand() : 'stand'), why:'Usually stand on soft 19.'};
+      if(total.total === 18){
+        if([3,4,5,6].includes(up) || (rules.soft17==='hit' && up===2)) return {action:doubleOrStand(), why:'Double soft 18 against dealer weakness.'};
+        if([2,7,8].includes(up)) return {action:'stand', why:'Stand soft 18 against 2, 7, or 8.'};
+        return {action:'hit', why:'Hit soft 18 against 9, 10, or ace.'};
+      }
+      if(total.total === 17) return {action:([3,4,5,6].includes(up) || (rules.soft17==='hit' && up===2) ? doubleOrHit() : 'hit'), why:'Double soft 17 against weak dealer cards.'};
+      if(total.total === 15 || total.total === 16) return {action:([4,5,6].includes(up) ? doubleOrHit() : 'hit'), why:'Double soft 15 or 16 against 4 through 6.'};
+      if(total.total === 13 || total.total === 14) return {action:([5,6].includes(up) ? doubleOrHit() : 'hit'), why:'Double soft 13 or 14 against 5 or 6.'};
+    }
+    if(canSurrender && !total.soft){
+      if(total.total === 16 && up >= 9) return {action:'surrender', why:'Late surrender hard 16 against 9, 10, or ace.'};
+      if(total.total === 15 && up === 10) return {action:'surrender', why:'Late surrender hard 15 against a dealer 10.'};
+    }
+    if(total.total >= 17) return {action:'stand', why:'Stand on hard 17 or more.'};
+    if(total.total >= 13 && total.total <= 16) return {action:(up>=2 && up<=6 ? 'stand' : 'hit'), why:'Stand hard 13-16 against dealer 2-6; otherwise hit.'};
+    if(total.total === 12) return {action:([4,5,6].includes(up) ? 'stand' : 'hit'), why:'Stand hard 12 only against 4 through 6.'};
+    if(total.total === 11) return {action:doubleOrHit(), why:'Double hard 11 when available.'};
+    if(total.total === 10) return {action:([2,3,4,5,6,7,8,9].includes(up) ? doubleOrHit() : 'hit'), why:'Double hard 10 against 2 through 9.'};
+    if(total.total === 9) return {action:([3,4,5,6].includes(up) ? doubleOrHit() : 'hit'), why:'Double hard 9 against 3 through 6.'};
+    return {action:'hit', why:'Hit hard 8 or less.'};
+  }
+  function blackjackNaturalOutcome(playerHand, dealerCards, bet){
+    const playerNatural = blackjackIsNatural(playerHand);
+    const dealerNatural = blackjackIsNatural({cards:dealerCards || [], split:false});
+    if(!playerNatural && !dealerNatural) return null;
+    if(playerNatural && dealerNatural) return {returned:bet, net:0, label:'Blackjack push'};
+    if(playerNatural) return {returned:bet * 2.5, net:bet * 1.5, label:'Blackjack pays 3:2'};
+    return {returned:0, net:-bet, label:'Dealer blackjack'};
+  }
+  function blackjackSettleHand(hand, dealerCards){
+    const playerTotal = blackjackTotal(hand.cards).total;
+    const dealerTotal = blackjackTotal(dealerCards).total;
+    let returned = 0, label = '';
+    if(hand.status === 'surrender'){
+      returned = hand.bet / 2;
+      label = 'Surrender';
+    }else if(playerTotal > 21){
+      label = 'Bust';
+    }else if(dealerTotal > 21 || playerTotal > dealerTotal){
+      returned = hand.bet * 2;
+      label = 'Win';
+    }else if(playerTotal === dealerTotal){
+      returned = hand.bet;
+      label = 'Push';
+    }else{
+      label = 'Loss';
+    }
+    return {returned, net:returned - hand.bet, label, playerTotal, dealerTotal};
+  }
+  function blackjackCanExitRound(stage, busy){
+    return !busy && stage !== 'player' && stage !== 'dealer';
+  }
+
   return {
     RANKS,
     SUITS,
@@ -492,6 +616,19 @@
     recommendWoO,
     settleHypGeneric,
     settleHand,
-    settleFold
+    settleFold,
+    blackjackRank,
+    blackjackTotal,
+    blackjackIsNatural,
+    blackjackCanPlaceBet,
+    blackjackCanSplit,
+    blackjackCanDouble,
+    blackjackCanSurrender,
+    blackjackDealerUpValue,
+    blackjackShouldDealerHit,
+    blackjackAdvice,
+    blackjackNaturalOutcome,
+    blackjackSettleHand,
+    blackjackCanExitRound
   };
 });
