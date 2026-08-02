@@ -4,6 +4,7 @@ const VERSION = self.HUHEAppConfig?.cacheVersion || "v3.2";
 const STATIC_CACHE = `golden-table-static-${VERSION}`;
 const HTML_CACHE = `golden-table-html-${VERSION}`;
 const OFFLINE_PAGE = "index.html";
+const NETWORK_FIRST_ASSETS = ["app-config.js", "game-logic.js", "app.js", "manifest.webmanifest"];
 const ASSETS = [
   "index.html",
   "app-config.js",
@@ -40,9 +41,9 @@ self.addEventListener("fetch", e => {
 
   if (url.origin !== self.location.origin) return;
 
-  // App identity metadata should prefer the network so installed clients do
-  // not remain pinned to an older cached name or description.
-  if (url.pathname.endsWith("/manifest.webmanifest")) {
+  // Runtime files must stay in sync with network-first HTML. Otherwise an
+  // update can briefly pair a new index.html with stale cached game logic.
+  if (NETWORK_FIRST_ASSETS.some(asset => url.pathname.endsWith(`/${asset}`))) {
     e.respondWith(
       fetch(req)
         .then(res => {

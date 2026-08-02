@@ -32,8 +32,8 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '3.9');
-  assert.equal(appConfig.cacheVersion, 'v3.9');
+  assert.equal(appConfig.appVersion, '4.0');
+  assert.equal(appConfig.cacheVersion, 'v4.0');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
@@ -68,6 +68,15 @@ test('lobby consolidates video poker variants behind one selector', () => {
   assert.match(indexSource, /option value="video-poker-deuces-wild"/);
   assert.match(indexSource, /function selectedVideoPokerGameId\(\)/);
   assert.doesNotMatch(indexSource, /id="(?:vp|dw)Lobby(?:Play|Rules|Strategy|Version)"/);
+});
+
+test('runtime scripts are cache-busted to prevent mixed app versions', () => {
+  assert.match(indexSource, /app-config\.js\?v=4\.0/);
+  assert.match(indexSource, /game-logic\.js\?v=4\.0/);
+  assert.match(indexSource, /app\.js\?v=4\.0/);
+  const workerSource = fs.readFileSync(path.join(__dirname, '..', 'service-worker.js'), 'utf8');
+  assert.match(workerSource, /NETWORK_FIRST_ASSETS/);
+  assert.match(workerSource, /game-logic\.js/);
 });
 
 test('blackjack totals handle soft hands and multiple aces', () => {
