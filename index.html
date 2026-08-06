@@ -542,15 +542,11 @@
   /* Splash Screen + WoO Modal */
   .splash-overlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:24px; background:radial-gradient(circle at 50% 0%,rgba(34,139,94,.52),transparent 42%),linear-gradient(155deg,#0b5b3d 0%,#073d2b 45%,#04271c 100%); z-index:2200; overflow:auto; box-sizing:border-box; }
   .splash-card{ width:min(680px,92vw); box-sizing:border-box; background:linear-gradient(160deg,rgba(8,38,28,.97),rgba(5,25,19,.97)); border:1px solid rgba(220,181,91,.38); border-radius:18px; padding:18px; text-align:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 18px 46px rgba(0,0,0,.48); }
-  .splash-brand-mark{ width:min(440px,100%); margin:4px auto 12px; min-height:134px; border-radius:18px; border:1px solid rgba(230,195,106,.52); background:radial-gradient(circle at 24% 18%,rgba(34,139,94,.24),transparent 34%),linear-gradient(145deg,#092c20,#0b3b29 52%,#061b15); display:grid; grid-template-columns:1fr 1.1fr; gap:12px; align-items:center; padding:16px; box-sizing:border-box; box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 12px 26px rgba(0,0,0,.32); overflow:hidden; position:relative; }
+  .splash-brand-mark{ width:min(440px,100%); margin:4px auto 12px; min-height:104px; border-radius:18px; border:1px solid rgba(230,195,106,.52); background:radial-gradient(circle at 24% 18%,rgba(34,139,94,.24),transparent 34%),linear-gradient(145deg,#092c20,#0b3b29 52%,#061b15); display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center; padding:18px 24px; box-sizing:border-box; box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 12px 26px rgba(0,0,0,.32); overflow:hidden; position:relative; }
   .splash-brand-mark::before{ content:""; position:absolute; inset:10px; border-radius:14px; border:1px dashed rgba(230,195,106,.42); pointer-events:none; }
-  .brand-chip-stack{ display:flex; align-items:center; justify-content:center; gap:8px; position:relative; z-index:1; }
-  .brand-chip{ width:58px; height:58px; border-radius:50%; border:4px solid #111827; background:conic-gradient(#e6c36a 0 12%, #111827 12% 18%, #e6c36a 18% 30%, #111827 30% 36%, #e6c36a 36% 48%, #111827 48% 54%, #e6c36a 54% 66%, #111827 66% 72%, #e6c36a 72% 84%, #111827 84% 90%, #e6c36a 90% 100%); box-shadow:0 8px 14px rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; color:#0b5138; font-size:30px; font-weight:900; }
-  .brand-chip::after{ content:"G"; width:35px; height:35px; border-radius:50%; background:radial-gradient(circle at 35% 28%,#f5dc91,#d5a93e 72%); border:2px solid #111827; box-shadow:inset 0 0 0 2px rgba(255,246,199,.32),0 2px 5px rgba(0,0,0,.38); display:flex; align-items:center; justify-content:center; color:#09442f; font-family:Georgia,serif; font-size:23px; font-weight:900; line-height:1; text-shadow:0 1px rgba(255,255,255,.38); }
-  .brand-card-pair{ display:flex; align-items:center; justify-content:center; gap:0; transform:translateX(-4px); }
-  .brand-card{ width:48px; height:68px; border-radius:8px; background:#f8fafc; color:#111827; border:1px solid rgba(0,0,0,.2); display:flex; align-items:flex-start; justify-content:flex-start; padding:7px; box-sizing:border-box; font-weight:900; font-size:18px; box-shadow:0 8px 16px rgba(0,0,0,.28); }
-  .brand-card.red{ color:#d6293b; transform:rotate(-8deg) translateX(10px); }
-  .brand-card.black{ transform:rotate(7deg) translateX(-10px) translateY(6px); }
+  .brand-emblem{ position:relative; z-index:1; width:64px; height:64px; border-radius:16px; display:grid; place-items:center; background:linear-gradient(145deg,#f3d98e,#c99731); border:1px solid #ffe7a5; box-shadow:inset 0 0 0 3px rgba(8,52,37,.2),0 8px 18px rgba(0,0,0,.3); color:#073d2b; }
+  .brand-emblem-letter{font:900 32px/1 Georgia,serif;transform:translateY(-5px);}
+  .brand-emblem-suits{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:10px;line-height:1;letter-spacing:2px;color:#174f3b;}
   .brand-wordmark{ text-align:left; position:relative; z-index:1; }
   .brand-wordmark-main{ font-size:25px; line-height:1.05; color:#fff; font-weight:900; }
   .brand-wordmark-sub{ margin-top:6px; font-size:11px; color:#d9c989; text-transform:uppercase; letter-spacing:.8px; font-weight:800; }
@@ -563,7 +559,9 @@
   .lobby-game-art{ position:relative; height:58px; border-radius:9px; background:radial-gradient(circle at 30% 18%,rgba(255,255,255,.1),transparent 34%),linear-gradient(145deg,#167452,#0a3e2d); border:1px solid rgba(230,195,106,.48); box-shadow:inset 0 0 0 2px rgba(4,31,22,.42); display:flex; align-items:center; justify-content:center; gap:4px; overflow:hidden; }
   .lobby-game-art::before{content:"♠";position:absolute;right:5px;bottom:-12px;color:rgba(230,195,106,.12);font-size:44px;line-height:1;}
   .lobby-game-art.video-poker::before{content:"♦"}.lobby-game-art.blackjack::before{content:"♣"}
-  .lobby-mini-card{ position:relative; z-index:1; width:25px; height:36px; border-radius:4px; background:linear-gradient(145deg,#fff,#e8eee9); border:1px solid rgba(11,31,23,.18); color:#121622; display:flex; align-items:flex-start; justify-content:flex-start; padding:4px 3px; box-sizing:border-box; font-size:12px; font-weight:900; line-height:1; box-shadow:0 4px 9px rgba(0,0,0,.32); }
+  .lobby-mini-card{ position:relative; z-index:1; width:28px; height:40px; border-radius:5px; background:linear-gradient(145deg,#fff,#e8eee9); border:1px solid rgba(11,31,23,.18); color:#121622; display:grid; grid-template-rows:auto auto; align-content:start; justify-items:center; padding:4px 2px; box-sizing:border-box; font-weight:900; line-height:.9; box-shadow:0 4px 9px rgba(0,0,0,.32); overflow:hidden; }
+  .lobby-card-rank{font-size:12px;line-height:1;letter-spacing:-.5px;}
+  .lobby-card-suit{font-size:10px;line-height:1;margin-top:1px;}
   .lobby-mini-card.red{ color:#d6293b; transform:translateY(-4px) rotate(-6deg); }
   .lobby-mini-card.black{ transform:translateY(4px) rotate(6deg); }
   .lobby-game>span:nth-child(2){min-width:0;}
@@ -600,11 +598,11 @@
   @media(max-width:520px){
     .splash-overlay{ padding:8px; align-items:flex-start; }
     .splash-card{ padding:10px; margin:auto 0; max-height:calc(100dvh - 16px); overflow:auto; box-sizing:border-box; }
-    .splash-brand-mark{ grid-template-columns:1fr; min-height:0; gap:6px; padding:10px; margin-bottom:8px; }
-    .brand-chip{ width:44px; height:44px; border-width:3px; font-size:22px; }
-    .brand-chip::after{ width:26px; height:26px; }
-    .brand-card{ width:36px; height:50px; border-radius:6px; padding:5px; font-size:14px; }
-    .brand-wordmark{ text-align:center; }
+    .splash-brand-mark{ grid-template-columns:auto 1fr; min-height:82px; gap:12px; padding:12px 16px; margin-bottom:8px; }
+    .brand-emblem{width:50px;height:50px;border-radius:13px;}
+    .brand-emblem-letter{font-size:25px;transform:translateY(-4px);}
+    .brand-emblem-suits{bottom:6px;font-size:8px;letter-spacing:1.5px;}
+    .brand-wordmark{ text-align:left; }
     .brand-wordmark-main{ font-size:19px; }
     .brand-wordmark-sub{ margin-top:4px; font-size:9px; }
     .lobby-title{ margin-top:8px; font-size:10px; }
@@ -613,7 +611,9 @@
     .lobby-game-status{ grid-column:2; justify-self:start; }
     .lobby-game-actions{ grid-template-columns:repeat(2,minmax(0,1fr)); }
     .lobby-game-art{ height:46px; }
-    .lobby-mini-card{ width:21px; height:30px; font-size:12px; }
+    .lobby-mini-card{ width:25px; height:35px; padding:3px 2px; }
+    .lobby-card-rank{font-size:11px;}
+    .lobby-card-suit{font-size:9px;}
     .lobby-game{ gap:8px; padding:7px; border-radius:10px; }
     .lobby-game-name{ font-size:14px; }
     .lobby-game-meta{ font-size:9px; line-height:1.2; }
@@ -655,6 +655,7 @@
   .vp-shell{display:grid;grid-template-columns:280px minmax(0,1fr);gap:12px;max-width:1320px;margin:0 auto;}
   .vp-panel,.vp-table{background:#0b172a;border:1px solid #203a63;border-radius:8px;box-shadow:0 10px 28px #0006;}
   .vp-panel{padding:14px;display:flex;flex-direction:column;gap:12px;}
+  .mobile-setup-intro{display:none;margin:0;padding:9px 10px;border:1px solid rgba(37,211,155,.45);border-radius:8px;background:rgba(37,211,155,.1);color:#d8ffee;font-size:12px;line-height:1.35;}
   .vp-panel h2,.vp-table h2{margin:0;color:#f7fbff;font-size:20px;}
   .vp-beta{display:inline-flex;align-items:center;margin-left:6px;padding:2px 6px;border-radius:999px;background:#4a3110;border:1px solid #8f6b27;color:#ffd36d;font-size:10px;text-transform:uppercase;letter-spacing:.4px;vertical-align:middle;}
   .vp-controls{display:grid;gap:9px;}
@@ -723,7 +724,9 @@
   #vpChart{display:block;width:100%;height:190px;}
   @media (max-width:900px){
     .vp-shell{grid-template-columns:1fr;}
-    .vp-panel{order:2;}
+    .vp-panel{order:0;}
+    .vp-screen.session-started .vp-panel{order:2;}
+    .vp-screen:not(.session-started) .mobile-setup-intro{display:block;}
     .vp-paytable-table tbody{grid-template-columns:repeat(2,minmax(0,1fr));}
     .vp-cards{grid-template-columns:repeat(5,minmax(52px,1fr));gap:6px;}
     .vp-card-button{min-height:126px;font-size:22px;border-radius:8px;padding:4px;--card-w:72px;--card-h:101px;--card-br:8px;}
@@ -796,7 +799,7 @@
   .bj-topline{display:flex;justify-content:space-between;gap:12px;align-items:start;flex-wrap:wrap;}
   .bj-result{font-size:24px;font-weight:900;text-align:right;color:#f3f7ff;}
   .bj-table{position:relative;min-height:460px;border-radius:18px;border:1px solid #1b5d49;background:radial-gradient(circle at 50% 42%,#14664d 0%,#0b4436 48%,#082f27 100%);overflow:hidden;box-shadow:inset 0 0 0 7px rgba(130,82,28,.42),inset 0 0 38px rgba(0,0,0,.55);}
-  .bj-table::before{content:"BLACKJACK PAYS 3 TO 2";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:rgba(255,230,170,.16);font-size:32px;font-weight:900;letter-spacing:1px;white-space:nowrap;pointer-events:none;}
+  .bj-table::before{content:attr(data-payout-label);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:rgba(255,230,170,.16);font-size:32px;font-weight:900;letter-spacing:1px;white-space:nowrap;pointer-events:none;}
   .bj-lane{position:absolute;left:24px;right:24px;display:grid;justify-items:center;gap:8px;z-index:2;}
   .bj-lane.dealer{top:26px;}
   .bj-lane.player{bottom:78px;}
@@ -868,7 +871,9 @@
   .bj-strategy-swatch{width:13px;height:13px;border-radius:3px;}
   @media(max-width:900px){
     .bj-shell{grid-template-columns:1fr;}
-    .bj-panel{order:2;}
+    .bj-panel{order:0;}
+    .bj-screen.session-started .bj-panel{order:2;}
+    .bj-screen:not(.session-started) .mobile-setup-intro{display:block;}
     .bj-table{min-height:440px;}
   }
   @media(max-width:640px){
@@ -927,31 +932,27 @@
 <header><h1>Golden Table Games</h1></header>
 <div id="splashOverlay" class="splash-overlay" role="dialog" aria-modal="true" aria-labelledby="splashTitle">
   <div class="splash-card">
-    <div class="splash-brand-mark" aria-hidden="true">
-      <div class="brand-chip-stack">
-        <div class="brand-chip"></div>
-        <div class="brand-card-pair">
-          <div class="brand-card red">A♦</div>
-          <div class="brand-card black">K♠</div>
-        </div>
+    <div class="splash-brand-mark">
+      <div class="brand-emblem" aria-hidden="true">
+        <span class="brand-emblem-letter">G</span>
+        <span class="brand-emblem-suits">♠ ♥ ♦ ♣</span>
       </div>
       <div class="brand-wordmark">
-        <div class="brand-wordmark-main">Golden<br>Table Games</div>
+        <div id="splashTitle" class="brand-wordmark-main">Golden Table Games</div>
         <div class="brand-wordmark-sub">Casino Lobby</div>
       </div>
     </div>
-<div id="splashTitle" class="splash-title">Golden Table Games</div>
     <div class="lobby-title">Game Lobby</div>
     <div class="lobby-grid" aria-label="Available games">
       <div class="lobby-game">
         <span class="lobby-game-art holdem" aria-hidden="true">
-          <span class="lobby-mini-card red">A♦</span>
-          <span class="lobby-mini-card black">K♠</span>
+          <span class="lobby-mini-card red"><span class="lobby-card-rank">A</span><span class="lobby-card-suit">♦</span></span>
+          <span class="lobby-mini-card black"><span class="lobby-card-rank">K</span><span class="lobby-card-suit">♠</span></span>
         </span>
         <span>
           <span class="lobby-game-name">Heads Up Hold 'Em</span>
           <span class="lobby-game-meta">Poker table game with strategy tracking, session stats, and bankroll graph.</span>
-          <span class="lobby-game-version" id="splashVersion">Heads Up v2.9</span>
+          <span class="lobby-game-version" id="splashVersion">Heads Up v2.10</span>
         </span>
         <span class="lobby-game-status">Ready</span>
         <span class="lobby-game-actions">
@@ -963,13 +964,13 @@
       </div>
       <div class="lobby-game">
         <span class="lobby-game-art video-poker" aria-hidden="true">
-          <span class="lobby-mini-card red">J♥</span>
-          <span class="lobby-mini-card black">2♣</span>
+          <span class="lobby-mini-card red"><span class="lobby-card-rank">J</span><span class="lobby-card-suit">♥</span></span>
+          <span class="lobby-mini-card black"><span class="lobby-card-rank">2</span><span class="lobby-card-suit">♣</span></span>
         </span>
         <span>
           <span class="lobby-game-name">Video Poker</span>
           <span class="lobby-game-meta">Choose Jacks or Better or Deuces Wild with optimal hold advice and bankroll tracking.</span>
-          <span class="lobby-game-version" id="videoPokerLobbyVersionText">Jacks or Better v0.3 beta</span>
+          <span class="lobby-game-version" id="videoPokerLobbyVersionText">Jacks or Better v0.4 beta</span>
         </span>
         <span class="lobby-game-status beta">Beta</span>
         <span class="lobby-variant-row">
@@ -988,13 +989,13 @@
       </div>
       <div class="lobby-game">
         <span class="lobby-game-art blackjack" aria-hidden="true">
-          <span class="lobby-mini-card red">A♥</span>
-          <span class="lobby-mini-card black">10♠</span>
+          <span class="lobby-mini-card red"><span class="lobby-card-rank">A</span><span class="lobby-card-suit">♥</span></span>
+          <span class="lobby-mini-card black"><span class="lobby-card-rank">10</span><span class="lobby-card-suit">♠</span></span>
         </span>
         <span>
           <span class="lobby-game-name">Blackjack</span>
           <span class="lobby-game-meta">Blackjack trainer with configurable rules, basic strategy, shoe tracking, and chip settlement.</span>
-          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v1.0</span>
+          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v1.1</span>
         </span>
         <span class="lobby-game-status">Ready</span>
         <span class="lobby-game-actions">
@@ -1386,6 +1387,7 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
+      <p class="muted"><b>Version 2.10</b></br>-Refined the Golden Table Games lobby branding and game artwork for mobile screens.</br>-Improved game-specific player-stat visibility and navigation.</p>
       <p class="muted"><b>Version 2.9</b></br>-Added the Golden Table Games lobby and multi-game navigation.</br>-Kept Heads Up Hold 'Em sessions and statistics isolated by game.</p>
       <p class="muted"><b>Version 2.8</b></br>-Added shared app/game configuration for future multi-game support.</br>-Updated saved session metadata with game and schema information.</br>-Prepared local storage and session database versioning for safer future upgrades.</p>
       <p class="muted"><b>Version 2.7</b></br>-Polished the results, stats, and graph panels for desktop and mobile views.</br>-Added a last-hand detail view and improved end-of-hand flow.</p>
@@ -1509,6 +1511,7 @@
   <div class="vp-shell">
     <aside class="vp-panel">
       <h2>Jacks or Better <span class="vp-beta">Beta</span></h2>
+      <p class="mobile-setup-intro">Choose your game settings below, then tap Start Session. The play area will move into view automatically.</p>
       <div class="vp-controls">
         <label>Starting Bankroll
           <input id="vpStartingBankroll" type="number" min="1" step="1" value="500" inputmode="numeric">
@@ -1618,6 +1621,7 @@
   <div class="bj-shell">
     <aside class="bj-panel">
       <h2>Blackjack</h2>
+      <p class="mobile-setup-intro">Choose your table rules and game settings below, then tap Start Session. The table will move into view automatically.</p>
       <div class="bj-controls">
         <label>Starting Bankroll
           <input id="bjStartingBankroll" type="number" min="1" step="1" value="500" inputmode="numeric">
@@ -1645,6 +1649,8 @@
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="4">4</option>
+              <option value="6">6</option>
+              <option value="8">8</option>
             </select>
           </label>
           <label>Soft 17
@@ -1663,6 +1669,12 @@
             <select id="bjSurrenderRule" title="Surrender rule">
               <option value="no">Not allowed</option>
               <option value="yes">Allowed</option>
+            </select>
+          </label>
+          <label>Blackjack Payout
+            <select id="bjBlackjackPayout" title="Natural blackjack payout">
+              <option value="3:2">3:2</option>
+              <option value="6:5">6:5</option>
             </select>
           </label>
         </div>
@@ -1694,7 +1706,7 @@
         <summary>Rules</summary>
         <div class="sidebar-disclosure-body">
           <div class="bj-log">
-            American hole-card blackjack. Blackjack pays 3:2. Dealer peeks for blackjack. Double is allowed on any first two cards. Split to four hands. Split aces receive one card. Insurance is not offered.
+            American hole-card blackjack. A natural blackjack pays according to the selected table rule. Dealer peeks for blackjack. Double is allowed on any first two cards. Split to four hands. Split aces receive one card. Insurance is not offered.
           </div>
         </div>
       </details>
@@ -1710,7 +1722,7 @@
         <h2>Blackjack</h2>
         <div id="bjResult" class="bj-result">$0</div>
       </div>
-      <div id="bjTable" class="bj-table">
+      <div id="bjTable" class="bj-table" data-payout-label="BLACKJACK PAYS 3 TO 2">
         <div id="bjPotDealer" class="bj-seat-pot-dealer"></div>
         <div id="bjPot" class="bj-pot"></div>
         <div class="bj-lane dealer">
@@ -1795,8 +1807,8 @@
   </div>
 </div>
 
-<script src="app-config.js?v=4.0"></script>
-<script src="game-logic.js?v=4.0"></script>
+<script src="app-config.js?v=4.1"></script>
+<script src="game-logic.js?v=4.1"></script>
 <script>
 const APP_CONFIG = window.HUHEAppConfig || {};
 const APP_STORAGE = APP_CONFIG.storage || {};
@@ -3570,7 +3582,7 @@ async function saveSessionSummary(summary){
 }
 
 // List unique players from DB
-async function listPlayers(){
+async function listPlayers(gameId){
   try{
     const db = await _openSessionDB();
     return new Promise((resolve, reject)=>{
@@ -3584,8 +3596,8 @@ async function listPlayers(){
           const cur = e.target.result;
           if(cur){
             const value = cur.value || {};
-            const gameId = value.gameId || CURRENT_GAME_ID;
-            if(gameId === CURRENT_GAME_ID && !seen.has(value.player)){
+            const valueGameId = value.gameId || CURRENT_GAME_ID;
+            if((!gameId || valueGameId === gameId) && !seen.has(value.player)){
               seen.add(value.player);
               out.push(value.player);
             }
@@ -3600,7 +3612,7 @@ async function listPlayers(){
 }
 
 // Get all sessions for a player
-async function getSessions(player){
+async function getSessions(player, gameId=CURRENT_GAME_ID){
   const db = await _openSessionDB();
   return new Promise((resolve, reject)=>{
     try{
@@ -3608,7 +3620,7 @@ async function getSessions(player){
       const idx = tx.objectStore(SESSION_STORE).index(SESSION_BY_PLAYER);
       const req = idx.getAll(player);
       req.onsuccess = ()=>{
-        const arr = (Array.isArray(req.result)?req.result:[]).filter(row => (row.gameId || CURRENT_GAME_ID) === CURRENT_GAME_ID);
+        const arr = (Array.isArray(req.result)?req.result:[]).filter(row => (row.gameId || CURRENT_GAME_ID) === gameId);
         arr.sort((a,b)=> (a.sessionNo||0) - (b.sessionNo||0));
         resolve(arr);
       };
@@ -3617,7 +3629,7 @@ async function getSessions(player){
   });
 }
 
-async function deletePlayer(name){
+async function deletePlayer(name, gameId=CURRENT_GAME_ID){
   if(!name) return 0;
   const db = await _openSessionDB();
   return new Promise((resolve, reject)=>{
@@ -3632,7 +3644,7 @@ async function deletePlayer(name){
         if(cur){
           try{
             const value = cur.value || {};
-            if((value.gameId || CURRENT_GAME_ID) === CURRENT_GAME_ID){
+            if((value.gameId || CURRENT_GAME_ID) === gameId){
               cur.delete();
               removed += 1;
             }
@@ -3647,7 +3659,7 @@ async function deletePlayer(name){
 }
 
 // Open Player Stats modal for current player
-async function openStatsModal(playerOverride){
+async function openStatsModal(playerOverride, gameId=CURRENT_GAME_ID){
   const modal = document.getElementById('statsModal');
   const tbody = document.querySelector('#statsTable tbody');
   const empty = document.getElementById('statsEmpty');
@@ -3656,14 +3668,15 @@ async function openStatsModal(playerOverride){
   const statsTotalsEl = document.getElementById('statsTotals');
   const statsSessionList = document.getElementById('statsSessionList');
   const name = (playerOverride && playerOverride.trim()) || (state.playerName || localStorage.getItem(PLAYER_NAME_KEY) || '-');
-  if(meta) meta.textContent = `Player: ${name}`;
+  const gameName = APP_CONFIG.games && APP_CONFIG.games[gameId] ? APP_CONFIG.games[gameId].name : gameId;
+  if(meta) meta.textContent = `Player: ${name} · Game: ${gameName}`;
   if(tbody) tbody.innerHTML = '';
   if(statsSummaryEl) statsSummaryEl.innerHTML = '';
   if(statsTotalsEl) statsTotalsEl.innerHTML = '';
   if(statsSessionList) statsSessionList.innerHTML = '';
   if(empty) empty.style.display = 'none';
   try {
-    const rows = await getSessions(name);
+    const rows = await getSessions(name, gameId);
     if(!rows || rows.length===0){
       if(empty) empty.style.display='block';
       if(statsSummaryEl) statsSummaryEl.innerHTML = '';
@@ -3685,7 +3698,7 @@ async function openStatsModal(playerOverride){
         const pushes = Number(r.pushes||0);
         const recordStr = `${wins}-${losses}-${pushes}`;
         const totalBet = Number(r.totalBet||0);
-        const baseBet = Number(r.playAnteOddsBet||r.baseBet||0);
+        const baseBet = Number(r.playAnteOddsBet||r.baseBet||(gameId === 'blackjack' ? r.totalBet : 0)||0);
         const tripsBet = Number(r.tripsBet||0);
         const pocketBet = Number(r.pocketBet||0);
         const playProfit = Number(r.playProfit||0);
@@ -3693,7 +3706,7 @@ async function openStatsModal(playerOverride){
         const pocketProfit = Number(r.pocketProfit||0);
         const profitVal = Number(r.profit||0);
         const hypoVal = Number(r.hypoProfit||0);
-        const followedVal = Number(r.wooFollowed||0);
+        const followedVal = Number(r.wooFollowed ?? r.followed ?? 0);
         const handsVal = Number(r.hands||0);
         totalHands += handsVal;
         totalTotalBet += totalBet;
@@ -3707,7 +3720,7 @@ async function openStatsModal(playerOverride){
         totalFollowed += followedVal;
         totalHypo += hypoVal;
         totalWins += wins; totalLosses += losses; totalPushes += pushes;
-        const bestLabelSession = r.bestHandLabel || '-';
+        const bestLabelSession = r.bestHandLabel || r.bestHand || '-';
         const bestCountSession = Number(r.bestHandCount||0) || (bestLabelSession && bestLabelSession !== '-' ? 1 : 0);
         if(bestLabelSession){ bestCounter[bestLabelSession] = (bestCounter[bestLabelSession]||0) + bestCountSession; }
         const tr = document.createElement('tr');
@@ -3728,7 +3741,7 @@ async function openStatsModal(playerOverride){
           <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(pocketProfit)}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">${followedVal} / ${handsVal||0}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">${fmt(hypoVal)}</td>
-          <td style="padding:6px; border-bottom:1px solid #24365d;">${(r.bestHandLabel||'-')} ${bestCountSession>0?("x "+bestCountSession):""}</td>`;
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${bestLabelSession} ${bestCountSession>0?("x "+bestCountSession):""}</td>`;
         frag.appendChild(tr);
         const card = document.createElement('div');
         card.className = 'stats-session-card';
@@ -3745,7 +3758,7 @@ async function openStatsModal(playerOverride){
             <div class="session-detail"><div class="session-label">Record</div><div class="session-value">${recordStr}</div></div>
             <div class="session-detail"><div class="session-label">Bank</div><div class="session-value">$${r.startBank||0} to $${r.endBank||0}</div></div>
             <div class="session-detail"><div class="session-label">Followed</div><div class="session-value">${followedVal}/${handsVal||0}</div></div>
-            <div class="session-detail"><div class="session-label">Best Hand</div><div class="session-value">${(r.bestHandLabel||'-')} ${bestCountSession>0?("x "+bestCountSession):""}</div></div>
+            <div class="session-detail"><div class="session-label">Best Hand</div><div class="session-value">${bestLabelSession} ${bestCountSession>0?("x "+bestCountSession):""}</div></div>
             <div class="session-detail"><div class="session-label">Total Bet</div><div class="session-value">${formatCurrency(totalBet)}</div></div>
             <div class="session-detail"><div class="session-label">Play Profit</div><div class="session-value">${fmt(playProfit)}</div></div>
             <div class="session-detail"><div class="session-label">Side Bets</div><div class="session-value">Trips ${fmt(tripsProfit)} / Pocket ${fmt(pocketProfit)}</div></div>
@@ -4901,6 +4914,7 @@ async function logSessionAndReset(options){
   }
   function vpRender(){
     vpRenderGameChrome();
+    document.getElementById('videoPokerScreen')?.classList.toggle('session-started', vp.started);
     if(vpEls.bank) vpEls.bank.textContent = vpMoney(vp.bank);
     if(vpEls.profit) vpEls.profit.textContent = vpMoney(vp.bank - vp.startBank);
     if(vpEls.hands) vpEls.hands.textContent = String(vp.hands);
@@ -4932,6 +4946,9 @@ async function logSessionAndReset(options){
     if(vpEls.log) vpEls.log.textContent = '';
     vpLog(vpGame().startLog);
     vpRender();
+    if(window.matchMedia('(max-width: 900px)').matches){
+      requestAnimationFrame(()=>document.querySelector('#videoPokerScreen .vp-table')?.scrollIntoView({block:'start'}));
+    }
   }
   function vpDeal(){
     if(vp.busy) return;
@@ -5118,16 +5135,18 @@ async function logSessionAndReset(options){
   function bjFace(c){ return RANKS[c%13] + ({c:'♣',d:'♦',h:'♥',s:'♠'}[SUITS[Math.floor(c/13)]]); }
   function bjShuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
   function bjReadRules(){
+    const selectedDecks = Number(bjEls.decks?.value);
     return {
       csm: bjEls.csm?.value === 'yes',
-      decks: Math.max(1, Number(bjEls.decks?.value)||4),
+      decks: [1,2,4,6,8].includes(selectedDecks) ? selectedDecks : 4,
       soft17: bjEls.soft17?.value === 'hit' ? 'hit' : 'stand',
       das: bjEls.das?.value !== 'no',
-      surrender: bjEls.surrender?.value === 'yes'
+      surrender: bjEls.surrender?.value === 'yes',
+      blackjackPayout: bjEls.blackjackPayout?.value === '6:5' ? '6:5' : '3:2'
     };
   }
   function bjRuleLabel(r=bj.rules || bjReadRules()){
-    return `${r.csm?'CSM':'Shoe'} / ${r.decks}D / ${r.soft17==='hit'?'H17':'S17'} / ${r.das?'DAS':'No DAS'} / ${r.surrender?'LS':'No surrender'}`;
+    return `${r.csm?'CSM':'Shoe'} / ${r.decks}D / ${r.soft17==='hit'?'H17':'S17'} / ${r.das?'DAS':'No DAS'} / ${r.surrender?'LS':'No surrender'} / BJ ${r.blackjackPayout || '3:2'}`;
   }
   function bjHouseEdge(r=bjReadRules()){
     let edge = 0.43;
@@ -5137,6 +5156,7 @@ async function logSessionAndReset(options){
     if(!r.das) edge += 0.14;
     if(!r.surrender) edge += 0.08;
     if(r.csm) edge -= 0.02;
+    if(r.blackjackPayout === '6:5') edge += 1.39;
     return Math.max(0.05, edge);
   }
   function bjHand(cards){ return {cards:cards||[], bet:bj.bet, status:'active', doubled:false, split:false, splitAces:false, result:null}; }
@@ -5228,7 +5248,7 @@ async function logSessionAndReset(options){
     bjEls.log.prepend(div);
   }
   function bjSetRuleInputsLocked(locked){
-    ['startBank','csm','decks','soft17','das','surrender'].forEach(key=>{ if(bjEls[key]) bjEls[key].disabled = !!locked; });
+    ['startBank','csm','decks','soft17','das','surrender','blackjackPayout'].forEach(key=>{ if(bjEls[key]) bjEls[key].disabled = !!locked; });
     if(bjEls.ruleOptions) bjEls.ruleOptions.hidden = !!locked;
   }
   function bjUpdateHouseEdge(){
@@ -5236,6 +5256,7 @@ async function logSessionAndReset(options){
     if(bjEls.houseEdge) bjEls.houseEdge.textContent = `${bjHouseEdge(r).toFixed(2)}%`;
     if(bjEls.houseEdgeNote) bjEls.houseEdgeNote.textContent = `${bjRuleLabel(r)}. Estimate for Wizard-style total-dependent basic strategy.`;
     if(bjEls.rulesStat) bjEls.rulesStat.textContent = r.soft17 === 'hit' ? 'H17' : 'S17';
+    if(bjEls.table) bjEls.table.dataset.payoutLabel = `BLACKJACK PAYS ${r.blackjackPayout === '6:5' ? '6 TO 5' : '3 TO 2'}`;
   }
   function bjActionText(action){
     return {hit:'Hit', stand:'Stand', double:'Double', split:'Split', surrender:'Surrender'}[action] || '-';
@@ -5366,6 +5387,7 @@ async function logSessionAndReset(options){
   }
   function bjRender(){
     bjUpdateHouseEdge();
+    document.getElementById('blackjackScreen')?.classList.toggle('session-started', bj.started);
     if(bjEls.bank) bjEls.bank.textContent = bjMoney(bj.bank);
     if(bjEls.profit) bjEls.profit.textContent = bjMoney(bj.bank - bj.startBank);
     if(bjEls.handsStat) bjEls.handsStat.textContent = String(bj.handsPlayed);
@@ -5428,6 +5450,9 @@ async function logSessionAndReset(options){
     if(bjEls.log) bjEls.log.textContent = '';
     bjLog(`Started Blackjack session: ${bjRuleLabel(bj.rules)}.`);
     bjRender();
+    if(window.matchMedia('(max-width: 900px)').matches){
+      requestAnimationFrame(()=>document.querySelector('#blackjackScreen .bj-table-wrap')?.scrollIntoView({block:'start'}));
+    }
   }
   function bjFinalizeHand(net, label){
     bj.bank += net;
@@ -5441,7 +5466,7 @@ async function logSessionAndReset(options){
     bjRender();
   }
   async function bjInitialBlackjackCheck(){
-    const outcome = HUHELogic.blackjackNaturalOutcome(bj.hands[0], bj.dealer, bj.bet);
+    const outcome = HUHELogic.blackjackNaturalOutcome(bj.hands[0], bj.dealer, bj.bet, bj.rules?.blackjackPayout);
     if(!outcome) return false;
     bj.stage = 'dealer';
     bj.busy = true;
@@ -5648,7 +5673,7 @@ async function logSessionAndReset(options){
       followed: bj.followed,
       decisions: bj.decisions,
       bestHand: '-',
-      notes: `Blackjack 1.0. Rules: ${bjRuleLabel(bj.rules)}. House edge estimate ${bjHouseEdge(bj.rules).toFixed(2)}%.`
+      notes: `Blackjack ${APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.1'}. Rules: ${bjRuleLabel(bj.rules)}. House edge estimate ${bjHouseEdge(bj.rules).toFixed(2)}%.`
     };
     try{ await saveSessionSummary(summary); bjLog('Session saved.'); }catch(e){ bjLog('Unable to save session.'); }
   }
@@ -5743,6 +5768,7 @@ async function logSessionAndReset(options){
     bjEls.soft17 = document.getElementById('bjSoft17');
     bjEls.das = document.getElementById('bjDas');
     bjEls.surrender = document.getElementById('bjSurrenderRule');
+    bjEls.blackjackPayout = document.getElementById('bjBlackjackPayout');
     bjEls.cardStyle = document.getElementById('bjCardStyle');
     bjEls.showAdvice = document.getElementById('bjShowAdvice');
     bjEls.correct = document.getElementById('bjCorrectMistakes');
@@ -5809,7 +5835,7 @@ async function logSessionAndReset(options){
       document.getElementById('splashOverlay').style.display='flex';
       document.body.classList.add('splash-open');
     });
-    ['csm','decks','soft17','das','surrender'].forEach(key=>bjEls[key]?.addEventListener('change', bjRender));
+    ['csm','decks','soft17','das','surrender','blackjackPayout'].forEach(key=>bjEls[key]?.addEventListener('change', bjRender));
     bjEls.showAdvice?.addEventListener('change', bjRender);
     bjEls.cardStyle?.addEventListener('change', (e)=>{
       setCardStyle(e.target.value);
@@ -5822,7 +5848,8 @@ async function logSessionAndReset(options){
   }
   window.blackjackInit = function(){ bjBind(); bjRender(); };
   window.openBlackjackRules = function(){
-    alert('Blackjack 1.0\n\nAmerican hole-card blackjack. Dealer peeks for blackjack. Blackjack pays 3:2. Double is allowed on any first two cards. Split to four hands. Split aces receive one card. Insurance is not offered. Session rule options lock when the session starts.');
+    const version = APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.1';
+    alert(`Blackjack ${version}\n\nAmerican hole-card blackjack. Dealer peeks for blackjack. A natural blackjack pays according to the selected 3:2 or 6:5 rule. Double is allowed on any first two cards. Split to four hands. Split aces receive one card. Insurance is not offered. Session rule options lock when the session starts.`);
   };
   window.openBlackjackStrategy = function(){
     if(!bj.bound) bjBind();
@@ -6015,16 +6042,19 @@ async function logSessionAndReset(options){
   function closeRules(){ if(rules){ rules.style.display="none"; } }
   const gameReleaseNotes = {
     [VIDEO_POKER_GAME_ID]: [
+      ['0.4', ['Moved game settings above the play area before a mobile session starts.', 'Refined shared lobby artwork, branding, and version presentation.']],
       ['0.3', ['Added full Jacks or Better strategy guidance and the Wizard simple-strategy explanation.', 'Improved session statistics, card controls, and mobile layout.']],
       ['0.2', ['Added hold advice, expected-value comparisons, and bankroll tracking.']],
       ['0.1', ['Initial Jacks or Better beta release.']]
     ],
     [DEUCES_WILD_GAME_ID]: [
+      ['0.4', ['Moved game settings above the play area before a mobile session starts.', 'Refined shared lobby artwork, branding, and version presentation.']],
       ['0.3', ['Added the 20/12/9/5/3/2 pay table and Deuces Wild strategy guidance.', 'Improved session statistics, card controls, and mobile layout.']],
       ['0.2', ['Added wild-card hand evaluation and hold advice.']],
       ['0.1', ['Initial Deuces Wild beta release.']]
     ],
     [BLACKJACK_GAME_ID]: [
+      ['1.1', ['Fixed player-stat queries so saved Blackjack sessions appear under the selected player.', 'Moved mobile setup above the table before play and refined the shared game lobby.']],
       ['1.0', ['Promoted Blackjack from beta after rules, settlement, strategy, bankroll, and session-exit hardening.', 'Added compact split-hand presentation, context-aware controls, responsive lobby polish, and automated Blackjack regression coverage.']],
       ['0.3', ['Condensed split hands and action controls for mobile play.', 'Hardened wager validation, session exits, payouts, dealer rules, and surrender strategy with automated Blackjack regression tests.']],
       ['0.2', ['Kept dealer and player cards on a single row with responsive overlapping card stacks.', 'Improved Blackjack hand readability on narrow screens and for hands with several cards.']],
@@ -6058,7 +6088,7 @@ async function logSessionAndReset(options){
   }
   function closeVersion(){ if(version){ version.style.display="none"; } }
   async function _openStatsModal_local(playerOverride){
-    return openStatsModal(playerOverride);
+    return openStatsModal(playerOverride, selectedGameId);
   }
 
   if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", openSplash); } else { openSplash(); }
@@ -6115,11 +6145,12 @@ async function logSessionAndReset(options){
     try{
       const selected = playerSel ? playerSel.value : '';
       if(!selected) return;
-      if(typeof window !== 'undefined' && !window.confirm(`Delete player sessions for "${selected}"? This will remove all saved sessions.`)){ return; }
+      const selectedGameName = APP_CONFIG.games && APP_CONFIG.games[selectedGameId] ? APP_CONFIG.games[selectedGameId].name : selectedGameId;
+      if(typeof window !== 'undefined' && !window.confirm(`Delete ${selectedGameName} sessions for "${selected}"?`)){ return; }
       if(playerErr) playerErr.textContent='';
       if(playerViewStats) playerViewStats.disabled = true;
       playerDeleteBtn.disabled = true;
-      await deletePlayer(selected);
+      await deletePlayer(selected, selectedGameId);
       try{
         const stored = (localStorage.getItem(PLAYER_NAME_KEY)||'').trim();
         if(stored === selected){ localStorage.removeItem(PLAYER_NAME_KEY); }
@@ -6153,7 +6184,7 @@ async function logSessionAndReset(options){
   });
 })();
 </script>
-<script src="app.js?v=4.0" defer></script>
+<script src="app.js?v=4.1" defer></script>
 </body>
 </html>
 

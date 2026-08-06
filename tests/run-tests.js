@@ -32,17 +32,17 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '4.0');
-  assert.equal(appConfig.cacheVersion, 'v4.0');
+  assert.equal(appConfig.appVersion, '4.1');
+  assert.equal(appConfig.cacheVersion, 'v4.1');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
-  assert.equal(appConfig.games[appConfig.currentGameId].version, '2.9');
-  assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.3');
+  assert.equal(appConfig.games[appConfig.currentGameId].version, '2.10');
+  assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.4');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
-  assert.equal(appConfig.games.blackjack.version, '1.0');
+  assert.equal(appConfig.games.blackjack.version, '1.1');
   assert.equal(appConfig.games.blackjack.status, undefined);
-  assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.3');
+  assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.4');
   assert.equal(appConfig.games['video-poker-deuces-wild'].status, 'beta');
 
   const summary = appConfig.normalizeSessionSummary({player:'Ada', profit:25});
@@ -71,12 +71,49 @@ test('lobby consolidates video poker variants behind one selector', () => {
 });
 
 test('runtime scripts are cache-busted to prevent mixed app versions', () => {
-  assert.match(indexSource, /app-config\.js\?v=4\.0/);
-  assert.match(indexSource, /game-logic\.js\?v=4\.0/);
-  assert.match(indexSource, /app\.js\?v=4\.0/);
+  assert.match(indexSource, /app-config\.js\?v=4\.1/);
+  assert.match(indexSource, /game-logic\.js\?v=4\.1/);
+  assert.match(indexSource, /app\.js\?v=4\.1/);
   const workerSource = fs.readFileSync(path.join(__dirname, '..', 'service-worker.js'), 'utf8');
   assert.match(workerSource, /NETWORK_FIRST_ASSETS/);
   assert.match(workerSource, /game-logic\.js/);
+});
+
+test('blackjack offers each supported physical shoe size', () => {
+  const select = indexSource.match(/<select id="bjDecks"[\s\S]*?<\/select>/)?.[0] || '';
+  for(const decks of [1, 2, 4, 6, 8]){
+    assert.match(select, new RegExp(`<option value="${decks}">${decks}<\\/option>`));
+  }
+  assert.match(indexSource, /\[1,2,4,6,8\]\.includes\(selectedDecks\)/);
+});
+
+test('blackjack offers 3:2 and 6:5 natural payout rules', () => {
+  const select = indexSource.match(/<select id="bjBlackjackPayout"[\s\S]*?<\/select>/)?.[0] || '';
+  assert.match(select, /<option value="3:2">3:2<\/option>/);
+  assert.match(select, /<option value="6:5">6:5<\/option>/);
+});
+
+test('player stats queries use the selected game so blackjack sessions remain visible', () => {
+  assert.match(indexSource, /async function getSessions\(player, gameId=CURRENT_GAME_ID\)/);
+  assert.match(indexSource, /openStatsModal\(playerOverride, selectedGameId\)/);
+  assert.match(indexSource, /deletePlayer\(selected, selectedGameId\)/);
+  assert.match(indexSource, /\(row\.gameId \|\| CURRENT_GAME_ID\) === gameId/);
+});
+
+test('mobile game setup appears before play and moves below after session start', () => {
+  assert.match(indexSource, /\.vp-panel\{order:0;\}/);
+  assert.match(indexSource, /\.bj-panel\{order:0;\}/);
+  assert.match(indexSource, /\.vp-screen\.session-started \.vp-panel\{order:2;\}/);
+  assert.match(indexSource, /\.bj-screen\.session-started \.bj-panel\{order:2;\}/);
+  assert.match(indexSource, /classList\.toggle\('session-started', vp\.started\)/);
+  assert.match(indexSource, /classList\.toggle\('session-started', bj\.started\)/);
+});
+
+test('lobby artwork keeps card ranks and suits contained and uses the simplified brand emblem', () => {
+  assert.match(indexSource, /class="brand-emblem"/);
+  assert.doesNotMatch(indexSource, /class="brand-chip"/);
+  assert.match(indexSource, /class="lobby-card-rank">10<\/span><span class="lobby-card-suit">♠/);
+  assert.match(indexSource, /\.lobby-mini-card\{[^}]*overflow:hidden;/);
 });
 
 test('blackjack totals handle soft hands and multiple aces', () => {
@@ -129,6 +166,7 @@ test('blackjack surrender strategy distinguishes soft totals, pairs, S17, and H1
 test('blackjack natural payouts return the original wager plus winnings', () => {
   const natural = {cards:[card('A','c'), card('K','d')], split:false};
   assert.deepEqual(logic.blackjackNaturalOutcome(natural, [card('9','c'), card('7','d')], 10), {returned:25, net:15, label:'Blackjack pays 3:2'});
+  assert.deepEqual(logic.blackjackNaturalOutcome(natural, [card('9','c'), card('7','d')], 10, '6:5'), {returned:22, net:12, label:'Blackjack pays 6:5'});
   assert.deepEqual(logic.blackjackNaturalOutcome(natural, [card('A','h'), card('T','s')], 10), {returned:10, net:0, label:'Blackjack push'});
   assert.deepEqual(logic.blackjackNaturalOutcome({cards:[card('T','c'), card('9','d')], split:false}, [card('A','h'), card('T','s')], 10), {returned:0, net:-10, label:'Dealer blackjack'});
 });

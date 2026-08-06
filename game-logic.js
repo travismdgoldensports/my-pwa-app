@@ -565,12 +565,16 @@
     if(total.total === 9) return {action:([3,4,5,6].includes(up) ? doubleOrHit() : 'hit'), why:'Double hard 9 against 3 through 6.'};
     return {action:'hit', why:'Hit hard 8 or less.'};
   }
-  function blackjackNaturalOutcome(playerHand, dealerCards, bet){
+  function blackjackNaturalOutcome(playerHand, dealerCards, bet, blackjackPayout='3:2'){
     const playerNatural = blackjackIsNatural(playerHand);
     const dealerNatural = blackjackIsNatural({cards:dealerCards || [], split:false});
     if(!playerNatural && !dealerNatural) return null;
     if(playerNatural && dealerNatural) return {returned:bet, net:0, label:'Blackjack push'};
-    if(playerNatural) return {returned:bet * 2.5, net:bet * 1.5, label:'Blackjack pays 3:2'};
+    if(playerNatural){
+      const payout = blackjackPayout === '6:5' ? 1.2 : 1.5;
+      const label = blackjackPayout === '6:5' ? 'Blackjack pays 6:5' : 'Blackjack pays 3:2';
+      return {returned:bet * (1 + payout), net:bet * payout, label};
+    }
     return {returned:0, net:-bet, label:'Dealer blackjack'};
   }
   function blackjackSettleHand(hand, dealerCards){
