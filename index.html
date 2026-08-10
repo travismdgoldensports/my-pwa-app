@@ -952,7 +952,7 @@
         <span>
           <span class="lobby-game-name">Heads Up Hold 'Em</span>
           <span class="lobby-game-meta">Poker table game with strategy tracking, session stats, and bankroll graph.</span>
-          <span class="lobby-game-version" id="splashVersion">Heads Up v2.10</span>
+          <span class="lobby-game-version" id="splashVersion">Heads Up v2.11</span>
         </span>
         <span class="lobby-game-status">Ready</span>
         <span class="lobby-game-actions">
@@ -970,7 +970,7 @@
         <span>
           <span class="lobby-game-name">Video Poker</span>
           <span class="lobby-game-meta">Choose Jacks or Better or Deuces Wild with optimal hold advice and bankroll tracking.</span>
-          <span class="lobby-game-version" id="videoPokerLobbyVersionText">Jacks or Better v0.4 beta</span>
+          <span class="lobby-game-version" id="videoPokerLobbyVersionText">Jacks or Better v0.5 beta</span>
         </span>
         <span class="lobby-game-status beta">Beta</span>
         <span class="lobby-variant-row">
@@ -995,7 +995,7 @@
         <span>
           <span class="lobby-game-name">Blackjack</span>
           <span class="lobby-game-meta">Blackjack trainer with configurable rules, basic strategy, shoe tracking, and chip settlement.</span>
-          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v1.1</span>
+          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v1.2</span>
         </span>
         <span class="lobby-game-status">Ready</span>
         <span class="lobby-game-actions">
@@ -1387,6 +1387,7 @@
     <div class="close-row"><button id="versionClose">Close</button></div>
     <h3 id="versionTitle">Version Info</h3>
     <div class="woo-content" id="versionContent">
+      <p class="muted"><b>Version 2.11</b></br>-Saved game and wager settings separately for each player.</br>-Restored each player's latest setup when they return to the game.</p>
       <p class="muted"><b>Version 2.10</b></br>-Refined the Golden Table Games lobby branding and game artwork for mobile screens.</br>-Improved game-specific player-stat visibility and navigation.</p>
       <p class="muted"><b>Version 2.9</b></br>-Added the Golden Table Games lobby and multi-game navigation.</br>-Kept Heads Up Hold 'Em sessions and statistics isolated by game.</p>
       <p class="muted"><b>Version 2.8</b></br>-Added shared app/game configuration for future multi-game support.</br>-Updated saved session metadata with game and schema information.</br>-Prepared local storage and session database versioning for safer future upgrades.</p>
@@ -1807,8 +1808,8 @@
   </div>
 </div>
 
-<script src="app-config.js?v=4.1"></script>
-<script src="game-logic.js?v=4.1"></script>
+<script src="app-config.js?v=4.2"></script>
+<script src="game-logic.js?v=4.2"></script>
 <script>
 const APP_CONFIG = window.HUHEAppConfig || {};
 const APP_STORAGE = APP_CONFIG.storage || {};
@@ -1987,7 +1988,98 @@ const state={
 
 function updateBank(){el('bankVal').textContent=Math.round(Number(state.bank)||0).toLocaleString('en-US')}
 const PLAYER_NAME_KEY = LOCAL_STORAGE_KEYS.playerName || 'huhe.playerName';
+const PLAYER_GAME_SETTINGS_KEY = LOCAL_STORAGE_KEYS.playerGameSettings || 'huhe.playerGameSettings';
 const CARD_STYLE_KEY = LOCAL_STORAGE_KEYS.cardStyle || 'huhe.cardStyle';
+const PLAYER_GAME_SETTING_FIELDS = {
+  [CURRENT_GAME_ID]: [
+    ['bankroll','value'], ['ante','value'], ['trips','value'], ['pocket','value'],
+    ['cardStyle','value'], ['togglePlayerHand','checked'], ['toggleAdvice','checked'], ['toggleCorrectMistakes','checked']
+  ],
+  'video-poker-jacks-or-better': [
+    ['vpStartingBankroll','value'], ['vpBet','value'], ['vpCardStyle','value'], ['vpShowAdvice','checked'], ['vpCorrectMistakes','checked']
+  ],
+  'video-poker-deuces-wild': [
+    ['vpStartingBankroll','value'], ['vpBet','value'], ['vpCardStyle','value'], ['vpShowAdvice','checked'], ['vpCorrectMistakes','checked']
+  ],
+  blackjack: [
+    ['bjStartingBankroll','value'], ['bjBet','value'], ['bjCsm','value'], ['bjDecks','value'],
+    ['bjSoft17','value'], ['bjDas','value'], ['bjSurrenderRule','value'], ['bjBlackjackPayout','value'],
+    ['bjCardStyle','value'], ['bjShowAdvice','checked'], ['bjCorrectMistakes','checked']
+  ]
+};
+const PLAYER_GAME_DEFAULT_SETTINGS = Object.fromEntries(Object.entries(PLAYER_GAME_SETTING_FIELDS).map(([gameId,fields])=>[
+  gameId,
+  Object.fromEntries(fields.map(([id,property])=>[id,document.getElementById(id)?.[property]]))
+]));
+function readPlayerGameSettingsStore(){
+  try{
+    const stored = JSON.parse(localStorage.getItem(PLAYER_GAME_SETTINGS_KEY) || '{}');
+    return stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
+  }catch(e){ return {}; }
+}
+function activeSettingsPlayer(){
+  return String(state.playerName && state.playerName !== '-' ? state.playerName : '').trim();
+}
+function playerSettingsStorageId(playerName){ return encodeURIComponent(String(playerName || '').trim()); }
+function savePlayerGameSettings(gameId, playerName=activeSettingsPlayer()){
+  const player = String(playerName || '').trim();
+  const fields = PLAYER_GAME_SETTING_FIELDS[gameId];
+  if(!player || !fields) return false;
+  const settings = {};
+  fields.forEach(([id,property])=>{
+    const input = document.getElementById(id);
+    if(input) settings[id] = input[property];
+  });
+  const store = readPlayerGameSettingsStore();
+  const playerId = playerSettingsStorageId(player);
+  const playerSettings = Object.prototype.hasOwnProperty.call(store,playerId) && store[playerId] && typeof store[playerId] === 'object' ? store[playerId] : {};
+  playerSettings[gameId] = {settings, updatedAt:new Date().toISOString()};
+  store[playerId] = playerSettings;
+  try{ localStorage.setItem(PLAYER_GAME_SETTINGS_KEY, JSON.stringify(store)); return true; }catch(e){ return false; }
+}
+function restorePlayerGameSettings(gameId, playerName){
+  const player = String(playerName || '').trim();
+  const fields = PLAYER_GAME_SETTING_FIELDS[gameId];
+  const saved = readPlayerGameSettingsStore()[playerSettingsStorageId(player)]?.[gameId]?.settings;
+  if(!player || !fields) return false;
+  const settings = Object.assign({}, PLAYER_GAME_DEFAULT_SETTINGS[gameId], saved && typeof saved === 'object' ? saved : {});
+  fields.forEach(([id,property])=>{
+    const input = document.getElementById(id);
+    if(!input || !Object.prototype.hasOwnProperty.call(settings,id)) return;
+    if(property === 'checked') input.checked = !!settings[id];
+    else input.value = String(settings[id]);
+  });
+  const styleId = gameId === CURRENT_GAME_ID ? 'cardStyle' : gameId === 'blackjack' ? 'bjCardStyle' : 'vpCardStyle';
+  const styleInput = document.getElementById(styleId);
+  if(styleInput) setCardStyle(styleInput.value);
+  if(gameId === CURRENT_GAME_ID){
+    state.showPlayerHand = !!document.getElementById('togglePlayerHand')?.checked;
+    state.showAdvice = !!document.getElementById('toggleAdvice')?.checked;
+    state.correctMistakes = !!document.getElementById('toggleCorrectMistakes')?.checked;
+    if(state.hands === 0){
+      const restoredBank = Math.max(0, Math.floor(Number(document.getElementById('bankroll')?.value) || 0));
+      state.bank = restoredBank;
+      state.sessionStartBank = restoredBank;
+      state.bankHistory = [restoredBank];
+      updateBank();
+    }
+  }
+  return !!saved;
+}
+const boundPlayerSettingInputs = new Set();
+Object.entries(PLAYER_GAME_SETTING_FIELDS).forEach(([gameId,fields])=>{
+  fields.forEach(([id,property])=>{
+    const input = document.getElementById(id);
+    if(!input || boundPlayerSettingInputs.has(id)) return;
+    boundPlayerSettingInputs.add(id);
+    const saveCurrentSettings = ()=>{
+      const activeGameId = id.startsWith('vp') && window.getActiveVideoPokerGameId ? window.getActiveVideoPokerGameId() : gameId;
+      savePlayerGameSettings(activeGameId);
+    };
+    input.addEventListener(property === 'checked' ? 'change' : 'input', saveCurrentSettings);
+    if(property === 'value' && input.tagName === 'SELECT') input.addEventListener('change', saveCurrentSettings);
+  });
+});
 function setCardStyle(value){
   const style = value === 'simple' ? 'simple' : 'typical';
   state.cardStyle = style;
@@ -2673,6 +2765,7 @@ function clearBetChips(){ Object.values(betChips).forEach(arr=>{ arr.forEach(el=
 function newHand(){
   if(chipSettlementInProgress) return;
   if(!(state.stage==='waiting'||state.stage==='complete'||state.stage==='showdown')) return;
+  savePlayerGameSettings(CURRENT_GAME_ID);
   state.ante=Number(el('ante').value)||0; state.trips=Number(el('trips').value)||0; state.pocket=Number(el('pocket').value)||0;
   const needed=state.ante*2+state.trips+state.pocket; if(state.bank<needed){alert("Not enough bank for Ante+Blind+Trips+Pocket.");return;}
   if(state.hands===0){ state.sessionStartBank = state.bank; if(!state.sessionStartTs) state.sessionStartTs=Date.now(); }
@@ -3662,6 +3755,7 @@ async function deletePlayer(name, gameId=CURRENT_GAME_ID){
 async function openStatsModal(playerOverride, gameId=CURRENT_GAME_ID){
   const modal = document.getElementById('statsModal');
   const tbody = document.querySelector('#statsTable tbody');
+  const thead = document.querySelector('#statsTable thead');
   const empty = document.getElementById('statsEmpty');
   const meta = document.getElementById('statsMeta');
   const statsSummaryEl = document.getElementById('statsSummary');
@@ -3669,6 +3763,24 @@ async function openStatsModal(playerOverride, gameId=CURRENT_GAME_ID){
   const statsSessionList = document.getElementById('statsSessionList');
   const name = (playerOverride && playerOverride.trim()) || (state.playerName || localStorage.getItem(PLAYER_NAME_KEY) || '-');
   const gameName = APP_CONFIG.games && APP_CONFIG.games[gameId] ? APP_CONFIG.games[gameId].name : gameId;
+  const isBlackjackStats = gameId === 'blackjack';
+  if(thead){
+    if(!thead.dataset.defaultHtml) thead.dataset.defaultHtml = thead.innerHTML;
+    thead.innerHTML = isBlackjackStats ? `
+      <tr style="text-align:left; color:#b6c6ea;">
+        <th style="padding:3px; border-bottom:1px solid #24365d;">#</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">Start</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">Start Bank</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">End Bank</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">Rounds</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">Round Record</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">Amount Wagered</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">Profit</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">Return on Wagers</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">Avg / Round</th>
+        <th style="padding:3px; border-bottom:1px solid #24365d;">Strategy Accuracy</th>
+      </tr>` : thead.dataset.defaultHtml;
+  }
   if(meta) meta.textContent = `Player: ${name} · Game: ${gameName}`;
   if(tbody) tbody.innerHTML = '';
   if(statsSummaryEl) statsSummaryEl.innerHTML = '';
@@ -3686,11 +3798,18 @@ async function openStatsModal(playerOverride, gameId=CURRENT_GAME_ID){
       if(empty) empty.style.display='none';
       const fmtDT = (ts)=>{ try{ return new Date(ts).toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'numeric', minute:'numeric' }); }catch(e){ return '-' ; } };
       const formatPercent = (value, denom)=> denom>0 ? `${((value/denom)*100).toFixed(1)}%` : '0.0%';
+      const statsMoney = (value)=>{
+        if(!isBlackjackStats) return formatCurrency(value);
+        const amount = Math.round((Number(value)||0) * 100) / 100;
+        const abs = Math.abs(amount);
+        const display = abs % 1 ? abs.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : Math.round(abs).toLocaleString('en-US');
+        return amount < 0 ? `$(${display})` : `$${display}`;
+      };
       const labelRank = { 'Royal Flush':9, 'Straight Flush':8, 'Four Kind':7, 'Full House':6, 'Flush':5, 'Straight':4, 'Three Kind':3, 'Two Pair':2, 'One Pair':1, 'High Card':0 };
       const frag = document.createDocumentFragment();
       const cardFrag = document.createDocumentFragment();
       let totalSessions = rows.length;
-      let totalHands=0,totalProfit=0,totalBaseBet=0,totalTripsBet=0,totalPocketBet=0,totalTotalBet=0,totalFollowed=0,totalHypo=0,totalWins=0,totalLosses=0,totalPushes=0,totalPlayProfit=0,totalTripsProfit=0,totalPocketProfit=0;
+      let totalHands=0,totalProfit=0,totalBaseBet=0,totalTripsBet=0,totalPocketBet=0,totalTotalBet=0,totalFollowed=0,totalDecisions=0,totalHypo=0,totalWins=0,totalLosses=0,totalPushes=0,totalPlayProfit=0,totalTripsProfit=0,totalPocketProfit=0;
       const bestCounter = {};
       rows.forEach(r=>{
         const wins = Number(r.wins||0);
@@ -3704,9 +3823,11 @@ async function openStatsModal(playerOverride, gameId=CURRENT_GAME_ID){
         const playProfit = Number(r.playProfit||0);
         const tripsProfit = Number(r.tripsProfit||0);
         const pocketProfit = Number(r.pocketProfit||0);
-        const profitVal = Number(r.profit||0);
+        const storedProfit = r.profit ?? r.totalProfit;
+        const profitVal = storedProfit !== undefined && storedProfit !== null ? Number(storedProfit)||0 : Number(r.endBank||0) - Number(r.startBank||0);
         const hypoVal = Number(r.hypoProfit||0);
         const followedVal = Number(r.wooFollowed ?? r.followed ?? 0);
+        const decisionsVal = Number(r.decisions ?? (isBlackjackStats ? r.hands : 0) ?? 0);
         const handsVal = Number(r.hands||0);
         totalHands += handsVal;
         totalTotalBet += totalBet;
@@ -3718,13 +3839,25 @@ async function openStatsModal(playerOverride, gameId=CURRENT_GAME_ID){
         totalTripsProfit += tripsProfit;
         totalPocketProfit += pocketProfit;
         totalFollowed += followedVal;
+        totalDecisions += decisionsVal;
         totalHypo += hypoVal;
         totalWins += wins; totalLosses += losses; totalPushes += pushes;
         const bestLabelSession = r.bestHandLabel || r.bestHand || '-';
         const bestCountSession = Number(r.bestHandCount||0) || (bestLabelSession && bestLabelSession !== '-' ? 1 : 0);
         if(bestLabelSession){ bestCounter[bestLabelSession] = (bestCounter[bestLabelSession]||0) + bestCountSession; }
         const tr = document.createElement('tr');
-        tr.innerHTML = `
+        tr.innerHTML = isBlackjackStats ? `
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${r.sessionNo||'-'}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionStart)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${statsMoney(Number(r.startBank||0))}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${statsMoney(Number(r.endBank||0))}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${handsVal}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${recordStr}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${statsMoney(totalBet)}</td>
+          <td class="${profitVal>0?'win':profitVal<0?'loss':'push'}" style="padding:6px; border-bottom:1px solid #24365d;">${statsMoney(profitVal)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${formatPercent(profitVal,totalBet)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${statsMoney(handsVal ? profitVal/handsVal : 0)}</td>
+          <td style="padding:6px; border-bottom:1px solid #24365d;">${followedVal}/${decisionsVal} (${formatPercent(followedVal,decisionsVal)})</td>` : `
           <td style="padding:6px; border-bottom:1px solid #24365d;">${r.sessionNo||'-'}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d; white-space:nowrap;">${fmtDT(r.sessionStart)}</td>
           <td style="padding:6px; border-bottom:1px solid #24365d;">$${r.startBank||0}</td>
@@ -3745,7 +3878,23 @@ async function openStatsModal(playerOverride, gameId=CURRENT_GAME_ID){
         frag.appendChild(tr);
         const card = document.createElement('div');
         card.className = 'stats-session-card';
-        card.innerHTML = `
+        card.innerHTML = isBlackjackStats ? `
+          <div class="session-card-head">
+            <div>
+              <div class="session-title">Session ${r.sessionNo||'-'}</div>
+              <div class="session-profit ${profitVal>0?'win':profitVal<0?'loss':'push'}">${statsMoney(profitVal)}</div>
+            </div>
+            <div class="session-date">${fmtDT(r.sessionStart)}</div>
+          </div>
+          <div class="session-metrics">
+            <div class="session-detail"><div class="session-label">Rounds</div><div class="session-value">${handsVal}</div></div>
+            <div class="session-detail"><div class="session-label">Record (W-L-P)</div><div class="session-value">${recordStr}</div></div>
+            <div class="session-detail"><div class="session-label">Bank</div><div class="session-value">${statsMoney(Number(r.startBank||0))} to ${statsMoney(Number(r.endBank||0))}</div></div>
+            <div class="session-detail"><div class="session-label">Amount Wagered</div><div class="session-value">${statsMoney(totalBet)}</div></div>
+            <div class="session-detail"><div class="session-label">Return on Wagers</div><div class="session-value">${formatPercent(profitVal,totalBet)}</div></div>
+            <div class="session-detail"><div class="session-label">Avg Profit / Round</div><div class="session-value">${statsMoney(handsVal ? profitVal/handsVal : 0)}</div></div>
+            <div class="session-detail"><div class="session-label">Strategy Accuracy</div><div class="session-value">${followedVal}/${decisionsVal} (${formatPercent(followedVal,decisionsVal)})</div></div>
+          </div>` : `
           <div class="session-card-head">
             <div>
               <div class="session-title">Session ${r.sessionNo||'-'}</div>
@@ -3796,7 +3945,17 @@ async function openStatsModal(playerOverride, gameId=CURRENT_GAME_ID){
           <div class="mini-stat-item"><div class="mini-stat-label">Followed</div><div class="mini-stat-value">${followDisplay}</div></div>`;
       }
       if(statsSummaryEl){
-        statsSummaryEl.innerHTML = `
+        statsSummaryEl.innerHTML = isBlackjackStats ? `
+          <div class="mini-stat-item"><div class="mini-stat-label">Total Profit</div><div class="mini-stat-value ${totalProfit>0?'win':totalProfit<0?'loss':'push'}">${statsMoney(totalProfit)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Sessions</div><div class="mini-stat-value">${totalSessions}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Total Rounds</div><div class="mini-stat-value">${totalHands}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Round Record (W-L-P)</div><div class="mini-stat-value">${totalWins}-${totalLosses}-${totalPushes}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Amount Wagered</div><div class="mini-stat-value">${statsMoney(totalTotalBet)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Strategy Accuracy</div><div class="mini-stat-value">${totalFollowed}/${totalDecisions} (${formatPercent(totalFollowed,totalDecisions)})</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Return on Wagers</div><div class="mini-stat-value">${formatPercent(totalProfit,totalTotalBet)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Avg Profit / Round</div><div class="mini-stat-value">${statsMoney(totalHands ? totalProfit/totalHands : 0)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Avg Wager / Round</div><div class="mini-stat-value">${statsMoney(totalHands ? totalTotalBet/totalHands : 0)}</div></div>
+          <div class="mini-stat-item"><div class="mini-stat-label">Avg Rounds / Session</div><div class="mini-stat-value">${avgHands.toFixed(1)}</div></div>` : `
           <div class="mini-stat-item"><div class="mini-stat-label">Sessions</div><div class="mini-stat-value">${totalSessions}</div></div>
           <div class="mini-stat-item"><div class="mini-stat-label">Total Hands</div><div class="mini-stat-value">${totalHands}</div></div>
           <div class="mini-stat-item"><div class="mini-stat-label">Avg Hands / Session</div><div class="mini-stat-value">${avgHands.toFixed(1)}</div></div>
@@ -4937,6 +5096,7 @@ async function logSessionAndReset(options){
   function vpStartSession(){
     if(vp.busy) return;
     vpReadInputs();
+    savePlayerGameSettings(vpGame().id);
     if(vp.busyTimer){ clearTimeout(vp.busyTimer); vp.busyTimer = null; }
     Object.assign(vp, {
       started:true, stage:'ready', bank:vp.startBank, deck:[], hand:[], held:[false,false,false,false,false],
@@ -5083,6 +5243,7 @@ async function logSessionAndReset(options){
   window.videoPokerInit = function(){ vpBind(); vpRender(); };
   window.videoPokerRefresh = function(){ if(vp.bound) vpRender(); };
   window.setVideoPokerGame = function(gameId){ return vpSetGame(gameId); };
+  window.getActiveVideoPokerGameId = function(){ return vpGame().id; };
   window.activateGame = function(gameId){
     const vpScreen = document.getElementById('videoPokerScreen');
     const huheMain = document.querySelector('main');
@@ -5193,16 +5354,24 @@ async function logSessionAndReset(options){
   function bjClearChips(){
     Object.values(bj.betChips).forEach(arr=>{ arr.forEach(chip=>{ try{ chip.remove(); }catch(e){} }); arr.length = 0; });
   }
+  function bjBreakdownChips(amount){
+    const value = Math.round(Math.abs(Number(amount) || 0) * 100) / 100;
+    const parts = breakdown(Math.floor(value));
+    const remainder = Math.round((value - Math.floor(value)) * 100) / 100;
+    if(remainder) parts.push(remainder);
+    return parts;
+  }
   function bjAnimateChips(fromEl, toEl, amount, options={stay:false, store:null}){
     if(!fromEl || !toEl || amount <= 0) return;
     const table = bjEls.table;
     if(!table) return;
-    const parts = breakdown(amount);
+    const parts = bjBreakdownChips(amount);
     const t = table.getBoundingClientRect();
     const rf = fromEl.getBoundingClientRect();
     const rt = toEl.getBoundingClientRect();
     parts.forEach((d,i)=>{
       const c = makeChip(d);
+      if(d < 1) c.classList.add('denom-1');
       const angle = ((Math.random()*24)-12).toFixed(2);
       c.dataset.angle = angle;
       c.style.left = (rf.left - t.left + rf.width/2 - 20) + 'px';
@@ -5240,6 +5409,12 @@ async function logSessionAndReset(options){
       });
       setTimeout(()=>{ chips.forEach(chip=>{ try{ chip.remove(); }catch(e){} }); resolve(); }, 520);
     });
+  }
+  function bjAnimateWinPayout(amount){
+    const winnings = Math.max(0, Number(amount) || 0);
+    if(!winnings) return Promise.resolve();
+    bjAnimateChips(bjEls.potDealer, bjEls.potPlayer, winnings);
+    return waitMs(540);
   }
   function bjLog(msg){
     if(!bjEls.log) return;
@@ -5435,11 +5610,13 @@ async function logSessionAndReset(options){
     const current = Math.max(1, Math.round(Number(bjEls.bet.value)||bj.bet||1));
     bj.bet = Math.max(1, current + Number(delta||0));
     bjEls.bet.value = bj.bet;
+    savePlayerGameSettings(BLACKJACK_GAME_ID);
   }
   function bjStartSession(){
     if(bj.busy || bj.started) return;
     bjReadInputs();
     bj.rules = bjReadRules();
+    savePlayerGameSettings(BLACKJACK_GAME_ID);
     Object.assign(bj, {
       started:true, stage:'ready', bank:bj.startBank, dealer:[], hands:[], activeHand:0,
       handsPlayed:0, wins:0, losses:0, pushes:0, followed:0, decisions:0,
@@ -5481,7 +5658,10 @@ async function logSessionAndReset(options){
     bj.stage = 'complete';
     bj.hands[0].result = label;
     bjLog(`${label}. Net ${bjMoney(net)}. Bankroll ${bjMoney(bj.bank)}.`);
-    await bjMoveStoredChips(bj.betChips.main, net < 0 ? bjEls.potDealer : bjEls.potPlayer);
+    await Promise.all([
+      bjMoveStoredChips(bj.betChips.main, net < 0 ? bjEls.potDealer : bjEls.potPlayer),
+      bjAnimateWinPayout(net)
+    ]);
     bj.betChips.main.length = 0;
     bj.busy = false;
     bjRender();
@@ -5647,7 +5827,10 @@ async function logSessionAndReset(options){
     bj.stage = 'complete';
     bjLog(`${labels.join('; ')}. Net ${bjMoney(totalNet)}. Bankroll ${bjMoney(bj.bank)}.`);
     const target = totalNet < 0 ? bjEls.potDealer : bjEls.potPlayer;
-    await bjMoveStoredChips([...bj.betChips.main, ...bj.betChips.double, ...bj.betChips.split], target);
+    await Promise.all([
+      bjMoveStoredChips([...bj.betChips.main, ...bj.betChips.double, ...bj.betChips.split], target),
+      bjAnimateWinPayout(totalNet)
+    ]);
     bjClearChips();
     bj.busy = false;
     bjRender();
@@ -5673,7 +5856,7 @@ async function logSessionAndReset(options){
       followed: bj.followed,
       decisions: bj.decisions,
       bestHand: '-',
-      notes: `Blackjack ${APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.1'}. Rules: ${bjRuleLabel(bj.rules)}. House edge estimate ${bjHouseEdge(bj.rules).toFixed(2)}%.`
+      notes: `Blackjack ${APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.2'}. Rules: ${bjRuleLabel(bj.rules)}. House edge estimate ${bjHouseEdge(bj.rules).toFixed(2)}%.`
     };
     try{ await saveSessionSummary(summary); bjLog('Session saved.'); }catch(e){ bjLog('Unable to save session.'); }
   }
@@ -5848,7 +6031,7 @@ async function logSessionAndReset(options){
   }
   window.blackjackInit = function(){ bjBind(); bjRender(); };
   window.openBlackjackRules = function(){
-    const version = APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.1';
+    const version = APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.2';
     alert(`Blackjack ${version}\n\nAmerican hole-card blackjack. Dealer peeks for blackjack. A natural blackjack pays according to the selected 3:2 or 6:5 rule. Double is allowed on any first two cards. Split to four hands. Split aces receive one card. Insurance is not offered. Session rule options lock when the session starts.`);
   };
   window.openBlackjackStrategy = function(){
@@ -6042,18 +6225,21 @@ async function logSessionAndReset(options){
   function closeRules(){ if(rules){ rules.style.display="none"; } }
   const gameReleaseNotes = {
     [VIDEO_POKER_GAME_ID]: [
+      ['0.5', ['Saved bankroll, bet, card, and strategy settings separately for each player and video-poker variant.']],
       ['0.4', ['Moved game settings above the play area before a mobile session starts.', 'Refined shared lobby artwork, branding, and version presentation.']],
       ['0.3', ['Added full Jacks or Better strategy guidance and the Wizard simple-strategy explanation.', 'Improved session statistics, card controls, and mobile layout.']],
       ['0.2', ['Added hold advice, expected-value comparisons, and bankroll tracking.']],
       ['0.1', ['Initial Jacks or Better beta release.']]
     ],
     [DEUCES_WILD_GAME_ID]: [
+      ['0.5', ['Saved bankroll, bet, card, and strategy settings separately for each player and video-poker variant.']],
       ['0.4', ['Moved game settings above the play area before a mobile session starts.', 'Refined shared lobby artwork, branding, and version presentation.']],
       ['0.3', ['Added the 20/12/9/5/3/2 pay table and Deuces Wild strategy guidance.', 'Improved session statistics, card controls, and mobile layout.']],
       ['0.2', ['Added wild-card hand evaluation and hold advice.']],
       ['0.1', ['Initial Deuces Wild beta release.']]
     ],
     [BLACKJACK_GAME_ID]: [
+      ['1.2', ['Added dealer-to-player chip animations for winnings.', 'Added player-specific setup persistence and redesigned Blackjack player stats around profit, wagers, rounds, and strategy accuracy.']],
       ['1.1', ['Fixed player-stat queries so saved Blackjack sessions appear under the selected player.', 'Moved mobile setup above the table before play and refined the shared game lobby.']],
       ['1.0', ['Promoted Blackjack from beta after rules, settlement, strategy, bankroll, and session-exit hardening.', 'Added compact split-hand presentation, context-aware controls, responsive lobby polish, and automated Blackjack regression coverage.']],
       ['0.3', ['Condensed split hands and action controls for mobile play.', 'Hardened wager validation, session exits, payouts, dealer rules, and surrender strategy with automated Blackjack regression tests.']],
@@ -6177,6 +6363,7 @@ async function logSessionAndReset(options){
       if(!name){ if(playerErr){ playerErr.textContent='Please enter or select a player name.'; } return; }
       state.playerName = name;
       try{ localStorage.setItem(PLAYER_NAME_KEY, name); }catch(e){}
+      restorePlayerGameSettings(selectedGameId, name);
       closePlayer();
       closeSplash();
       if(window.activateGame) window.activateGame(selectedGameId);
@@ -6184,7 +6371,7 @@ async function logSessionAndReset(options){
   });
 })();
 </script>
-<script src="app.js?v=4.1" defer></script>
+<script src="app.js?v=4.2" defer></script>
 </body>
 </html>
 

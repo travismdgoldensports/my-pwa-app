@@ -5,7 +5,7 @@
     root.HUHEAppConfig = factory();
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function(){
-  const APP_VERSION = '4.1';
+  const APP_VERSION = '4.2';
   const CURRENT_GAME_ID = 'heads-up-hold-em';
   const VIDEO_POKER_GAME_ID = 'video-poker-jacks-or-better';
   const DEUCES_WILD_GAME_ID = 'video-poker-deuces-wild';
@@ -20,33 +20,34 @@
       [CURRENT_GAME_ID]: {
         id: CURRENT_GAME_ID,
         name: "Heads Up Hold 'Em",
-        version: '2.10',
+        version: '2.11',
         sessionSchemaVersion: 2
       },
       [VIDEO_POKER_GAME_ID]: {
         id: VIDEO_POKER_GAME_ID,
         name: 'Jacks or Better Video Poker',
-        version: '0.4',
+        version: '0.5',
         status: 'beta',
         sessionSchemaVersion: 1
       },
       [DEUCES_WILD_GAME_ID]: {
         id: DEUCES_WILD_GAME_ID,
         name: 'Deuces Wild Video Poker',
-        version: '0.4',
+        version: '0.5',
         status: 'beta',
         sessionSchemaVersion: 1
       },
       [BLACKJACK_GAME_ID]: {
         id: BLACKJACK_GAME_ID,
         name: 'Blackjack',
-        version: '1.1',
+        version: '1.2',
         sessionSchemaVersion: 1
       }
     },
     storage: {
       local: {
         playerName: 'huhe.playerName',
+        playerGameSettings: 'huhe.playerGameSettings',
         cardStyle: 'huhe.cardStyle',
         miniStatsOrder: 'huhe.miniStatsOrder',
         schemaVersion: 'huhe.storageSchemaVersion'

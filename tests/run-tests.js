@@ -32,17 +32,18 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '4.1');
-  assert.equal(appConfig.cacheVersion, 'v4.1');
+  assert.equal(appConfig.appVersion, '4.2');
+  assert.equal(appConfig.cacheVersion, 'v4.2');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
-  assert.equal(appConfig.games[appConfig.currentGameId].version, '2.10');
-  assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.4');
+  assert.equal(appConfig.games[appConfig.currentGameId].version, '2.11');
+  assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.5');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
-  assert.equal(appConfig.games.blackjack.version, '1.1');
+  assert.equal(appConfig.games.blackjack.version, '1.2');
   assert.equal(appConfig.games.blackjack.status, undefined);
-  assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.4');
+  assert.equal(appConfig.storage.local.playerGameSettings, 'huhe.playerGameSettings');
+  assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.5');
   assert.equal(appConfig.games['video-poker-deuces-wild'].status, 'beta');
 
   const summary = appConfig.normalizeSessionSummary({player:'Ada', profit:25});
@@ -71,12 +72,17 @@ test('lobby consolidates video poker variants behind one selector', () => {
 });
 
 test('runtime scripts are cache-busted to prevent mixed app versions', () => {
-  assert.match(indexSource, /app-config\.js\?v=4\.1/);
-  assert.match(indexSource, /game-logic\.js\?v=4\.1/);
-  assert.match(indexSource, /app\.js\?v=4\.1/);
+  assert.match(indexSource, /app-config\.js\?v=4\.2/);
+  assert.match(indexSource, /game-logic\.js\?v=4\.2/);
+  assert.match(indexSource, /app\.js\?v=4\.2/);
   const workerSource = fs.readFileSync(path.join(__dirname, '..', 'service-worker.js'), 'utf8');
   assert.match(workerSource, /NETWORK_FIRST_ASSETS/);
   assert.match(workerSource, /game-logic\.js/);
+});
+
+test('inline application scripts parse successfully', () => {
+  const scripts = Array.from(indexSource.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g), match=>match[1]).filter(source=>source.trim());
+  scripts.forEach(source=>assert.doesNotThrow(()=>new Function(source)));
 });
 
 test('blackjack offers each supported physical shoe size', () => {
@@ -93,11 +99,37 @@ test('blackjack offers 3:2 and 6:5 natural payout rules', () => {
   assert.match(select, /<option value="6:5">6:5<\/option>/);
 });
 
+test('blackjack wins animate matching payout chips from dealer to player', () => {
+  assert.match(indexSource, /function bjAnimateWinPayout\(amount\)/);
+  assert.match(indexSource, /function bjBreakdownChips\(amount\)/);
+  assert.match(indexSource, /const parts = bjBreakdownChips\(amount\)/);
+  assert.match(indexSource, /bjAnimateChips\(bjEls\.potDealer, bjEls\.potPlayer, winnings\)/);
+  assert.match(indexSource, /bjAnimateWinPayout\(net\)/);
+  assert.match(indexSource, /bjAnimateWinPayout\(totalNet\)/);
+});
+
 test('player stats queries use the selected game so blackjack sessions remain visible', () => {
   assert.match(indexSource, /async function getSessions\(player, gameId=CURRENT_GAME_ID\)/);
   assert.match(indexSource, /openStatsModal\(playerOverride, selectedGameId\)/);
   assert.match(indexSource, /deletePlayer\(selected, selectedGameId\)/);
   assert.match(indexSource, /\(row\.gameId \|\| CURRENT_GAME_ID\) === gameId/);
+});
+
+test('blackjack player stats use relevant round, profit, wager, and decision metrics', () => {
+  assert.match(indexSource, /const isBlackjackStats = gameId === 'blackjack'/);
+  assert.match(indexSource, /Total Profit[\s\S]*?Total Rounds[\s\S]*?Round Record \(W-L-P\)[\s\S]*?Amount Wagered[\s\S]*?Strategy Accuracy/);
+  assert.match(indexSource, /\$\{totalFollowed\}\/\$\{totalDecisions\}/);
+  assert.match(indexSource, /Avg Profit \/ Round/);
+  assert.match(indexSource, /Return on Wagers/);
+});
+
+test('game and wager settings persist per player and per game', () => {
+  assert.match(indexSource, /const PLAYER_GAME_SETTING_FIELDS = \{/);
+  assert.match(indexSource, /function savePlayerGameSettings\(gameId, playerName=activeSettingsPlayer\(\)\)/);
+  assert.match(indexSource, /function restorePlayerGameSettings\(gameId, playerName\)/);
+  assert.match(indexSource, /savePlayerGameSettings\(vpGame\(\)\.id\)/);
+  assert.match(indexSource, /savePlayerGameSettings\(BLACKJACK_GAME_ID\)/);
+  assert.match(indexSource, /restorePlayerGameSettings\(selectedGameId, name\);[\s\S]*?window\.activateGame\(selectedGameId\)/);
 });
 
 test('mobile game setup appears before play and moves below after session start', () => {
