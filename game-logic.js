@@ -514,56 +514,113 @@
     const total = blackjackTotal(cards);
     return total.total < 17 || (total.total === 17 && total.soft && rules.soft17 === 'hit');
   }
+
+  // Wizard of Odds total-dependent basic-strategy tables. The suffix is the
+  // deck group: 0 = one deck, 1 = two decks, 2 = four to eight decks.
+  const blackjackStrategyData = {
+    H17_0:'H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|DH,DH,DH,DH,DH,DH,DH,DH,DH,DH|H,H,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,RH|S,S,S,S,S,H,H,H,RH,RH|S,S,S,S,S,S,S,S,S,RS|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,H,H,H,H,H|S,DS,DS,DS,DS,S,S,H,H,H|S,S,S,S,DS,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|QH,P,P,P,P,P,H,H,H,H|QH,QH,P,P,P,P,QH,H,H,H|H,H,QH,QD,QD,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|P,P,P,P,P,QH,H,H,H,H|P,P,P,P,P,P,QH,H,RS,RH|P,P,P,P,P,P,P,P,P,P|P,P,P,P,P,S,P,P,S,QS|S,S,S,S,S,S,S,S,S,S|P,P,P,P,P,P,P,P,P,P',
+    S17_0:'H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|DH,DH,DH,DH,DH,DH,DH,DH,DH,DH|H,H,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,RH,RH|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,H,H,H,H,H|S,DS,DS,DS,DS,S,S,H,H,S|S,S,S,S,DS,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|QH,P,P,P,P,P,H,H,H,H|QH,QH,P,P,P,P,QH,H,H,H|H,H,QH,QD,QD,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|P,P,P,P,P,QH,H,H,H,H|P,P,P,P,P,P,QH,H,RS,H|P,P,P,P,P,P,P,P,P,P|P,P,P,P,P,S,P,P,S,S|S,S,S,S,S,S,S,S,S,S|P,P,P,P,P,P,P,P,P,P',
+    H17_1:'H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|DH,DH,DH,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|DH,DH,DH,DH,DH,DH,DH,DH,DH,DH|H,H,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,RH,RH|S,S,S,S,S,H,H,H,RH,RH|S,S,S,S,S,S,S,S,S,RS|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|H,H,H,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,DH,DH,DH,DH,H,H,H,H,H|DS,DS,DS,DS,DS,S,S,H,H,H|S,S,S,S,DS,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|QH,QH,P,P,P,P,H,H,H,H|QH,QH,P,P,P,P,H,H,H,H|H,H,H,QH,QH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|P,P,P,P,P,QH,H,H,H,H|P,P,P,P,P,P,QH,H,H,H|P,P,P,P,P,P,P,P,P,RP|P,P,P,P,P,S,P,P,S,S|S,S,S,S,S,S,S,S,S,S|P,P,P,P,P,P,P,P,P,P',
+    S17_1:'H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|DH,DH,DH,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|DH,DH,DH,DH,DH,DH,DH,DH,DH,DH|H,H,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,RH,H|S,S,S,S,S,H,H,H,RH,RH|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|H,H,H,DH,DH,H,H,H,H,H|H,H,H,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,DH,DH,DH,DH,H,H,H,H,H|S,DS,DS,DS,DS,S,S,H,H,H|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|QH,QH,P,P,P,P,H,H,H,H|QH,QH,P,P,P,P,H,H,H,H|H,H,H,QH,QH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|P,P,P,P,P,QH,H,H,H,H|P,P,P,P,P,P,QH,H,H,H|P,P,P,P,P,P,P,P,P,P|P,P,P,P,P,S,P,P,S,S|S,S,S,S,S,S,S,S,S,S|P,P,P,P,P,P,P,P,P,P',
+    H17_2:'H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,DH,DH,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|DH,DH,DH,DH,DH,DH,DH,DH,DH,DH|H,H,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,RH,RH|S,S,S,S,S,H,H,RH,RH,RH|S,S,S,S,S,S,S,S,S,RS|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|H,H,H,DH,DH,H,H,H,H,H|H,H,H,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,DH,DH,DH,DH,H,H,H,H,H|DS,DS,DS,DS,DS,S,S,H,H,H|S,S,S,S,DS,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|QH,QH,P,P,P,P,H,H,H,H|QH,QH,P,P,P,P,H,H,H,H|H,H,H,QH,QH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|QH,P,P,P,P,H,H,H,H,H|P,P,P,P,P,P,H,H,H,H|P,P,P,P,P,P,P,P,P,RP|P,P,P,P,P,S,P,P,S,S|S,S,S,S,S,S,S,S,S,S|P,P,P,P,P,P,P,P,P,P',
+    S17_2:'H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,H,H,H,H,H,H,H,H,H|H,DH,DH,DH,DH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|DH,DH,DH,DH,DH,DH,DH,DH,DH,H|H,H,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,H,H|S,S,S,S,S,H,H,H,RH,H|S,S,S,S,S,H,H,RH,RH,RH|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|H,H,H,DH,DH,H,H,H,H,H|H,H,H,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,H,DH,DH,DH,H,H,H,H,H|H,DH,DH,DH,DH,H,H,H,H,H|S,DS,DS,DS,DS,S,S,H,H,H|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|S,S,S,S,S,S,S,S,S,S|QH,QH,P,P,P,P,H,H,H,H|QH,QH,P,P,P,P,H,H,H,H|H,H,H,QH,QH,H,H,H,H,H|DH,DH,DH,DH,DH,DH,DH,DH,H,H|QH,P,P,P,P,H,H,H,H,H|P,P,P,P,P,P,H,H,H,H|P,P,P,P,P,P,P,P,P,P|P,P,P,P,P,S,P,P,S,S|S,S,S,S,S,S,S,S,S,S|P,P,P,P,P,P,P,P,P,P'
+  };
+  const blackjackStrategyTables = Object.fromEntries(Object.entries(blackjackStrategyData).map(([key,value])=>[
+    key,
+    value.split('|').map(row=>row.split(','))
+  ]));
+
+  // Exact Wizard calculator rows for this game's fixed rules: double on any
+  // first two cards, split to four hands, no resplitting/hitting split aces,
+  // and American peek (only the original bet is exposed to dealer blackjack).
+  const blackjackOptimalEdges = {
+    '1,0,0':[-0.041620,-0.063668], '1,0,1':[-0.182895,-0.204943],
+    '1,1,0':[0.151762,0.113752], '1,1,1':[0.007747,-0.030263],
+    '2,0,0':[0.321003,0.269849], '2,0,1':[0.178315,0.127162],
+    '2,1,0':[0.525253,0.459061], '2,1,1':[0.379879,0.313717],
+    '4,0,0':[0.489600,0.422835], '4,0,1':[0.347486,0.280721],
+    '4,1,0':[0.702116,0.619913], '4,1,1':[0.557183,0.475079],
+    '6,0,0':[0.544889,0.472286], '6,0,1':[0.403115,0.330512],
+    '6,1,0':[0.760168,0.671883], '6,1,1':[0.615626,0.527409],
+    '8,0,0':[0.572499,0.496681], '8,0,1':[0.430961,0.355143],
+    '8,1,0':[0.789206,0.697582], '8,1,1':[0.644928,0.553356]
+  };
+  const blackjackCutCardAdjustment = {1:0.1517, 2:0.0770, 4:0.0395, 6:0.0231, 8:0.0159};
+  const blackjackCsmReduction = {1:0.113, 2:0.063, 4:0.034, 6:0.020, 8:0.014};
+  const blackjackSixFiveAdjustment = {1:1.394773, 2:1.373499, 4:1.363115, 6:1.359690, 8:1.357984};
+  function blackjackHouseEdge(rules={}){
+    const decks = [1,2,4,6,8].includes(Number(rules.decks)) ? Number(rules.decks) : 4;
+    const h17 = rules.soft17 === 'hit' ? 1 : 0;
+    const das = rules.das === false ? 0 : 1;
+    const surrender = rules.surrender === true ? 1 : 0;
+    let edge = blackjackOptimalEdges[`${decks},${h17},${das}`][surrender];
+    edge += blackjackCutCardAdjustment[decks];
+    if(rules.csm) edge -= blackjackCsmReduction[decks];
+    if(rules.blackjackPayout === '6:5') edge += blackjackSixFiveAdjustment[decks];
+    return edge;
+  }
+
+  function blackjackStrategyActionCode(hand, dealerUpCard, rules={}, usePair=true){
+    const up = blackjackDealerUpValue(dealerUpCard);
+    if(!hand || !up) return null;
+    const total = blackjackTotal(hand.cards);
+    const deckGroup = rules.decks === 1 ? 0 : rules.decks === 2 ? 1 : 2;
+    const table = blackjackStrategyTables[`${rules.soft17 === 'hit' ? 'H17' : 'S17'}_${deckGroup}`];
+    const dealerColumn = up === 11 ? 9 : up - 2;
+    const pairRank = hand.cards.length === 2 && blackjackRank(hand.cards[0]) === blackjackRank(hand.cards[1]) ? blackjackRank(hand.cards[0]) : null;
+    let row;
+    if(pairRank !== null && usePair){
+      const pairValue = pairRank === 12 ? 11 : Math.min(10, pairRank + 2);
+      row = 26 + (pairValue === 11 ? 9 : pairValue - 2);
+    }else if(total.soft && total.total >= 13){
+      row = 17 + Math.min(8, total.total - 13);
+    }else{
+      row = Math.max(0, Math.min(16, total.total - 5));
+    }
+    return table[row][dealerColumn];
+  }
+
+  function blackjackBasicStrategyCode(section, value, dealerUpValue, rules={}){
+    const deckGroup = rules.decks === 1 ? 0 : rules.decks === 2 ? 1 : 2;
+    const table = blackjackStrategyTables[`${rules.soft17 === 'hit' ? 'H17' : 'S17'}_${deckGroup}`];
+    const dealerColumn = dealerUpValue === 11 ? 9 : dealerUpValue - 2;
+    const row = section === 'pair' ? 26 + (value === 11 ? 9 : value - 2)
+      : section === 'soft' ? 17 + Math.max(0, Math.min(8, value - 13))
+      : Math.max(0, Math.min(16, value - 5));
+    let code = table[row][dealerColumn];
+    if(code === 'QD') code = rules.das === false ? 'DH' : 'P';
+    if(code === 'QH') code = rules.das === false ? 'H' : 'P';
+    if(code === 'QS') code = rules.das === false ? 'S' : 'P';
+    if(code[0] === 'R' && rules.surrender !== true) code = code[1];
+    return code.length === 2 ? `${code[0]}/${code[1]}` : code;
+  }
+
   function blackjackAdvice({hand, dealerUpCard, rules={}, bank=Infinity, handCount=1}){
     const up = blackjackDealerUpValue(dealerUpCard);
     if(!hand || hand.status !== 'active' || !up) return {action:'-', why:'No active decision.'};
-    const total = blackjackTotal(hand.cards);
-    const pairRank = hand.cards.length === 2 && blackjackRank(hand.cards[0]) === blackjackRank(hand.cards[1]) ? blackjackRank(hand.cards[0]) : null;
     const canDouble = blackjackCanDouble(hand, bank, rules);
     const canSplit = blackjackCanSplit(hand, handCount, bank);
     const canSurrender = blackjackCanSurrender(hand, rules);
-    const doubleOrHit = ()=> canDouble ? 'double' : 'hit';
-    const doubleOrStand = ()=> canDouble ? 'double' : 'stand';
-
-    // H17 late-surrender exceptions against an ace take priority over pair play.
-    if(canSurrender && !total.soft && rules.soft17 === 'hit' && up === 11 && [15,16,17].includes(total.total)){
-      return {action:'surrender', why:`Late surrender hard ${total.total} against an ace when the dealer hits soft 17.`};
+    let code = blackjackStrategyActionCode(hand, dealerUpCard, rules);
+    if(code === 'QD') code = rules.das ? 'P' : 'DH';
+    if(code === 'QH') code = rules.das ? 'P' : 'H';
+    if(code === 'QS') code = rules.das ? 'P' : 'S';
+    if(code === 'RH' || code === 'RS' || code === 'RP'){
+      if(canSurrender) return {action:'surrender', why:'Late surrender is the correct basic-strategy play for these rules.'};
+      code = code.slice(1);
     }
-    // Otherwise preserve pair and soft-hand strategy before considering hard-total surrender.
-    if(pairRank !== null && canSplit){
-      const value = pairRank === 12 ? 11 : Math.min(10, pairRank + 2);
-      if(value === 11 || value === 8) return {action:'split', why:'Always split aces and eights.'};
-      if(value === 10) return {action:'stand', why:'Never split tens.'};
-      if(value === 9) return {action:([2,3,4,5,6,8,9].includes(up) ? 'split' : 'stand'), why:'Split 9s except against 7, 10, or ace.'};
-      if(value === 7) return {action:(up <= 7 ? 'split' : 'hit'), why:'Split 7s against 2 through 7.'};
-      if(value === 6) return {action:((rules.das ? up>=2&&up<=6 : up>=3&&up<=6) ? 'split' : 'hit'), why:'Split 6s against dealer weakness.'};
-      if(value === 5) return {action:([2,3,4,5,6,7,8,9].includes(up) ? doubleOrHit() : 'hit'), why:'Play paired 5s as hard 10.'};
-      if(value === 4) return {action:(rules.das && (up===5 || up===6) ? 'split' : 'hit'), why:'Split 4s only with DAS against 5 or 6.'};
-      if(value === 3 || value === 2) return {action:((rules.das ? up>=2&&up<=7 : up>=4&&up<=7) ? 'split' : 'hit'), why:'Split small pairs against weak dealer cards.'};
+    if(code === 'P' && !canSplit){
+      code = blackjackStrategyActionCode(hand, dealerUpCard, rules, false);
     }
-    if(total.soft && total.total <= 20 && hand.cards.length >= 2){
-      if(total.total >= 20) return {action:'stand', why:'Stand on soft 20 or better.'};
-      if(total.total === 19) return {action:(rules.soft17==='hit' && up===6 ? doubleOrStand() : 'stand'), why:'Usually stand on soft 19.'};
-      if(total.total === 18){
-        if([3,4,5,6].includes(up) || (rules.soft17==='hit' && up===2)) return {action:doubleOrStand(), why:'Double soft 18 against dealer weakness.'};
-        if([2,7,8].includes(up)) return {action:'stand', why:'Stand soft 18 against 2, 7, or 8.'};
-        return {action:'hit', why:'Hit soft 18 against 9, 10, or ace.'};
-      }
-      if(total.total === 17) return {action:([3,4,5,6].includes(up) || (rules.soft17==='hit' && up===2) ? doubleOrHit() : 'hit'), why:'Double soft 17 against weak dealer cards.'};
-      if(total.total === 15 || total.total === 16) return {action:([4,5,6].includes(up) ? doubleOrHit() : 'hit'), why:'Double soft 15 or 16 against 4 through 6.'};
-      if(total.total === 13 || total.total === 14) return {action:([5,6].includes(up) ? doubleOrHit() : 'hit'), why:'Double soft 13 or 14 against 5 or 6.'};
+    if(code === 'RH' || code === 'RS' || code === 'RP'){
+      if(canSurrender) return {action:'surrender', why:'Late surrender is the correct basic-strategy play for these rules.'};
+      code = code.slice(1);
     }
-    if(canSurrender && !total.soft){
-      if(total.total === 16 && up >= 9) return {action:'surrender', why:'Late surrender hard 16 against 9, 10, or ace.'};
-      if(total.total === 15 && up === 10) return {action:'surrender', why:'Late surrender hard 15 against a dealer 10.'};
-    }
-    if(total.total >= 17) return {action:'stand', why:'Stand on hard 17 or more.'};
-    if(total.total >= 13 && total.total <= 16) return {action:(up>=2 && up<=6 ? 'stand' : 'hit'), why:'Stand hard 13-16 against dealer 2-6; otherwise hit.'};
-    if(total.total === 12) return {action:([4,5,6].includes(up) ? 'stand' : 'hit'), why:'Stand hard 12 only against 4 through 6.'};
-    if(total.total === 11) return {action:doubleOrHit(), why:'Double hard 11 when available.'};
-    if(total.total === 10) return {action:([2,3,4,5,6,7,8,9].includes(up) ? doubleOrHit() : 'hit'), why:'Double hard 10 against 2 through 9.'};
-    if(total.total === 9) return {action:([3,4,5,6].includes(up) ? doubleOrHit() : 'hit'), why:'Double hard 9 against 3 through 6.'};
-    return {action:'hit', why:'Hit hard 8 or less.'};
+    if(code === 'DH') code = canDouble ? 'D' : 'H';
+    if(code === 'DS') code = canDouble ? 'D' : 'S';
+    const action = {H:'hit', S:'stand', D:'double', P:'split'}[code] || 'hit';
+    const labels = {hit:'Hit', stand:'Stand', double:'Double', split:'Split'};
+    return {action, why:`${labels[action]} is the correct basic-strategy play for this ruleset.`};
   }
   function blackjackNaturalOutcome(playerHand, dealerCards, bet, blackjackPayout='3:2'){
     const playerNatural = blackjackIsNatural(playerHand);
@@ -630,6 +687,8 @@
     blackjackCanSurrender,
     blackjackDealerUpValue,
     blackjackShouldDealerHit,
+    blackjackHouseEdge,
+    blackjackBasicStrategyCode,
     blackjackAdvice,
     blackjackNaturalOutcome,
     blackjackSettleHand,

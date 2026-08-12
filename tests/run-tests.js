@@ -32,15 +32,15 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '4.2');
-  assert.equal(appConfig.cacheVersion, 'v4.2');
+  assert.equal(appConfig.appVersion, '4.3');
+  assert.equal(appConfig.cacheVersion, 'v4.3');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
   assert.equal(appConfig.games[appConfig.currentGameId].version, '2.11');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.5');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
-  assert.equal(appConfig.games.blackjack.version, '1.2');
+  assert.equal(appConfig.games.blackjack.version, '1.3');
   assert.equal(appConfig.games.blackjack.status, undefined);
   assert.equal(appConfig.storage.local.playerGameSettings, 'huhe.playerGameSettings');
   assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.5');
@@ -72,9 +72,9 @@ test('lobby consolidates video poker variants behind one selector', () => {
 });
 
 test('runtime scripts are cache-busted to prevent mixed app versions', () => {
-  assert.match(indexSource, /app-config\.js\?v=4\.2/);
-  assert.match(indexSource, /game-logic\.js\?v=4\.2/);
-  assert.match(indexSource, /app\.js\?v=4\.2/);
+  assert.match(indexSource, /app-config\.js\?v=4\.3/);
+  assert.match(indexSource, /game-logic\.js\?v=4\.3/);
+  assert.match(indexSource, /app\.js\?v=4\.3/);
   const workerSource = fs.readFileSync(path.join(__dirname, '..', 'service-worker.js'), 'utf8');
   assert.match(workerSource, /NETWORK_FIRST_ASSETS/);
   assert.match(workerSource, /game-logic\.js/);
@@ -184,6 +184,25 @@ test('blackjack dealer logic respects S17 and H17', () => {
   assert.equal(logic.blackjackShouldDealerHit([card('T','c'), card('7','d')], {soft17:'hit'}), false);
 });
 
+test('blackjack house edge matches Wizard cut-card and CSM results', () => {
+  const base = {decks:6, soft17:'stand', das:true, surrender:false, blackjackPayout:'3:2'};
+  assert.ok(Math.abs(logic.blackjackHouseEdge({...base, csm:false}) - 0.426215) < 1e-9);
+  assert.ok(Math.abs(logic.blackjackHouseEdge({...base, csm:true}) - 0.406215) < 1e-9);
+  assert.ok(Math.abs(logic.blackjackHouseEdge({...base, blackjackPayout:'6:5'}) - 1.785905) < 1e-9);
+  assert.ok(Math.abs(logic.blackjackHouseEdge({decks:1, soft17:'stand', das:true, surrender:false}) - (-0.031195)) < 1e-9);
+});
+
+test('blackjack basic strategy changes with deck count and table rules', () => {
+  const code = (section, value, up, rules) => logic.blackjackBasicStrategyCode(section, value, up, rules);
+  assert.equal(code('hard', 11, 11, {decks:1, soft17:'stand', das:true}), 'D/H');
+  assert.equal(code('hard', 11, 11, {decks:6, soft17:'stand', das:true}), 'H');
+  assert.equal(code('hard', 11, 11, {decks:6, soft17:'hit', das:true}), 'D/H');
+  assert.equal(code('pair', 6, 2, {decks:6, soft17:'stand', das:true}), 'P');
+  assert.equal(code('pair', 6, 2, {decks:6, soft17:'stand', das:false}), 'H');
+  assert.equal(code('hard', 15, 10, {decks:6, soft17:'stand', das:true, surrender:true}), 'R/H');
+  assert.equal(code('hard', 15, 10, {decks:6, soft17:'stand', das:true, surrender:false}), 'H');
+});
+
 test('blackjack surrender strategy distinguishes soft totals, pairs, S17, and H17', () => {
   const hand = cards => ({cards, bet:10, status:'active', split:false, splitAces:false, doubled:false});
   const advice = (cards, dealer, soft17) => logic.blackjackAdvice({hand:hand(cards), dealerUpCard:card(dealer,'s'), rules:{soft17, das:true, surrender:true}, bank:100, handCount:1}).action;
@@ -193,6 +212,8 @@ test('blackjack surrender strategy distinguishes soft totals, pairs, S17, and H1
   assert.equal(advice([card('T','c'), card('6','d')], 'A', 'stand'), 'surrender');
   assert.equal(advice([card('T','c'), card('5','d')], 'T', 'stand'), 'surrender');
   assert.equal(advice([card('T','c'), card('7','d')], 'A', 'hit'), 'surrender');
+  const eights = hand([card('8','c'), card('8','d')]);
+  assert.equal(logic.blackjackAdvice({hand:eights, dealerUpCard:card('T','s'), rules:{decks:6, soft17:'stand', das:true, surrender:true}, bank:0, handCount:1}).action, 'surrender');
 });
 
 test('blackjack natural payouts return the original wager plus winnings', () => {

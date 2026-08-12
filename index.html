@@ -626,6 +626,57 @@
     .lobby-share-label,.lobby-share-link,.lobby-share-copy{font-size:10px;}
     .lobby-share-copy{padding:6px 8px;}
   }
+
+  /* Lobby refresh: game-first tiles with a single dominant action. */
+  .splash-card{width:min(1160px,96vw);padding:22px 24px 18px;text-align:left;}
+  .splash-brand-mark{width:100%;max-width:none;min-height:92px;margin:0 auto 18px;padding:14px 22px;}
+  .lobby-title{text-align:center;margin:0 0 12px;font-size:11px;letter-spacing:1.8px;}
+  .lobby-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:14px;max-width:none;margin:0 auto 16px;}
+  .lobby-game{position:relative;grid-template-columns:1fr;grid-template-rows:150px auto auto 1fr auto;align-content:start;gap:10px;padding:12px;border-radius:16px;overflow:hidden;}
+  .lobby-game-art{height:150px;border-radius:12px;gap:8px;background:radial-gradient(circle at 25% 12%,rgba(255,255,255,.14),transparent 28%),radial-gradient(circle at 80% 82%,rgba(230,195,106,.15),transparent 32%),linear-gradient(145deg,#167452,#083a2a);}
+  .lobby-game-art::after{content:"";position:absolute;left:10%;right:10%;bottom:14px;height:24px;border:1px solid rgba(230,195,106,.28);border-radius:50%;background:rgba(3,27,20,.28);box-shadow:0 9px 18px rgba(0,0,0,.24);}
+  .lobby-mini-card{width:58px;height:82px;border-radius:8px;padding:7px 4px;z-index:2;}
+  .lobby-card-rank{font-size:22px}.lobby-card-suit{font-size:18px;margin-top:3px}
+  .lobby-mini-card.red{transform:translate(4px,-7px) rotate(-8deg)}
+  .lobby-mini-card.black{transform:translate(-4px,7px) rotate(8deg)}
+  .lobby-game-name{font-size:20px;letter-spacing:.1px;}
+  .lobby-game-meta{font-size:12px;min-height:46px;}
+  .lobby-game-version{font-size:10px;}
+  .lobby-game-status{position:absolute;right:22px;top:22px;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,.3);}
+  .lobby-variant-row{grid-column:auto;grid-template-columns:1fr;gap:5px;padding:8px 9px;}
+  .lobby-game-actions{grid-column:auto;align-self:end;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:2px;}
+  .lobby-game-actions .lobby-play{grid-column:1 / -1;min-height:43px;margin-bottom:3px;background:linear-gradient(180deg,#e3bd5d,#b98226);border-color:#f0d483;color:#10241b;font-size:13px;text-shadow:0 1px rgba(255,255,255,.28);box-shadow:0 5px 13px rgba(0,0,0,.28);}
+  .lobby-game-actions #splashClose.lobby-play,
+  .lobby-game-actions #videoPokerLobbyPlay.lobby-play,
+  .lobby-game-actions #bjLobbyPlay.lobby-play{background:linear-gradient(180deg,#e3bd5d,#b98226);border-color:#f0d483;color:#10241b;}
+  .lobby-game-actions .lobby-play:hover{background:linear-gradient(180deg,#f0cf78,#c89332);}
+  .lobby-game-actions .lobby-secondary{border:0;background:transparent;color:#c8dbd1;padding:6px 3px;text-decoration:underline;text-decoration-color:rgba(200,219,209,.28);text-underline-offset:3px;font-size:10px;}
+  .lobby-game-actions .lobby-secondary:hover{color:#fff;text-decoration-color:#d9c989;}
+  .lobby-share{max-width:none;margin:0;padding:0;border-color:rgba(81,146,113,.32);background:rgba(3,28,20,.38);text-align:left;}
+  .lobby-share>summary{cursor:pointer;padding:9px 12px;color:#b9d3c5;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.45px;}
+  .lobby-share-body{padding:0 12px 10px;}
+  .splash-actions{justify-content:flex-start;margin:8px 0 6px;}
+  .splash-install{font-size:11px;}
+  @media(max-width:900px){
+    .splash-card{width:min(760px,96vw);}
+    .lobby-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .lobby-game:last-child{grid-column:1 / -1;}
+  }
+  @media(max-width:620px){
+    .splash-card{padding:10px;}
+    .splash-brand-mark{margin-bottom:10px;}
+    .lobby-grid{grid-template-columns:1fr;gap:9px;}
+    .lobby-game:last-child{grid-column:auto;}
+    .lobby-game{grid-template-columns:92px minmax(0,1fr);grid-template-rows:auto auto auto;padding:9px;gap:6px 10px;}
+    .lobby-game-art{grid-row:1 / span 2;height:96px;}
+    .lobby-mini-card{width:34px;height:50px;padding:4px 2px;}
+    .lobby-card-rank{font-size:14px}.lobby-card-suit{font-size:12px}
+    .lobby-game-meta{min-height:0;font-size:10px;}
+    .lobby-game-status{right:14px;top:14px;}
+    .lobby-variant-row,.lobby-game-actions{grid-column:1 / -1;}
+    .lobby-game-actions{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .lobby-game-actions .lobby-play{min-height:40px;}
+  }
   .modal-woo{ display:none; position:fixed; inset:0; padding:24px; background:rgba(6,12,24,.92); z-index:2800; }
   .modal-woo .woo-box{ background:var(--panel); border:1px solid #203355; border-radius:14px; max-width:800px; margin:0 auto; padding:14px; color:var(--text); }
   .modal-woo h3{ margin:0 0 10px; font-size:16px; }
@@ -772,6 +823,50 @@
   .bj-shell{display:grid;grid-template-columns:300px minmax(0,1fr);gap:12px;max-width:1320px;margin:0 auto;}
   .bj-panel,.bj-table-wrap{background:#0b172a;border:1px solid #203a63;border-radius:8px;box-shadow:0 10px 28px #0006;}
   .bj-panel{padding:14px;display:flex;flex-direction:column;gap:12px;}
+  .bj-screen:not(.session-started){display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 0%,rgba(24,112,78,.32),transparent 40%),#07101f;}
+  .bj-screen:not(.session-started) .bj-shell{display:block;width:min(620px,100%);}
+  .bj-screen:not(.session-started) .bj-panel{padding:24px;border-radius:18px;border-color:rgba(214,168,77,.48);background:linear-gradient(155deg,#0d2530,#0a1728 72%);box-shadow:0 24px 64px rgba(0,0,0,.5);}
+  .bj-screen:not(.session-started) .bj-table-wrap{display:none;}
+  .bj-screen.session-started .bj-shell{grid-template-columns:minmax(0,1fr) 240px;max-width:1180px;}
+  .bj-screen.session-started .bj-table-wrap{grid-column:1;grid-row:1;}
+  .bj-screen.session-started .bj-panel{grid-column:2;grid-row:1;padding:10px;gap:8px;background:#091526;}
+  .bj-screen.session-started .bj-setup-heading,
+  .bj-screen.session-started .bj-controls,
+  .bj-screen.session-started .bj-edge,
+  .bj-screen.session-started .bj-coaching,
+  .bj-screen.session-started .bj-card-style,
+  .bj-screen.session-started .bj-rules-detail{display:none;}
+  .bj-screen.session-started .bj-action-grid{grid-template-columns:1fr;}
+  .bj-screen.session-started #bjStartSession{display:none;}
+  .bj-setup-heading{text-align:center;}
+  .bj-setup-kicker{display:block;color:#d8b85d;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;}
+  .bj-setup-heading h2{font-family:Georgia,serif;font-size:30px!important;letter-spacing:.2px;}
+  .bj-setup-heading .mobile-setup-intro{display:block;margin:8px auto 0;padding:0;border:0;background:transparent;color:#b9ccdf;max-width:460px;}
+  .bj-screen:not(.session-started) .bj-controls{grid-template-columns:1fr 1fr;gap:12px;}
+  .bj-screen:not(.session-started) .bj-bet-adjust,
+  .bj-screen:not(.session-started) .bj-custom-rules{grid-column:1 / -1;}
+  .bj-custom-rules{border:1px solid #28466f;border-radius:10px;background:rgba(5,18,32,.45);}
+  .bj-custom-rules>summary{cursor:pointer;padding:10px 12px;color:#e2c776;font-size:12px;font-weight:850;}
+  .bj-custom-rules .bj-rule-options{padding:2px 10px 10px;grid-template-columns:1fr 1fr;}
+  .bj-screen:not(.session-started) .bj-edge{display:grid;grid-template-columns:auto 90px;gap:2px 14px;align-items:center;border-color:rgba(214,168,77,.35);background:rgba(214,168,77,.08);}
+  .bj-screen:not(.session-started) .bj-edge strong{grid-column:2;grid-row:1 / span 2;text-align:right;color:#edca6e;}
+  .bj-screen:not(.session-started) .bj-edge span{grid-column:1;}
+  .bj-coaching{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;padding:11px 12px;border:1px solid #28466f;border-radius:10px;background:rgba(5,18,32,.45);}
+  .bj-coaching h3{grid-column:1 / -1;margin:0;color:#e2c776;font-size:13px;letter-spacing:.2px;}
+  .bj-coaching p{grid-column:1 / -1;margin:-3px 0 2px;color:#aac2e7;font-size:11px;line-height:1.35;}
+  .bj-coaching .bj-check{margin:0;color:#e8f2ff;}
+  .bj-coaching .bj-coaching-wide{grid-column:1 / -1;}
+  .bj-sidebar-coaching{display:none;padding:10px;border:1px solid #315184;border-radius:9px;background:#101f37;gap:9px;}
+  .bj-screen.session-started .bj-sidebar-coaching{display:grid;}
+  .bj-sidebar-coaching h3{margin:0;color:#e2c776;font-size:12px;text-transform:uppercase;letter-spacing:.6px;}
+  .bj-sidebar-coaching .bj-check{margin:0;color:#e8f2ff;font-size:11px;line-height:1.3;}
+  .bj-sidebar-coaching .bj-check input{flex:0 0 auto;}
+  .bj-card-style{display:grid;gap:4px;color:#cfe2ff;font-size:13px;}
+  .bj-card-style select{width:100%;box-sizing:border-box;background:#0b172a;border:1px solid #28466f;border-radius:8px;color:#fff;padding:10px 12px;font-size:16px;}
+  .bj-screen:not(.session-started) .bj-shoe,.bj-screen:not(.session-started) #bjEndSession,.bj-screen:not(.session-started) .bj-log-detail{display:none;}
+  .bj-screen:not(.session-started) .bj-action-grid{grid-template-columns:2fr 1fr;}
+  .bj-screen:not(.session-started) #bjStartSession{min-height:50px;background:linear-gradient(180deg,#e3bd5d,#b98226);border-color:#f0d483;color:#10241b;font-size:15px;box-shadow:0 6px 16px rgba(0,0,0,.28);}
+  .bj-screen:not(.session-started) #bjPeekStrategy{grid-column:1 / -1;}
   .bj-panel h2,.bj-table-wrap h2{margin:0;color:#f7fbff;font-size:20px;}
   .bj-controls{display:grid;gap:9px;}
   .bj-rule-options{display:grid;gap:9px;}
@@ -795,15 +890,15 @@
   .bj-stat-label{display:block;color:#aac2e7;font-size:10px;text-transform:uppercase;letter-spacing:.35px;}
   .bj-stat strong{display:block;margin-top:2px;color:#f3f7ff;font-size:18px;}
   .bj-log{min-height:112px;max-height:180px;overflow:auto;background:#081326;border:1px solid #203a63;border-radius:8px;padding:9px;font-size:12px;color:#cfe2ff;line-height:1.35;}
-  .bj-table-wrap{padding:14px;display:grid;gap:12px;align-content:start;}
-  .bj-topline{display:flex;justify-content:space-between;gap:12px;align-items:start;flex-wrap:wrap;}
-  .bj-result{font-size:24px;font-weight:900;text-align:right;color:#f3f7ff;}
-  .bj-table{position:relative;min-height:460px;border-radius:18px;border:1px solid #1b5d49;background:radial-gradient(circle at 50% 42%,#14664d 0%,#0b4436 48%,#082f27 100%);overflow:hidden;box-shadow:inset 0 0 0 7px rgba(130,82,28,.42),inset 0 0 38px rgba(0,0,0,.55);}
+  .bj-table-wrap{padding:14px;display:grid;gap:10px;align-content:start;background:linear-gradient(180deg,#0b172a,#081321);border-color:#263e5d;border-radius:14px;}
+  .bj-table{position:relative;min-height:500px;border-radius:42px 42px 20px 20px;border:3px solid #8f6b32;background-image:radial-gradient(circle at 50% 42%,rgba(27,130,91,.96) 0%,rgba(9,70,51,.98) 53%,#052e23 100%),repeating-linear-gradient(35deg,rgba(255,255,255,.018) 0 1px,transparent 1px 4px);overflow:hidden;box-shadow:inset 0 0 0 9px #382717,inset 0 0 0 12px rgba(226,183,87,.38),inset 0 0 65px rgba(0,0,0,.62),0 14px 32px rgba(0,0,0,.3);}
   .bj-table::before{content:attr(data-payout-label);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:rgba(255,230,170,.16);font-size:32px;font-weight:900;letter-spacing:1px;white-space:nowrap;pointer-events:none;}
   .bj-lane{position:absolute;left:24px;right:24px;display:grid;justify-items:center;gap:8px;z-index:2;}
   .bj-lane.dealer{top:26px;}
-  .bj-lane.player{bottom:78px;}
+  .bj-lane.player{bottom:110px;}
   .bj-label{color:#d9e6ff;font-size:12px;text-transform:uppercase;letter-spacing:.45px;background:rgba(8,19,38,.7);border:1px solid rgba(207,226,255,.22);border-radius:999px;padding:4px 10px;}
+  .bj-lane.dealer .bj-label{padding:0;border:0;border-radius:0;background:transparent;color:#fff;font-size:12px;font-weight:900;line-height:1.35;letter-spacing:0;text-transform:none;}
+  .bj-table.hide-counts .bj-label,.bj-table.hide-counts .bj-hand-total{display:none;}
   .bj-cards{display:flex;gap:0;justify-content:center;align-items:center;flex-wrap:nowrap;min-height:118px;--card-w:82px;--card-h:115px;--card-br:9px;--bj-card-overlap:55px;}
   .bj-cards .card{flex:0 0 auto;box-shadow:0 8px 18px #0007;}
   .bj-cards>.card+.card{margin-left:calc(0px - var(--bj-card-overlap));}
@@ -812,32 +907,49 @@
   @keyframes bjCardReveal{0%{transform:rotateY(90deg) scale(.94);opacity:.35}100%{transform:rotateY(0) scale(1);opacity:1}}
   @keyframes bjCardDraw{0%{transform:translateY(-18px) scale(.94);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
   .bj-hands{display:flex;gap:10px;justify-content:center;align-items:flex-start;width:100%;}
-  .bj-hands.has-split{display:grid;grid-template-columns:minmax(86px,112px) minmax(150px,210px) minmax(86px,112px);gap:8px;align-items:center;justify-content:center;}
+  .bj-hands.has-split{display:grid;grid-template-columns:minmax(124px,148px) minmax(180px,230px) minmax(124px,148px);gap:10px;align-items:center;justify-content:center;}
   .bj-hand-rail{display:grid;gap:5px;align-content:center;min-width:0;}
   .bj-hand{border:1px solid rgba(207,226,255,.2);border-radius:8px;background:rgba(8,19,38,.42);padding:8px;min-width:188px;display:grid;gap:6px;justify-items:center;}
   .bj-hand.active{border-color:#25d39b;box-shadow:0 0 0 2px rgba(37,211,155,.25);}
   .bj-hand.done{opacity:.82;}
-  .bj-hand-meta{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap;color:#cfe2ff;font-size:12px;}
+  .bj-hand.single,.bj-hand.single.active{border-color:transparent;border-radius:0;background:transparent;padding:0;box-shadow:none;}
+  .bj-hand.single .bj-hand-number{display:none;}
+  .bj-hand-meta{position:relative;z-index:6;display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap;color:#cfe2ff;font-size:12px;}
   .bj-hand-total{font-weight:900;color:#fff;}
-  .bj-hand.compact{min-width:0;padding:5px;display:grid;grid-template-columns:minmax(34px,44px) minmax(0,1fr);gap:5px;align-items:center;justify-items:stretch;}
-  .bj-hand.compact .bj-cards{--card-w:34px;--card-h:48px;--card-br:5px;--bj-card-overlap:26px;min-height:48px;justify-content:flex-start;overflow:hidden;}
+  .bj-hand.compact{min-width:0;padding:7px;display:grid;grid-template-columns:minmax(68px,78px) minmax(48px,1fr);gap:7px;align-items:center;justify-items:stretch;background:rgba(7,27,34,.78);border-color:rgba(207,226,255,.32);}
+  .bj-hand.compact .bj-cards{--card-w:36px;--card-h:52px;--card-br:5px;--bj-card-overlap:26px;min-height:52px;justify-content:flex-start;overflow:visible;}
   .bj-hand.compact .bj-cards .card{box-shadow:0 3px 8px #0006;}
-  .bj-hand.compact .bj-hand-meta{display:grid;gap:0;justify-items:start;align-content:center;font-size:9px;line-height:1.25;white-space:nowrap;overflow:hidden;}
+  .bj-hand.compact .card .pips,
+  .bj-hand.compact .card .face-svg,
+  .bj-hand.compact .card .index.br{display:none;}
+  .bj-hand.compact .card .index.tl{display:flex;left:4px;top:4px;transform:none;}
+  .bj-hand.compact .card .index,
+  .bj-hand.compact .card .index.wide,
+  .bj-hand.compact .card .index.wide .rank{font-size:14px;line-height:1;}
+  .bj-hand.compact .card .index .suit,
+  .bj-hand.compact .card .index.wide .suit{font-size:12px;line-height:1;margin-top:2px;}
+  .bj-hand.compact .bj-hand-meta{display:grid;gap:1px;justify-items:start;align-content:center;font-size:10px;line-height:1.25;white-space:nowrap;overflow:hidden;}
   .bj-hand.compact .bj-hand-meta span{max-width:100%;overflow:hidden;text-overflow:ellipsis;}
   .bj-hand.compact .bj-hand-total{font-size:14px;line-height:1.1;}
-  .bj-advice{background:#101f37;border:1px solid #315184;border-radius:8px;padding:10px 12px;color:#d9e6ff;min-height:0;line-height:1.35;}
+  .bj-advice{justify-self:center;width:min(620px,calc(100% - 24px));box-sizing:border-box;background:rgba(11,46,37,.95);border:1px solid rgba(226,190,96,.42);border-radius:999px;padding:9px 16px;color:#e6efe9;min-height:0;line-height:1.35;text-align:center;}
+  .bj-advice[hidden]{display:none;}
   .bj-advice strong{color:#25d39b;}
-  .bj-play-actions{display:grid;gap:8px;}
+  .bj-play-actions{display:grid;gap:8px;justify-self:center;width:min(680px,100%);}
   .bj-primary-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
   .bj-primary-slot{display:grid;min-width:0;}
   .bj-primary-slot>button{grid-area:1 / 1;}
   .bj-conditional-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;}
-  .bj-play-actions button{padding:10px 8px;}
+  .bj-play-actions button{min-height:48px;padding:10px 8px;font-size:15px;box-shadow:0 5px 12px rgba(0,0,0,.25);}
   .bj-play-actions button.danger{background:#3a1a1a;border-color:#5c2a2a;}
   .bj-shoe{display:grid;gap:6px;background:#101f37;border:1px solid #315184;border-radius:8px;padding:8px 10px;}
   .bj-shoe-row{display:flex;justify-content:space-between;gap:10px;color:#cfe2ff;font-size:12px;}
   .bj-shoe-track{height:8px;background:repeating-linear-gradient(90deg,#07101f 0,#07101f calc(10% - 2px),#203a63 calc(10% - 2px),#203a63 10%);border:1px solid #203a63;border-radius:999px;overflow:hidden;}
   .bj-shoe-fill{height:100%;width:0%;background:linear-gradient(90deg,#25d39b 0%,#d6a84d 68%,#ef6b65 100%);transition:width .3s ease;}
+  .bj-sidebar-bet{display:none;padding:10px;border:1px solid #315184;border-radius:9px;background:#101f37;gap:7px;}
+  .bj-screen.session-started .bj-sidebar-bet{display:grid;}
+  .bj-sidebar-bet label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0;color:#cfe2ff;font-size:12px;font-weight:800;}
+  .bj-sidebar-bet input{width:92px;box-sizing:border-box;padding:8px 9px;border:1px solid #315184;border-radius:8px;background:#081326;color:#fff;font-size:15px;font-weight:800;text-align:right;}
+  .bj-sidebar-bet .bj-bet-adjust{margin:0;}
   .bj-bet-spots{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;}
   .bj-bet-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;color:#eddcff;font-size:12px;text-shadow:0 1px 1px rgba(0,0,0,.5);}
   .bj-bet-circle{width:62px;height:62px;border-radius:50%;border:3px solid rgba(255,255,255,.35);background:rgba(255,255,255,.06);box-shadow:inset 0 0 10px rgba(0,0,0,.35);position:relative;}
@@ -873,6 +985,13 @@
     .bj-shell{grid-template-columns:1fr;}
     .bj-panel{order:0;}
     .bj-screen.session-started .bj-panel{order:2;}
+    .bj-screen.session-started .bj-shell{display:grid;grid-template-columns:1fr;}
+    .bj-screen.session-started .bj-table-wrap{grid-column:1;grid-row:1;}
+    .bj-screen.session-started .bj-panel{grid-column:1;grid-row:2;display:grid;grid-template-columns:1fr 1fr;}
+    .bj-screen.session-started .bj-action-grid{grid-column:1;}
+    .bj-screen.session-started .bj-shoe{grid-column:2;grid-row:1;align-self:start;}
+    .bj-screen.session-started .bj-sidebar-bet{grid-column:2;}
+    .bj-screen.session-started .bj-log-detail{grid-column:1 / -1;}
     .bj-screen:not(.session-started) .mobile-setup-intro{display:block;}
     .bj-table{min-height:440px;}
   }
@@ -880,19 +999,34 @@
     .bj-screen{padding:8px;min-height:100dvh;}
     .bj-shell{gap:8px;}
     .bj-panel,.bj-table-wrap{padding:10px;gap:8px;}
+    .bj-screen:not(.session-started) .bj-panel{padding:15px;}
+    .bj-screen:not(.session-started) .bj-controls{grid-template-columns:1fr;}
+    .bj-screen:not(.session-started) .bj-bet-adjust,
+    .bj-screen:not(.session-started) .bj-custom-rules{grid-column:1;}
+    .bj-custom-rules .bj-rule-options{grid-template-columns:1fr;}
+    .bj-coaching{grid-template-columns:1fr;}
+    .bj-coaching h3,.bj-coaching p{grid-column:1;}
+    .bj-screen.session-started .bj-panel{grid-template-columns:1fr;}
+    .bj-screen.session-started .bj-shoe{grid-column:1;grid-row:auto;}
+    .bj-screen.session-started .bj-sidebar-bet{grid-column:1;}
     .bj-panel h2,.bj-table-wrap h2{font-size:22px;line-height:1.1;}
     .bj-table{min-height:400px;border-radius:14px;}
     .bj-table::before{font-size:18px;}
     .bj-lane{left:8px;right:8px;}
-    .bj-lane.player{bottom:66px;}
+    .bj-lane.player{bottom:88px;}
     .bj-cards{--card-w:58px;--card-h:82px;--card-br:7px;--bj-card-overlap:39px;min-height:86px;}
     .bj-hand{min-width:128px;padding:6px;}
     .bj-hands{gap:6px;}
     .bj-hands.has-split{grid-template-columns:minmax(76px,88px) minmax(128px,150px) minmax(76px,88px);gap:5px;}
     .bj-hand-rail{gap:4px;}
-    .bj-hand.compact{padding:4px;grid-template-columns:32px minmax(0,1fr);gap:3px;}
-    .bj-hand.compact .bj-cards{--card-w:30px;--card-h:43px;--card-br:4px;--bj-card-overlap:23px;min-height:43px;}
-    .bj-hand.compact .bj-hand-meta{font-size:8px;}
+    .bj-hand.compact{padding:4px;grid-template-columns:1fr;gap:4px;justify-items:center;}
+    .bj-hand.compact .bj-cards{--card-w:28px;--card-h:40px;--card-br:4px;--bj-card-overlap:21px;min-height:40px;justify-content:center;}
+    .bj-hand.compact .card .index,
+    .bj-hand.compact .card .index.wide,
+    .bj-hand.compact .card .index.wide .rank{font-size:11px;}
+    .bj-hand.compact .card .index .suit,
+    .bj-hand.compact .card .index.wide .suit{font-size:10px;margin-top:1px;}
+    .bj-hand.compact .bj-hand-meta{display:flex;gap:3px;justify-content:center;justify-items:center;font-size:8px;white-space:normal;overflow:visible;}
     .bj-hand.compact .bj-hand-total{font-size:12px;}
     .bj-play-actions,.bj-primary-actions,.bj-conditional-actions{gap:7px;}
     .bj-play-actions button{padding:8px 6px;font-size:12px;border-radius:10px;}
@@ -906,6 +1040,8 @@
     .bj-double-bet-anchor{right:42px;}
     .bj-chart-wrap{min-height:118px;padding:8px;}
     #bjChart{height:118px;}
+    .bj-advice{width:100%;border-radius:10px;padding:8px 10px;font-size:12px;}
+    .bj-play-actions button{min-height:48px;font-size:14px;}
   }
   .stats-modal-inner{ position:absolute; inset:12px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:8px; display:flex; flex-direction:column; gap:10px; }
   .stats-table-wrap{ border:1px solid #24365d; border-radius:10px; background:#0e1930; padding:10px; overflow:auto; }
@@ -945,6 +1081,24 @@
     <div class="lobby-title">Game Lobby</div>
     <div class="lobby-grid" aria-label="Available games">
       <div class="lobby-game">
+        <span class="lobby-game-art blackjack" aria-hidden="true">
+          <span class="lobby-mini-card red"><span class="lobby-card-rank">A</span><span class="lobby-card-suit">♥</span></span>
+          <span class="lobby-mini-card black"><span class="lobby-card-rank">10</span><span class="lobby-card-suit">♠</span></span>
+        </span>
+        <span>
+          <span class="lobby-game-name">Blackjack</span>
+          <span class="lobby-game-meta">Blackjack trainer with configurable rules, basic strategy, shoe tracking, and chip settlement.</span>
+          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v1.3</span>
+        </span>
+        <span class="lobby-game-status">Ready</span>
+        <span class="lobby-game-actions">
+          <button id="bjLobbyPlay" class="lobby-play">Play Blackjack</button>
+          <button id="bjLobbyRules" class="lobby-secondary">Rules</button>
+          <button id="bjLobbyStrategy" class="lobby-secondary">Strategy</button>
+          <button id="bjLobbyVersion" class="lobby-secondary">Version</button>
+        </span>
+      </div>
+      <div class="lobby-game">
         <span class="lobby-game-art holdem" aria-hidden="true">
           <span class="lobby-mini-card red"><span class="lobby-card-rank">A</span><span class="lobby-card-suit">♦</span></span>
           <span class="lobby-mini-card black"><span class="lobby-card-rank">K</span><span class="lobby-card-suit">♠</span></span>
@@ -956,10 +1110,10 @@
         </span>
         <span class="lobby-game-status">Ready</span>
         <span class="lobby-game-actions">
-          <button id="splashClose">Play</button>
-          <button id="splashShowRules">Rules</button>
-          <button id="splashShowWoo">Strategy</button>
-          <button id="splashShowVersion" class="button-small-muted">Version</button>
+          <button id="splashClose" class="lobby-play">Play Heads Up Hold 'Em</button>
+          <button id="splashShowRules" class="lobby-secondary">Rules</button>
+          <button id="splashShowWoo" class="lobby-secondary">Strategy</button>
+          <button id="splashShowVersion" class="lobby-secondary">Version</button>
         </span>
       </div>
       <div class="lobby-game">
@@ -981,43 +1135,27 @@
           </select>
         </span>
         <span class="lobby-game-actions">
-          <button id="videoPokerLobbyPlay">Play</button>
-          <button id="videoPokerLobbyRules">Rules</button>
-          <button id="videoPokerLobbyStrategy">Strategy</button>
-          <button id="videoPokerLobbyVersion" class="button-small-muted">Version</button>
-        </span>
-      </div>
-      <div class="lobby-game">
-        <span class="lobby-game-art blackjack" aria-hidden="true">
-          <span class="lobby-mini-card red"><span class="lobby-card-rank">A</span><span class="lobby-card-suit">♥</span></span>
-          <span class="lobby-mini-card black"><span class="lobby-card-rank">10</span><span class="lobby-card-suit">♠</span></span>
-        </span>
-        <span>
-          <span class="lobby-game-name">Blackjack</span>
-          <span class="lobby-game-meta">Blackjack trainer with configurable rules, basic strategy, shoe tracking, and chip settlement.</span>
-          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v1.2</span>
-        </span>
-        <span class="lobby-game-status">Ready</span>
-        <span class="lobby-game-actions">
-          <button id="bjLobbyPlay">Play</button>
-          <button id="bjLobbyRules">Rules</button>
-          <button id="bjLobbyStrategy">Strategy</button>
-          <button id="bjLobbyVersion" class="button-small-muted">Version</button>
+          <button id="videoPokerLobbyPlay" class="lobby-play">Play Video Poker</button>
+          <button id="videoPokerLobbyRules" class="lobby-secondary">Rules</button>
+          <button id="videoPokerLobbyStrategy" class="lobby-secondary">Strategy</button>
+          <button id="videoPokerLobbyVersion" class="lobby-secondary">Version</button>
         </span>
       </div>
     </div>
-    <div class="lobby-share" aria-labelledby="lobbyShareLabel">
-      <span id="lobbyShareLabel" class="lobby-share-label">Game download link</span>
-      <div class="lobby-share-row">
-        <a id="lobbyShareLink" class="lobby-share-link" href="./">Open Golden Table Games</a>
-        <button id="lobbyShareCopy" class="lobby-share-copy" type="button">Copy link</button>
+    <details class="lobby-share" aria-labelledby="lobbyShareLabel">
+      <summary id="lobbyShareLabel">Share or install Golden Table Games</summary>
+      <div class="lobby-share-body">
+        <div class="lobby-share-row">
+          <a id="lobbyShareLink" class="lobby-share-link" href="./">Open Golden Table Games</a>
+          <button id="lobbyShareCopy" class="lobby-share-copy" type="button">Copy link</button>
+        </div>
+        <div id="lobbyShareStatus" class="lobby-share-status" role="status" aria-live="polite"></div>
+        <div class="splash-actions">
+          <button id="installBtn" type="button">Install App</button>
+        </div>
+        <div id="installTip" class="splash-install">Install this app for faster startup and offline play.</div>
       </div>
-      <div id="lobbyShareStatus" class="lobby-share-status" role="status" aria-live="polite"></div>
-    </div>
-    <div class="splash-actions">
-      <button id="installBtn" type="button">Install App</button>
-    </div>
-    <div id="installTip" class="splash-install">Install this app for faster startup and offline play.</div>
+    </details>
   </div>
 </div>
 <div id="wooModal" class="modal-woo" role="dialog" aria-modal="true" aria-labelledby="wooTitle">
@@ -1621,13 +1759,16 @@
 <section id="blackjackScreen" class="bj-screen" aria-label="Blackjack">
   <div class="bj-shell">
     <aside class="bj-panel">
-      <h2>Blackjack</h2>
-      <p class="mobile-setup-intro">Choose your table rules and game settings below, then tap Start Session. The table will move into view automatically.</p>
+      <div class="bj-setup-heading">
+        <span class="bj-setup-kicker">Blackjack</span>
+        <h2>Choose your table</h2>
+        <p class="mobile-setup-intro">Set your bankroll and wager, choose the rules you want to practice, then take a seat.</p>
+      </div>
       <div class="bj-controls">
         <label>Starting Bankroll
           <input id="bjStartingBankroll" type="number" min="1" step="1" value="500" inputmode="numeric">
         </label>
-        <label>Bet Per Hand
+        <label>Starting Bet
           <input id="bjBet" type="number" min="1" step="1" value="10" inputmode="numeric">
         </label>
         <div id="bjBetAdjust" class="bj-bet-adjust" aria-label="Quick bet adjustments">
@@ -1638,7 +1779,9 @@
           <button type="button" data-bj-bet-delta="5" aria-label="Increase bet by 5">+5</button>
           <button type="button" data-bj-bet-delta="1" aria-label="Increase bet by 1">+1</button>
         </div>
-        <div id="bjRuleOptions" class="bj-rule-options">
+        <details class="bj-custom-rules" open>
+          <summary>Table Rules</summary>
+          <div id="bjRuleOptions" class="bj-rule-options">
           <label>Continuous Shuffler
             <select id="bjCsm" title="Continuous shuffler">
               <option value="no">No</option>
@@ -1678,32 +1821,57 @@
               <option value="6:5">6:5</option>
             </select>
           </label>
-        </div>
-        <label>Card Style
-          <select id="bjCardStyle" title="Blackjack card display style">
-            <option value="typical">Typical</option>
-            <option value="simple">Simple</option>
-          </select>
-        </label>
-        <label class="bj-check"><input id="bjShowAdvice" type="checkbox" checked> Show Basic Strategy</label>
-        <label class="bj-check"><input id="bjCorrectMistakes" type="checkbox"> Warn About Strategy Mistakes</label>
+          </div>
+        </details>
       </div>
       <div class="bj-edge">
         House Edge
         <strong id="bjHouseEdge">0.43%</strong>
         <span id="bjHouseEdgeNote">Wizard-style total-dependent basic strategy estimate.</span>
       </div>
+      <section class="bj-coaching" aria-labelledby="bjCoachingTitle">
+        <h3 id="bjCoachingTitle">Coaching</h3>
+        <p>Choose how much strategy guidance you want during play.</p>
+        <label class="bj-check"><input id="bjShowAdvice" type="checkbox" checked> Show Basic Strategy</label>
+        <label class="bj-check"><input id="bjCorrectMistakes" type="checkbox"> Warn About Strategy Mistakes</label>
+        <label class="bj-check bj-coaching-wide"><input id="bjShowCounts" type="checkbox" checked> Show Card Counts (Player &amp; Dealer)</label>
+      </section>
+      <label class="bj-card-style">Card Style
+        <select id="bjCardStyle" title="Blackjack card display style">
+          <option value="typical">Typical</option>
+          <option value="simple">Simple</option>
+        </select>
+      </label>
       <div class="bj-shoe" aria-label="Visual shoe progress">
         <div class="bj-shoe-row"><span id="bjShoeLabel">Shoe progress</span><span id="bjShoeCount">Fresh</span></div>
         <div class="bj-shoe-track"><div id="bjShoeFill" class="bj-shoe-fill"></div></div>
       </div>
+      <section class="bj-sidebar-bet" aria-label="In-session bet controls">
+        <label for="bjSidebarBet">Bet Amount
+          <input id="bjSidebarBet" type="number" min="1" step="1" value="10" inputmode="numeric">
+        </label>
+        <div id="bjSidebarBetAdjust" class="bj-bet-adjust" aria-label="Quick bet adjustments">
+          <button type="button" data-bj-bet-delta="-1" aria-label="Decrease bet by 1">−1</button>
+          <button type="button" data-bj-bet-delta="-5" aria-label="Decrease bet by 5">−5</button>
+          <button type="button" data-bj-bet-delta="-25" aria-label="Decrease bet by 25">−25</button>
+          <button type="button" data-bj-bet-delta="25" aria-label="Increase bet by 25">+25</button>
+          <button type="button" data-bj-bet-delta="5" aria-label="Increase bet by 5">+5</button>
+          <button type="button" data-bj-bet-delta="1" aria-label="Increase bet by 1">+1</button>
+        </div>
+      </section>
       <div class="bj-action-grid">
-        <button id="bjStartSession" type="button">Start Session</button>
+        <button id="bjStartSession" type="button">Take a Seat</button>
         <button id="bjExitLobby" type="button" class="secondary">Lobby</button>
         <button id="bjEndSession" type="button" class="secondary wide">End Session</button>
         <button id="bjPeekStrategy" type="button" class="secondary wide">Peek at Strategy</button>
       </div>
-      <details class="sidebar-disclosure" open>
+      <section class="bj-sidebar-coaching" aria-labelledby="bjSidebarCoachingTitle">
+        <h3 id="bjSidebarCoachingTitle">Coaching</h3>
+        <label class="bj-check"><input id="bjSidebarShowAdvice" type="checkbox"> Show Basic Strategy</label>
+        <label class="bj-check"><input id="bjSidebarCorrectMistakes" type="checkbox"> Warn About Strategy Mistakes</label>
+        <label class="bj-check"><input id="bjSidebarShowCounts" type="checkbox"> Show Card Counts (Player &amp; Dealer)</label>
+      </section>
+      <details class="sidebar-disclosure bj-rules-detail">
         <summary>Rules</summary>
         <div class="sidebar-disclosure-body">
           <div class="bj-log">
@@ -1711,7 +1879,7 @@
           </div>
         </div>
       </details>
-      <details class="sidebar-disclosure">
+      <details class="sidebar-disclosure bj-log-detail">
         <summary>Log</summary>
         <div class="sidebar-disclosure-body">
           <div id="bjLog" class="bj-log">Start a Blackjack session, then deal.</div>
@@ -1719,25 +1887,19 @@
       </details>
     </aside>
     <section class="bj-table-wrap">
-      <div class="bj-topline">
-        <h2>Blackjack</h2>
-        <div id="bjResult" class="bj-result">$0</div>
-      </div>
       <div id="bjTable" class="bj-table" data-payout-label="BLACKJACK PAYS 3 TO 2">
         <div id="bjPotDealer" class="bj-seat-pot-dealer"></div>
         <div id="bjPot" class="bj-pot"></div>
         <div class="bj-lane dealer">
-          <div id="bjDealerLabel" class="bj-label">Dealer</div>
+          <div id="bjDealerLabel" class="bj-label" hidden></div>
           <div id="bjDealerCards" class="bj-cards"></div>
         </div>
         <div class="bj-lane player">
           <div id="bjPlayerHands" class="bj-hands"></div>
-          <div id="bjPlayerLabel" class="bj-label">Player</div>
         </div>
         <div class="bj-bet-spots">
           <div class="bj-bet-wrap">
             <div id="bjMainBetCircle" class="bj-bet-circle"></div>
-            <div class="bj-bet-label">Bet</div>
           </div>
           <div id="bjDoubleBetCircle" class="bj-bet-anchor bj-double-bet-anchor" aria-hidden="true"></div>
           <div id="bjSplitBetCircle" class="bj-bet-anchor bj-split-bet-anchor" aria-hidden="true"></div>
@@ -1759,7 +1921,7 @@
           <button id="bjSurrender" type="button" class="danger" hidden>Surrender</button>
         </div>
       </div>
-      <div class="vp-main-bottom">
+      <div class="vp-main-bottom bj-session-content">
         <div class="bj-stats" aria-label="Blackjack session stats">
           <div class="bj-stat"><span class="bj-stat-label">Bank</span><strong id="bjBankStat">$500</strong></div>
           <div class="bj-stat"><span class="bj-stat-label">Profit</span><strong id="bjProfitStat">$0</strong></div>
@@ -1808,8 +1970,8 @@
   </div>
 </div>
 
-<script src="app-config.js?v=4.2"></script>
-<script src="game-logic.js?v=4.2"></script>
+<script src="app-config.js?v=4.3"></script>
+<script src="game-logic.js?v=4.3"></script>
 <script>
 const APP_CONFIG = window.HUHEAppConfig || {};
 const APP_STORAGE = APP_CONFIG.storage || {};
@@ -2004,7 +2166,7 @@ const PLAYER_GAME_SETTING_FIELDS = {
   blackjack: [
     ['bjStartingBankroll','value'], ['bjBet','value'], ['bjCsm','value'], ['bjDecks','value'],
     ['bjSoft17','value'], ['bjDas','value'], ['bjSurrenderRule','value'], ['bjBlackjackPayout','value'],
-    ['bjCardStyle','value'], ['bjShowAdvice','checked'], ['bjCorrectMistakes','checked']
+    ['bjCardStyle','value'], ['bjShowAdvice','checked'], ['bjCorrectMistakes','checked'], ['bjShowCounts','checked']
   ]
 };
 const PLAYER_GAME_DEFAULT_SETTINGS = Object.fromEntries(Object.entries(PLAYER_GAME_SETTING_FIELDS).map(([gameId,fields])=>[
@@ -5310,15 +5472,7 @@ async function logSessionAndReset(options){
     return `${r.csm?'CSM':'Shoe'} / ${r.decks}D / ${r.soft17==='hit'?'H17':'S17'} / ${r.das?'DAS':'No DAS'} / ${r.surrender?'LS':'No surrender'} / BJ ${r.blackjackPayout || '3:2'}`;
   }
   function bjHouseEdge(r=bjReadRules()){
-    let edge = 0.43;
-    if(r.decks === 1) edge -= 0.18;
-    else if(r.decks === 2) edge -= 0.05;
-    if(r.soft17 === 'hit') edge += 0.20;
-    if(!r.das) edge += 0.14;
-    if(!r.surrender) edge += 0.08;
-    if(r.csm) edge -= 0.02;
-    if(r.blackjackPayout === '6:5') edge += 1.39;
-    return Math.max(0.05, edge);
+    return HUHELogic.blackjackHouseEdge(r);
   }
   function bjHand(cards){ return {cards:cards||[], bet:bj.bet, status:'active', doubled:false, split:false, splitAces:false, result:null}; }
   function bjTotal(cards){ return HUHELogic.blackjackTotal(cards); }
@@ -5429,7 +5583,7 @@ async function logSessionAndReset(options){
   function bjUpdateHouseEdge(){
     const r = bj.started && bj.rules ? bj.rules : bjReadRules();
     if(bjEls.houseEdge) bjEls.houseEdge.textContent = `${bjHouseEdge(r).toFixed(2)}%`;
-    if(bjEls.houseEdgeNote) bjEls.houseEdgeNote.textContent = `${bjRuleLabel(r)}. Estimate for Wizard-style total-dependent basic strategy.`;
+    if(bjEls.houseEdgeNote) bjEls.houseEdgeNote.textContent = `${bjRuleLabel(r)}. Wizard total-dependent basic strategy (${r.csm ? 'continuous shuffler' : 'cut card'}).`;
     if(bjEls.rulesStat) bjEls.rulesStat.textContent = r.soft17 === 'hit' ? 'H17' : 'S17';
     if(bjEls.table) bjEls.table.dataset.payoutLabel = `BLACKJACK PAYS ${r.blackjackPayout === '6:5' ? '6 TO 5' : '3 TO 2'}`;
   }
@@ -5454,11 +5608,12 @@ async function logSessionAndReset(options){
     }
     if(bjEls.dealerLabel){
       const revealed = bj.dealer.length && bj.stage !== 'player';
+      bjEls.dealerLabel.hidden = !revealed;
       if(revealed){
         const total = bjTotal(bj.dealer);
-        bjEls.dealerLabel.textContent = `Dealer · ${total.total}${total.soft ? ' soft' : ''}`;
+        bjEls.dealerLabel.textContent = `${total.total}${total.soft ? ' soft' : ''}`;
       }else{
-        bjEls.dealerLabel.textContent = 'Dealer';
+        bjEls.dealerLabel.textContent = '';
       }
     }
     if(bjEls.playerHands){
@@ -5466,7 +5621,7 @@ async function logSessionAndReset(options){
       bjEls.playerHands.classList.toggle('has-split', bj.hands.length > 1);
       if(!bj.hands.length){
         const empty = document.createElement('div');
-        empty.className = 'bj-hand';
+        empty.className = 'bj-hand single';
         const row = document.createElement('div');
         row.className = 'bj-cards';
         row.appendChild(makeCardWithPips('', true));
@@ -5488,14 +5643,16 @@ async function logSessionAndReset(options){
           const total = bjTotal(hand.cards);
           const meta = document.createElement('div');
           meta.className = 'bj-hand-meta';
-          meta.innerHTML = `<span>Hand ${idx+1}</span><span class="bj-hand-total">${total.total}${total.soft?' soft':''}</span><span>${bjMoney(hand.bet)}</span><span>${hand.result || hand.status}</span>`;
+          meta.innerHTML = `<span class="bj-hand-number">Hand ${idx+1}</span><span class="bj-hand-total">${total.total}${total.soft?' soft':''}</span><span>${bjMoney(hand.bet)}</span><span>${hand.result || hand.status}</span>`;
           wrap.setAttribute('aria-label', `Hand ${idx+1}, ${total.total}${total.soft?' soft':''}, ${bjMoney(hand.bet)}, ${hand.result || hand.status}`);
           wrap.appendChild(row);
           wrap.appendChild(meta);
           return wrap;
         };
         if(bj.hands.length === 1){
-          bjEls.playerHands.appendChild(makeBjHand(bj.hands[0],0));
+          const singleHand = makeBjHand(bj.hands[0],0);
+          singleHand.classList.add('single');
+          bjEls.playerHands.appendChild(singleHand);
         }else{
           bj.hands.forEach((hand,idx)=>{
             if(idx < focusIndex) leftRail.appendChild(makeBjHand(hand,idx,true));
@@ -5510,14 +5667,15 @@ async function logSessionAndReset(options){
   }
   function bjRenderAdvice(){
     if(!bjEls.advice) return;
+    const showAdvice = !!bjEls.showAdvice?.checked;
+    bjEls.advice.hidden = !showAdvice;
+    if(!showAdvice) return;
     if(bj.stage !== 'player'){
       bjEls.advice.textContent = 'Basic strategy appears after the deal.';
       return;
     }
     const adv = bjAdviceFor(bjActiveHand());
-    bjEls.advice.innerHTML = bjEls.showAdvice?.checked
-      ? `<strong>Basic strategy:</strong> ${bjActionText(adv.action)}. <span>${adv.why}</span>`
-      : 'Basic strategy is hidden. Correction can still enforce the recommended play.';
+    bjEls.advice.innerHTML = `<strong>Basic strategy:</strong> ${bjActionText(adv.action)}. <span>${adv.why}</span>`;
   }
   function bjDrawChart(){
     const canvas = bjEls.chart;
@@ -5568,8 +5726,12 @@ async function logSessionAndReset(options){
     if(bjEls.handsStat) bjEls.handsStat.textContent = String(bj.handsPlayed);
     if(bjEls.record) bjEls.record.textContent = `${bj.wins}-${bj.losses}-${bj.pushes}`;
     if(bjEls.strategy) bjEls.strategy.textContent = `${bj.followed}/${bj.decisions}`;
-    if(bjEls.result) bjEls.result.textContent = bj.lastResult;
     if(bjEls.cardStyle) bjEls.cardStyle.value = state.cardStyle || 'typical';
+    if(bjEls.sidebarShowAdvice && bjEls.showAdvice) bjEls.sidebarShowAdvice.checked = bjEls.showAdvice.checked;
+    if(bjEls.sidebarCorrect && bjEls.correct) bjEls.sidebarCorrect.checked = bjEls.correct.checked;
+    if(bjEls.sidebarShowCounts && bjEls.showCounts) bjEls.sidebarShowCounts.checked = bjEls.showCounts.checked;
+    if(bjEls.sidebarBet) bjEls.sidebarBet.value = bj.bet;
+    if(bjEls.table) bjEls.table.classList.toggle('hide-counts', !bjEls.showCounts?.checked);
     bjSetRuleInputsLocked(bj.started);
     const active = bjActiveHand();
     const playerTurn = bj.stage === 'player' && active && active.status === 'active';
@@ -5607,9 +5769,10 @@ async function logSessionAndReset(options){
   }
   function bjAdjustBet(delta){
     if(!bjEls.bet || bj.busy) return;
-    const current = Math.max(1, Math.round(Number(bjEls.bet.value)||bj.bet||1));
+    const current = Math.max(1, Math.round(Number(bj.started ? bj.bet : bjEls.bet.value)||bj.bet||1));
     bj.bet = Math.max(1, current + Number(delta||0));
     bjEls.bet.value = bj.bet;
+    if(bjEls.sidebarBet) bjEls.sidebarBet.value = bj.bet;
     savePlayerGameSettings(BLACKJACK_GAME_ID);
   }
   function bjStartSession(){
@@ -5856,7 +6019,7 @@ async function logSessionAndReset(options){
       followed: bj.followed,
       decisions: bj.decisions,
       bestHand: '-',
-      notes: `Blackjack ${APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.2'}. Rules: ${bjRuleLabel(bj.rules)}. House edge estimate ${bjHouseEdge(bj.rules).toFixed(2)}%.`
+      notes: `Blackjack ${APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.3'}. Rules: ${bjRuleLabel(bj.rules)}. House edge estimate ${bjHouseEdge(bj.rules).toFixed(2)}%.`
     };
     try{ await saveSessionSummary(summary); bjLog('Session saved.'); }catch(e){ bjLog('Unable to save session.'); }
   }
@@ -5875,38 +6038,7 @@ async function logSessionAndReset(options){
     }
   }
   function bjChartAction(section, value, up, rules){
-    if(section === 'pair'){
-      if(rules.surrender && rules.soft17 === 'hit' && value === 8 && up === 11) return 'R/P';
-      if(value === 11 || value === 8) return 'P';
-      if(value === 10) return 'S';
-      if(value === 9) return [2,3,4,5,6,8,9].includes(up) ? 'P' : 'S';
-      if(value === 7) return up <= 7 ? 'P' : 'H';
-      if(value === 6) return (rules.das ? up>=2&&up<=6 : up>=3&&up<=6) ? 'P' : 'H';
-      if(value === 5) return up <= 9 ? 'D/H' : 'H';
-      if(value === 4) return rules.das && (up===5 || up===6) ? 'P' : 'H';
-      return (rules.das ? up<=7 : up>=4&&up<=7) ? 'P' : 'H';
-    }
-    if(section === 'soft'){
-      if(value >= 20) return 'S';
-      if(value === 19) return rules.soft17==='hit' && up===6 ? 'D/S' : 'S';
-      if(value === 18){
-        if([3,4,5,6].includes(up) || (rules.soft17==='hit' && up===2)) return 'D/S';
-        return [2,7,8].includes(up) ? 'S' : 'H';
-      }
-      if(value === 17) return ([3,4,5,6].includes(up) || (rules.soft17==='hit' && up===2)) ? 'D/H' : 'H';
-      if(value === 15 || value === 16) return [4,5,6].includes(up) ? 'D/H' : 'H';
-      return [5,6].includes(up) ? 'D/H' : 'H';
-    }
-    if(rules.surrender && rules.soft17 === 'hit' && up === 11 && [15,16,17].includes(value)) return value === 17 ? 'R/S' : 'R/H';
-    if(rules.surrender && value === 16 && up >= 9) return 'R/H';
-    if(rules.surrender && value === 15 && up === 10) return 'R/H';
-    if(value >= 17) return 'S';
-    if(value >= 13) return up <= 6 ? 'S' : 'H';
-    if(value === 12) return [4,5,6].includes(up) ? 'S' : 'H';
-    if(value === 11) return 'D/H';
-    if(value === 10) return up <= 9 ? 'D/H' : 'H';
-    if(value === 9) return [3,4,5,6].includes(up) ? 'D/H' : 'H';
-    return 'H';
+    return HUHELogic.blackjackBasicStrategyCode(section, value, up, rules);
   }
   function bjStrategyTable(title, section, rows, rules){
     const dealer = [2,3,4,5,6,7,8,9,10,11];
@@ -5946,6 +6078,8 @@ async function logSessionAndReset(options){
     bjEls.ruleOptions = document.getElementById('bjRuleOptions');
     bjEls.bet = document.getElementById('bjBet');
     bjEls.betAdjust = document.getElementById('bjBetAdjust');
+    bjEls.sidebarBet = document.getElementById('bjSidebarBet');
+    bjEls.sidebarBetAdjust = document.getElementById('bjSidebarBetAdjust');
     bjEls.csm = document.getElementById('bjCsm');
     bjEls.decks = document.getElementById('bjDecks');
     bjEls.soft17 = document.getElementById('bjSoft17');
@@ -5955,6 +6089,10 @@ async function logSessionAndReset(options){
     bjEls.cardStyle = document.getElementById('bjCardStyle');
     bjEls.showAdvice = document.getElementById('bjShowAdvice');
     bjEls.correct = document.getElementById('bjCorrectMistakes');
+    bjEls.showCounts = document.getElementById('bjShowCounts');
+    bjEls.sidebarShowAdvice = document.getElementById('bjSidebarShowAdvice');
+    bjEls.sidebarCorrect = document.getElementById('bjSidebarCorrectMistakes');
+    bjEls.sidebarShowCounts = document.getElementById('bjSidebarShowCounts');
     bjEls.houseEdge = document.getElementById('bjHouseEdge');
     bjEls.houseEdgeNote = document.getElementById('bjHouseEdgeNote');
     bjEls.table = document.getElementById('bjTable');
@@ -5965,7 +6103,6 @@ async function logSessionAndReset(options){
     bjEls.advice = document.getElementById('bjAdvice');
     bjEls.chart = document.getElementById('bjChart');
     bjEls.log = document.getElementById('bjLog');
-    bjEls.result = document.getElementById('bjResult');
     bjEls.bank = document.getElementById('bjBankStat');
     bjEls.profit = document.getElementById('bjProfitStat');
     bjEls.handsStat = document.getElementById('bjHandsStat');
@@ -6011,6 +6148,24 @@ async function logSessionAndReset(options){
       const button = e.target.closest('[data-bj-bet-delta]');
       if(button) bjAdjustBet(button.dataset.bjBetDelta);
     });
+    bjEls.sidebarBetAdjust?.addEventListener('click', e=>{
+      const button = e.target.closest('[data-bj-bet-delta]');
+      if(button) bjAdjustBet(button.dataset.bjBetDelta);
+    });
+    bjEls.sidebarBet?.addEventListener('input', ()=>{
+      const nextBet = Math.round(Number(bjEls.sidebarBet.value));
+      if(!Number.isFinite(nextBet) || nextBet < 1) return;
+      bj.bet = nextBet;
+      if(bjEls.bet) bjEls.bet.value = nextBet;
+      savePlayerGameSettings(BLACKJACK_GAME_ID);
+    });
+    bjEls.sidebarBet?.addEventListener('change', ()=>{
+      const nextBet = Math.max(1, Math.round(Number(bjEls.sidebarBet.value)||bj.bet||1));
+      bj.bet = nextBet;
+      bjEls.sidebarBet.value = nextBet;
+      if(bjEls.bet) bjEls.bet.value = nextBet;
+      savePlayerGameSettings(BLACKJACK_GAME_ID);
+    });
     bjEls.exitLobby?.addEventListener('click', async ()=>{
       if(!HUHELogic.blackjackCanExitRound(bj.stage, bj.busy)) return;
       await bjEndSession();
@@ -6020,6 +6175,23 @@ async function logSessionAndReset(options){
     });
     ['csm','decks','soft17','das','surrender','blackjackPayout'].forEach(key=>bjEls[key]?.addEventListener('change', bjRender));
     bjEls.showAdvice?.addEventListener('change', bjRender);
+    bjEls.correct?.addEventListener('change', bjRender);
+    bjEls.showCounts?.addEventListener('change', bjRender);
+    bjEls.sidebarShowAdvice?.addEventListener('change', ()=>{
+      if(!bjEls.showAdvice) return;
+      bjEls.showAdvice.checked = bjEls.sidebarShowAdvice.checked;
+      bjEls.showAdvice.dispatchEvent(new Event('change', {bubbles:true}));
+    });
+    bjEls.sidebarCorrect?.addEventListener('change', ()=>{
+      if(!bjEls.correct) return;
+      bjEls.correct.checked = bjEls.sidebarCorrect.checked;
+      bjEls.correct.dispatchEvent(new Event('change', {bubbles:true}));
+    });
+    bjEls.sidebarShowCounts?.addEventListener('change', ()=>{
+      if(!bjEls.showCounts) return;
+      bjEls.showCounts.checked = bjEls.sidebarShowCounts.checked;
+      bjEls.showCounts.dispatchEvent(new Event('change', {bubbles:true}));
+    });
     bjEls.cardStyle?.addEventListener('change', (e)=>{
       setCardStyle(e.target.value);
       try{ localStorage.setItem(CARD_STYLE_KEY, state.cardStyle); }catch(err){}
@@ -6031,7 +6203,7 @@ async function logSessionAndReset(options){
   }
   window.blackjackInit = function(){ bjBind(); bjRender(); };
   window.openBlackjackRules = function(){
-    const version = APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.2';
+    const version = APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.3';
     alert(`Blackjack ${version}\n\nAmerican hole-card blackjack. Dealer peeks for blackjack. A natural blackjack pays according to the selected 3:2 or 6:5 rule. Double is allowed on any first two cards. Split to four hands. Split aces receive one card. Insurance is not offered. Session rule options lock when the session starts.`);
   };
   window.openBlackjackStrategy = function(){
@@ -6239,6 +6411,7 @@ async function logSessionAndReset(options){
       ['0.1', ['Initial Deuces Wild beta release.']]
     ],
     [BLACKJACK_GAME_ID]: [
+      ['1.3', ['Matched house-edge calculations to Wizard of Odds cut-card and continuous-shuffler results.', 'Made live coaching and strategy charts follow the selected deck count, S17/H17, DAS, and surrender rules.']],
       ['1.2', ['Added dealer-to-player chip animations for winnings.', 'Added player-specific setup persistence and redesigned Blackjack player stats around profit, wagers, rounds, and strategy accuracy.']],
       ['1.1', ['Fixed player-stat queries so saved Blackjack sessions appear under the selected player.', 'Moved mobile setup above the table before play and refined the shared game lobby.']],
       ['1.0', ['Promoted Blackjack from beta after rules, settlement, strategy, bankroll, and session-exit hardening.', 'Added compact split-hand presentation, context-aware controls, responsive lobby polish, and automated Blackjack regression coverage.']],
@@ -6371,7 +6544,7 @@ async function logSessionAndReset(options){
   });
 })();
 </script>
-<script src="app.js?v=4.2" defer></script>
+<script src="app.js?v=4.3" defer></script>
 </body>
 </html>
 
