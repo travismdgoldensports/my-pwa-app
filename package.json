@@ -1,5 +1,11 @@
 {
   "scripts": {
-    "test": "node tests/run-tests.js"
+    "test": "node tests/run-tests.js",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
+    "test:all": "npm test && npm run test:visual"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
   }
 }

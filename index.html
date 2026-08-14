@@ -909,8 +909,11 @@
   .bj-hands{display:flex;gap:10px;justify-content:center;align-items:flex-start;width:100%;}
   .bj-hands.has-split{display:grid;grid-template-columns:minmax(124px,148px) minmax(180px,230px) minmax(124px,148px);gap:10px;align-items:center;justify-content:center;}
   .bj-hand-rail{display:grid;gap:5px;align-content:center;min-width:0;}
-  .bj-hand{border:1px solid rgba(207,226,255,.2);border-radius:8px;background:rgba(8,19,38,.42);padding:8px;min-width:188px;display:grid;gap:6px;justify-items:center;}
-  .bj-hand.active{border-color:#25d39b;box-shadow:0 0 0 2px rgba(37,211,155,.25);}
+  .bj-hand{border:1px solid rgba(207,226,255,.2);border-radius:8px;background:rgba(8,19,38,.42);padding:8px;min-width:188px;display:grid;gap:6px;justify-items:center;transition:opacity .16s ease,filter .16s ease,transform .16s ease,box-shadow .16s ease,border-color .16s ease;}
+  .bj-hands.has-split .bj-hand.active{position:relative;z-index:3;border-color:#55f2bd;background:rgba(7,54,44,.88);box-shadow:0 0 0 2px rgba(37,211,155,.42),0 8px 22px rgba(0,0,0,.34),0 0 20px rgba(37,211,155,.2);transform:translateY(-3px);}
+  .bj-hands.has-split .bj-hand.active .bj-cards .card{box-shadow:0 9px 20px rgba(0,0,0,.58);}
+  .bj-hand-rail .bj-hand{opacity:.58;filter:saturate(.72) brightness(.84);}
+  .bj-hand-rail .bj-hand-total{color:#d7e5e1;}
   .bj-hand.done{opacity:.82;}
   .bj-hand.single,.bj-hand.single.active{border-color:transparent;border-radius:0;background:transparent;padding:0;box-shadow:none;}
   .bj-hand.single .bj-hand-number{display:none;}
@@ -938,9 +941,16 @@
   .bj-primary-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
   .bj-primary-slot{display:grid;min-width:0;}
   .bj-primary-slot>button{grid-area:1 / 1;}
-  .bj-conditional-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;}
+  .bj-conditional-actions{display:grid;grid-template-columns:repeat(2,minmax(90px,1fr));gap:8px;}
+  .bj-conditional-actions.allows-surrender{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .bj-conditional-actions:not(.has-actions){display:none;}
+  .bj-action-slot{display:grid;min-width:0;min-height:48px;}
   .bj-play-actions button{min-height:48px;padding:10px 8px;font-size:15px;box-shadow:0 5px 12px rgba(0,0,0,.25);}
-  .bj-play-actions button.danger{background:#3a1a1a;border-color:#5c2a2a;}
+  #bjHit{background:#70272d;border-color:#d75b63;color:#fff;}
+  #bjStand{background:#69551d;border-color:#d5b848;color:#fff8d8;}
+  #bjDouble{background:#244d82;border-color:#5890ff;color:#f4f8ff;}
+  #bjSplit{background:#17603d;border-color:#4cdb79;color:#effff5;}
+  #bjSurrender{background:#583474;border-color:#bd77ee;color:#fbf3ff;}
   .bj-shoe{display:grid;gap:6px;background:#101f37;border:1px solid #315184;border-radius:8px;padding:8px 10px;}
   .bj-shoe-row{display:flex;justify-content:space-between;gap:10px;color:#cfe2ff;font-size:12px;}
   .bj-shoe-track{height:8px;background:repeating-linear-gradient(90deg,#07101f 0,#07101f calc(10% - 2px),#203a63 calc(10% - 2px),#203a63 10%);border:1px solid #203a63;border-radius:999px;overflow:hidden;}
@@ -951,15 +961,22 @@
   .bj-sidebar-bet input{width:92px;box-sizing:border-box;padding:8px 9px;border:1px solid #315184;border-radius:8px;background:#081326;color:#fff;font-size:15px;font-weight:800;text-align:right;}
   .bj-sidebar-bet .bj-bet-adjust{margin:0;}
   .bj-bet-spots{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;}
-  .bj-bet-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;color:#eddcff;font-size:12px;text-shadow:0 1px 1px rgba(0,0,0,.5);}
+  .bj-bet-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;color:#eddcff;font-size:12px;text-shadow:0 1px 1px rgba(0,0,0,.5);}
   .bj-bet-circle{width:62px;height:62px;border-radius:50%;border:3px solid rgba(255,255,255,.35);background:rgba(255,255,255,.06);box-shadow:inset 0 0 10px rgba(0,0,0,.35);position:relative;}
   .bj-bet-circle::after{content:"";position:absolute;inset:8px;border-radius:50%;border:2px dashed rgba(255,255,255,.35);opacity:.7;}
+  .bj-table-bet-label{position:absolute;left:calc(50% + 39px);bottom:44px;z-index:100;padding:4px 7px;border:1px solid rgba(226,190,96,.42);border-radius:999px;background:rgba(8,19,38,.9);color:#fff2c7;font-size:11px;font-weight:900;line-height:1;letter-spacing:.15px;white-space:nowrap;text-shadow:0 1px 2px #000;}
   .bj-bet-anchor{position:absolute;top:0;width:62px;height:62px;pointer-events:none;}
   .bj-double-bet-anchor{right:52px;}
   .bj-split-bet-anchor{left:0;}
   .bj-seat-pot-player{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:120px;height:40px;z-index:1;}
   .bj-seat-pot-dealer{position:absolute;left:50%;top:8px;transform:translateX(-50%);width:120px;height:40px;z-index:1;}
   .bj-pot{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:120px;height:40px;z-index:1;}
+  .bj-result-flash{position:absolute;left:50%;bottom:88px;z-index:8;transform:translateX(-50%);min-width:112px;padding:5px 10px;border:1px solid currentColor;border-radius:999px;background:rgba(8,19,38,.94);font-size:12px;font-weight:950;line-height:1;text-align:center;letter-spacing:.35px;white-space:nowrap;pointer-events:none;box-shadow:0 5px 14px rgba(0,0,0,.38);animation:bjResultFlashIn .2s ease both;}
+  .bj-result-flash[hidden]{display:none;}
+  .bj-result-flash[data-tone="win"]{color:#65efb5;background:rgba(7,55,42,.96);}
+  .bj-result-flash[data-tone="loss"]{color:#ff8d92;background:rgba(67,20,25,.96);}
+  .bj-result-flash[data-tone="push"]{color:#a9c8ff;background:rgba(21,43,77,.96);}
+  @keyframes bjResultFlashIn{from{opacity:0;transform:translate(-50%,5px) scale(.96)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
   .bj-chart-wrap{min-height:170px;background:#07101f;border:1px solid #203a63;border-radius:8px;padding:10px;}
   #bjChart{display:block;width:100%;height:170px;}
   .bj-strategy-box{max-width:920px!important;}
@@ -993,6 +1010,7 @@
     .bj-screen.session-started .bj-sidebar-bet{grid-column:2;}
     .bj-screen.session-started .bj-log-detail{grid-column:1 / -1;}
     .bj-screen:not(.session-started) .mobile-setup-intro{display:block;}
+    .bj-screen.session-started .bj-conditional-actions:not(.has-actions){display:grid;}
     .bj-table{min-height:440px;}
   }
   @media(max-width:640px){
@@ -1010,16 +1028,17 @@
     .bj-screen.session-started .bj-shoe{grid-column:1;grid-row:auto;}
     .bj-screen.session-started .bj-sidebar-bet{grid-column:1;}
     .bj-panel h2,.bj-table-wrap h2{font-size:22px;line-height:1.1;}
-    .bj-table{min-height:400px;border-radius:14px;}
+    .bj-table{min-height:370px;border-radius:14px 14px 50% 50% / 14px 14px 22% 22%;}
     .bj-table::before{font-size:18px;}
     .bj-lane{left:8px;right:8px;}
     .bj-lane.player{bottom:88px;}
     .bj-cards{--card-w:58px;--card-h:82px;--card-br:7px;--bj-card-overlap:39px;min-height:86px;}
     .bj-hand{min-width:128px;padding:6px;}
     .bj-hands{gap:6px;}
-    .bj-hands.has-split{grid-template-columns:minmax(76px,88px) minmax(128px,150px) minmax(76px,88px);gap:5px;}
+    .bj-hands.has-split{grid-template-columns:minmax(54px,72px) minmax(118px,150px) minmax(54px,72px);gap:3px;width:100%;}
     .bj-hand-rail{gap:4px;}
-    .bj-hand.compact{padding:4px;grid-template-columns:1fr;gap:4px;justify-items:center;}
+    .bj-hands.has-split>.bj-hand:not(.compact){min-width:0;width:100%;box-sizing:border-box;}
+    .bj-hand.compact{width:100%;box-sizing:border-box;padding:4px 2px;grid-template-columns:1fr;gap:3px;justify-items:center;}
     .bj-hand.compact .bj-cards{--card-w:28px;--card-h:40px;--card-br:4px;--bj-card-overlap:21px;min-height:40px;justify-content:center;}
     .bj-hand.compact .card .index,
     .bj-hand.compact .card .index.wide,
@@ -1036,11 +1055,13 @@
     .bj-stat strong{font-size:16px;}
     .bj-bet-spots{bottom:14px;}
     .bj-bet-circle{width:48px;height:48px;}
+    .bj-table-bet-label{left:calc(50% + 30px);bottom:29px;padding:4px 6px;font-size:10px;}
     .bj-bet-anchor{width:48px;height:48px;}
     .bj-double-bet-anchor{right:42px;}
     .bj-chart-wrap{min-height:118px;padding:8px;}
     #bjChart{height:118px;}
     .bj-advice{width:100%;border-radius:10px;padding:8px 10px;font-size:12px;}
+    .bj-result-flash{bottom:64px;}
     .bj-play-actions button{min-height:48px;font-size:14px;}
   }
   .stats-modal-inner{ position:absolute; inset:12px; bottom:auto; max-height:calc(90vh - 48px); overflow:auto; border:1px solid #24365d; border-radius:14px; background:#0c172a; padding:8px; display:flex; flex-direction:column; gap:10px; }
@@ -1088,7 +1109,7 @@
         <span>
           <span class="lobby-game-name">Blackjack</span>
           <span class="lobby-game-meta">Blackjack trainer with configurable rules, basic strategy, shoe tracking, and chip settlement.</span>
-          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v1.3</span>
+          <span class="lobby-game-version" id="bjLobbyVersionText">Blackjack v1.4</span>
         </span>
         <span class="lobby-game-status">Ready</span>
         <span class="lobby-game-actions">
@@ -1904,6 +1925,8 @@
           <div id="bjDoubleBetCircle" class="bj-bet-anchor bj-double-bet-anchor" aria-hidden="true"></div>
           <div id="bjSplitBetCircle" class="bj-bet-anchor bj-split-bet-anchor" aria-hidden="true"></div>
         </div>
+        <span id="bjTableBetLabel" class="bj-table-bet-label">Bet $10</span>
+        <div id="bjResultFlash" class="bj-result-flash" role="status" aria-live="polite" hidden></div>
         <div id="bjPotPlayer" class="bj-seat-pot-player"></div>
       </div>
       <div id="bjAdvice" class="bj-advice">Basic strategy appears after the deal.</div>
@@ -1915,10 +1938,10 @@
           </div>
           <button id="bjStand" type="button" class="secondary">Stand</button>
         </div>
-        <div id="bjConditionalActions" class="bj-conditional-actions" hidden>
-          <button id="bjDouble" type="button" class="secondary" hidden>Double</button>
-          <button id="bjSplit" type="button" class="secondary" hidden>Split</button>
-          <button id="bjSurrender" type="button" class="danger" hidden>Surrender</button>
+        <div id="bjConditionalActions" class="bj-conditional-actions">
+          <div class="bj-action-slot"><button id="bjDouble" type="button" class="secondary" hidden>Double</button></div>
+          <div class="bj-action-slot"><button id="bjSplit" type="button" class="secondary" hidden>Split</button></div>
+          <div id="bjSurrenderSlot" class="bj-action-slot" hidden><button id="bjSurrender" type="button" class="danger" hidden>Surrender</button></div>
         </div>
       </div>
       <div class="vp-main-bottom bj-session-content">
@@ -1970,8 +1993,8 @@
   </div>
 </div>
 
-<script src="app-config.js?v=4.3"></script>
-<script src="game-logic.js?v=4.3"></script>
+<script src="app-config.js?v=4.4"></script>
+<script src="game-logic.js?v=4.4"></script>
 <script>
 const APP_CONFIG = window.HUHEAppConfig || {};
 const APP_STORAGE = APP_CONFIG.storage || {};
@@ -5444,7 +5467,7 @@ async function logSessionAndReset(options){
     dealer:[], hands:[], activeHand:0,
     handsPlayed:0, wins:0, losses:0, pushes:0, followed:0, decisions:0,
     totalBet:0, sessionStart:null, history:[500], lastResult:'$0', outcome:null,
-    betChips:{main:[], double:[], split:[]}
+    betChips:{main:[], double:[], split:[]}, resultFlashTimer:null
   };
 
   function bjMoney(v){
@@ -5452,6 +5475,24 @@ async function logSessionAndReset(options){
     const abs = Math.abs(n);
     const text = abs % 1 ? abs.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : Math.round(abs).toLocaleString('en-US');
     return `${n<0?'$(':'$'}${text}${n<0?')':''}`;
+  }
+  function bjHideResultFlash(){
+    if(bj.resultFlashTimer){ clearTimeout(bj.resultFlashTimer); bj.resultFlashTimer = null; }
+    if(bjEls.resultFlash){ bjEls.resultFlash.hidden = true; bjEls.resultFlash.textContent = ''; }
+  }
+  function bjShowResultFlash(net, label){
+    if(!bjEls.resultFlash) return;
+    bjHideResultFlash();
+    const tone = net > 0 ? 'win' : net < 0 ? 'loss' : 'push';
+    const amount = bjMoney(Math.abs(net));
+    bjEls.resultFlash.dataset.tone = tone;
+    bjEls.resultFlash.textContent = net > 0 ? `WIN +${amount}` : net < 0 ? `LOSS −${amount}` : 'PUSH $0';
+    bjEls.resultFlash.setAttribute('aria-label', `${label || 'Round complete'}. ${bjEls.resultFlash.textContent}`);
+    bjEls.resultFlash.hidden = false;
+    bj.resultFlashTimer = setTimeout(()=>{
+      if(bjEls.resultFlash) bjEls.resultFlash.hidden = true;
+      bj.resultFlashTimer = null;
+    }, 2200);
   }
   function bjRank(c){ return HUHELogic.blackjackRank(c); }
   function bjIsAce(c){ return bjRank(c) === 12; }
@@ -5722,6 +5763,7 @@ async function logSessionAndReset(options){
     bjUpdateHouseEdge();
     document.getElementById('blackjackScreen')?.classList.toggle('session-started', bj.started);
     if(bjEls.bank) bjEls.bank.textContent = bjMoney(bj.bank);
+    if(bjEls.tableBetLabel) bjEls.tableBetLabel.textContent = `Bet ${bjMoney(bj.bet)}`;
     if(bjEls.profit) bjEls.profit.textContent = bjMoney(bj.bank - bj.startBank);
     if(bjEls.handsStat) bjEls.handsStat.textContent = String(bj.handsPlayed);
     if(bjEls.record) bjEls.record.textContent = `${bj.wins}-${bj.losses}-${bj.pushes}`;
@@ -5745,7 +5787,11 @@ async function logSessionAndReset(options){
     if(bjEls.doubleBtn){ bjEls.doubleBtn.hidden = !canDouble; bjEls.doubleBtn.disabled = bj.busy || !canDouble; }
     if(bjEls.split){ bjEls.split.hidden = !canSplit; bjEls.split.disabled = bj.busy || !canSplit; }
     if(bjEls.surrenderBtn){ bjEls.surrenderBtn.hidden = !canSurrender; bjEls.surrenderBtn.disabled = bj.busy || !canSurrender; }
-    if(bjEls.conditionalActions) bjEls.conditionalActions.hidden = !(canDouble || canSplit || canSurrender);
+    if(bjEls.conditionalActions){
+      bjEls.conditionalActions.classList.toggle('has-actions', canDouble || canSplit || canSurrender);
+      bjEls.conditionalActions.classList.toggle('allows-surrender', !!bj.rules?.surrender);
+    }
+    if(bjEls.surrenderSlot) bjEls.surrenderSlot.hidden = !bj.rules?.surrender;
     if(bjEls.startSession) bjEls.startSession.disabled = bj.busy || bj.started;
     const canExitRound = HUHELogic.blackjackCanExitRound(bj.stage, bj.busy);
     if(bjEls.endSession){
@@ -5777,6 +5823,7 @@ async function logSessionAndReset(options){
   }
   function bjStartSession(){
     if(bj.busy || bj.started) return;
+    bjHideResultFlash();
     bjReadInputs();
     bj.rules = bjReadRules();
     savePlayerGameSettings(BLACKJACK_GAME_ID);
@@ -5804,6 +5851,7 @@ async function logSessionAndReset(options){
     bj.stage = 'complete';
     bjLog(`${label}. Net ${bjMoney(net)}. Bankroll ${bjMoney(bj.bank)}.`);
     bjRender();
+    bjShowResultFlash(net, label);
   }
   async function bjInitialBlackjackCheck(){
     const outcome = HUHELogic.blackjackNaturalOutcome(bj.hands[0], bj.dealer, bj.bet, bj.rules?.blackjackPayout);
@@ -5818,6 +5866,7 @@ async function logSessionAndReset(options){
     bj.handsPlayed++;
     bj.history.push(bj.bank);
     bj.lastResult = bjMoney(net);
+    bj.outcome = {net, label};
     bj.stage = 'complete';
     bj.hands[0].result = label;
     bjLog(`${label}. Net ${bjMoney(net)}. Bankroll ${bjMoney(bj.bank)}.`);
@@ -5828,6 +5877,7 @@ async function logSessionAndReset(options){
     bj.betChips.main.length = 0;
     bj.busy = false;
     bjRender();
+    bjShowResultFlash(net, label);
     return true;
   }
   async function bjDeal(){
@@ -5835,6 +5885,7 @@ async function logSessionAndReset(options){
     if(!bj.started) bjStartSession();
     bjReadInputs();
     if(!HUHELogic.blackjackCanPlaceBet(bj.bank, bj.bet)){ bjLog('Not enough bankroll for the selected bet.'); return; }
+    bjHideResultFlash();
     bj.busy = true;
     bjRender();
     try{
@@ -5987,6 +6038,8 @@ async function logSessionAndReset(options){
     if(totalNet > 0) bj.wins++; else if(totalNet < 0) bj.losses++; else bj.pushes++;
     bj.history.push(bj.bank);
     bj.lastResult = bjMoney(totalNet);
+    const resultLabel = bj.hands.length === 1 ? bj.hands[0].result : 'Split-hand round complete';
+    bj.outcome = {net:totalNet, label:resultLabel};
     bj.stage = 'complete';
     bjLog(`${labels.join('; ')}. Net ${bjMoney(totalNet)}. Bankroll ${bjMoney(bj.bank)}.`);
     const target = totalNet < 0 ? bjEls.potDealer : bjEls.potPlayer;
@@ -5997,6 +6050,7 @@ async function logSessionAndReset(options){
     bjClearChips();
     bj.busy = false;
     bjRender();
+    bjShowResultFlash(totalNet, resultLabel);
   }
   async function bjSaveSession(){
     if(!bj.started || !bj.handsPlayed) return;
@@ -6019,12 +6073,13 @@ async function logSessionAndReset(options){
       followed: bj.followed,
       decisions: bj.decisions,
       bestHand: '-',
-      notes: `Blackjack ${APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.3'}. Rules: ${bjRuleLabel(bj.rules)}. House edge estimate ${bjHouseEdge(bj.rules).toFixed(2)}%.`
+      notes: `Blackjack ${APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.4'}. Rules: ${bjRuleLabel(bj.rules)}. House edge estimate ${bjHouseEdge(bj.rules).toFixed(2)}%.`
     };
     try{ await saveSessionSummary(summary); bjLog('Session saved.'); }catch(e){ bjLog('Unable to save session.'); }
   }
   async function bjEndSession(){
     if(!HUHELogic.blackjackCanExitRound(bj.stage, bj.busy)) return;
+    bjHideResultFlash();
     bj.busy = true;
     bjRender();
     try{
@@ -6116,14 +6171,17 @@ async function logSessionAndReset(options){
     bjEls.potDealer = document.getElementById('bjPotDealer');
     bjEls.pot = document.getElementById('bjPot');
     bjEls.mainBetCircle = document.getElementById('bjMainBetCircle');
+    bjEls.tableBetLabel = document.getElementById('bjTableBetLabel');
     bjEls.doubleBetCircle = document.getElementById('bjDoubleBetCircle');
     bjEls.splitBetCircle = document.getElementById('bjSplitBetCircle');
+    bjEls.resultFlash = document.getElementById('bjResultFlash');
     bjEls.deal = document.getElementById('bjDeal');
     bjEls.hit = document.getElementById('bjHit');
     bjEls.stand = document.getElementById('bjStand');
     bjEls.conditionalActions = document.getElementById('bjConditionalActions');
     bjEls.doubleBtn = document.getElementById('bjDouble');
     bjEls.split = document.getElementById('bjSplit');
+    bjEls.surrenderSlot = document.getElementById('bjSurrenderSlot');
     bjEls.surrenderBtn = document.getElementById('bjSurrender');
     bjEls.startSession = document.getElementById('bjStartSession');
     bjEls.endSession = document.getElementById('bjEndSession');
@@ -6203,7 +6261,7 @@ async function logSessionAndReset(options){
   }
   window.blackjackInit = function(){ bjBind(); bjRender(); };
   window.openBlackjackRules = function(){
-    const version = APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.3';
+    const version = APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.4';
     alert(`Blackjack ${version}\n\nAmerican hole-card blackjack. Dealer peeks for blackjack. A natural blackjack pays according to the selected 3:2 or 6:5 rule. Double is allowed on any first two cards. Split to four hands. Split aces receive one card. Insurance is not offered. Session rule options lock when the session starts.`);
   };
   window.openBlackjackStrategy = function(){
@@ -6411,6 +6469,7 @@ async function logSessionAndReset(options){
       ['0.1', ['Initial Deuces Wild beta release.']]
     ],
     [BLACKJACK_GAME_ID]: [
+      ['1.4', ['Redesigned mobile Blackjack play with a curved player rail, a more compact table, stable action rows, and clearer split-hand focus.', 'Added distinct strategy action colors, a live wager label, settlement feedback, and mobile visual regression coverage.']],
       ['1.3', ['Matched house-edge calculations to Wizard of Odds cut-card and continuous-shuffler results.', 'Made live coaching and strategy charts follow the selected deck count, S17/H17, DAS, and surrender rules.']],
       ['1.2', ['Added dealer-to-player chip animations for winnings.', 'Added player-specific setup persistence and redesigned Blackjack player stats around profit, wagers, rounds, and strategy accuracy.']],
       ['1.1', ['Fixed player-stat queries so saved Blackjack sessions appear under the selected player.', 'Moved mobile setup above the table before play and refined the shared game lobby.']],
@@ -6544,7 +6603,7 @@ async function logSessionAndReset(options){
   });
 })();
 </script>
-<script src="app.js?v=4.3" defer></script>
+<script src="app.js?v=4.4" defer></script>
 </body>
 </html>
 

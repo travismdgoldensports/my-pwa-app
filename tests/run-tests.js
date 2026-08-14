@@ -32,15 +32,15 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '4.3');
-  assert.equal(appConfig.cacheVersion, 'v4.3');
+  assert.equal(appConfig.appVersion, '4.4');
+  assert.equal(appConfig.cacheVersion, 'v4.4');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
   assert.equal(appConfig.games[appConfig.currentGameId].version, '2.11');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.5');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
-  assert.equal(appConfig.games.blackjack.version, '1.3');
+  assert.equal(appConfig.games.blackjack.version, '1.4');
   assert.equal(appConfig.games.blackjack.status, undefined);
   assert.equal(appConfig.storage.local.playerGameSettings, 'huhe.playerGameSettings');
   assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.5');
@@ -72,9 +72,10 @@ test('lobby consolidates video poker variants behind one selector', () => {
 });
 
 test('runtime scripts are cache-busted to prevent mixed app versions', () => {
-  assert.match(indexSource, /app-config\.js\?v=4\.3/);
-  assert.match(indexSource, /game-logic\.js\?v=4\.3/);
-  assert.match(indexSource, /app\.js\?v=4\.3/);
+  const escapedVersion = appConfig.appVersion.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  assert.match(indexSource, new RegExp(`app-config\\.js\\?v=${escapedVersion}`));
+  assert.match(indexSource, new RegExp(`game-logic\\.js\\?v=${escapedVersion}`));
+  assert.match(indexSource, new RegExp(`app\\.js\\?v=${escapedVersion}`));
   const workerSource = fs.readFileSync(path.join(__dirname, '..', 'service-worker.js'), 'utf8');
   assert.match(workerSource, /NETWORK_FIRST_ASSETS/);
   assert.match(workerSource, /game-logic\.js/);
