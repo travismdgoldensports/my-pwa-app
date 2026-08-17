@@ -32,15 +32,15 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '4.4');
-  assert.equal(appConfig.cacheVersion, 'v4.4');
+  assert.equal(appConfig.appVersion, '4.21');
+  assert.equal(appConfig.cacheVersion, 'v4.21');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
   assert.equal(appConfig.games[appConfig.currentGameId].version, '2.11');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.5');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
-  assert.equal(appConfig.games.blackjack.version, '1.4');
+  assert.equal(appConfig.games.blackjack.version, '1.21');
   assert.equal(appConfig.games.blackjack.status, undefined);
   assert.equal(appConfig.storage.local.playerGameSettings, 'huhe.playerGameSettings');
   assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.5');
@@ -183,6 +183,140 @@ test('blackjack dealer logic respects S17 and H17', () => {
   assert.equal(logic.blackjackShouldDealerHit(soft17, {soft17:'hit'}), true);
   assert.equal(logic.blackjackShouldDealerHit([card('T','c'), card('6','d')], {soft17:'hit'}), true);
   assert.equal(logic.blackjackShouldDealerHit([card('T','c'), card('7','d')], {soft17:'hit'}), false);
+});
+
+test('blackjack dealer outcome probabilities use visible composition and American peek', () => {
+  const up = card('A','s');
+  const visible = [up, card('8','c'), card('8','d')];
+  const rules = {decks:6, soft17:'hit'};
+  const peeked = logic.blackjackDealerOutcomeProbabilities({dealerUpCard:up, visibleCards:visible, rules, peeked:true});
+  const unpeeked = logic.blackjackDealerOutcomeProbabilities({dealerUpCard:up, visibleCards:visible, rules, peeked:false});
+  assert.ok(Math.abs(Object.values(peeked).reduce((sum,value)=>sum+value,0) - 1) < 1e-12);
+  assert.ok(peeked.bust > 0 && peeked[17] > 0 && peeked[21] > 0);
+  assert.ok(peeked[21] < unpeeked[21]);
+  const oneEight = logic.blackjackDealerOutcomeProbabilities({dealerUpCard:up, visibleCards:visible.slice(0,2), rules, peeked:true});
+  assert.notEqual(peeked[18], oneEight[18]);
+});
+
+test('blackjack initial-decision EV lookup covers compositions and exact supported rules', () => {
+  const rules = {decks:6, soft17:'hit', das:true, surrender:true, blackjackPayout:'3:2'};
+  const eights = {cards:[card('8','c'),card('8','d')], split:false};
+  const pairEv = logic.blackjackInitialDecisionEv(eights,card('T','s'),rules);
+  assert.deepEqual(pairEv, {stand:-0.536853, hit:-0.535361, double:-1.070722, split:-0.475385, surrender:-0.5});
+  const noDas = logic.blackjackInitialDecisionEv(eights,card('T','s'),{...rules,das:false});
+  assert.equal(noDas.split,-0.486276);
+  const mixed = logic.blackjackInitialDecisionEv({cards:[card('A','c'),card('2','d')],split:false},card('A','s'),rules);
+  assert.deepEqual(mixed, {stand:-0.597220, hit:-0.100433, double:-0.584256, surrender:-0.5});
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('T','s'),{...rules,decks:3}),null);
+  assert.equal(logic.blackjackInitialDecisionEv({...eights,split:true},card('T','s'),rules),null);
+  const s17 = {...rules,soft17:'stand'};
+  assert.equal(logic.blackjackInitialEvSupported(s17),true);
+  const s17Pair = logic.blackjackInitialDecisionEv(eights,card('6','s'),s17);
+  assert.deepEqual(s17Pair, {stand:-0.157495, hit:-0.425486, double:-0.850971, split:0.405899, surrender:-0.5});
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('6','s'),{...s17,das:false}).split,0.292983);
+  const eightDeckS17 = {...s17,decks:8};
+  assert.equal(logic.blackjackInitialEvSupported(eightDeckS17),true);
+  assert.deepEqual(logic.blackjackInitialDecisionEv(eights,card('6','s'),eightDeckS17), {
+    stand:-0.156536, hit:-0.426855, double:-0.853711, split:0.406860, surrender:-0.5
+  });
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('6','s'),{...eightDeckS17,das:false}).split,0.294064);
+  const eightDeckH17 = {...rules,decks:8};
+  assert.equal(logic.blackjackInitialEvSupported(eightDeckH17),true);
+  assert.deepEqual(logic.blackjackInitialDecisionEv(eights,card('6','s'),eightDeckH17), {
+    stand:-0.123902, hit:-0.438879, double:-0.877758, split:0.374948, surrender:-0.5
+  });
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('6','s'),{...eightDeckH17,das:false}).split,0.261636);
+  const fourDeckS17 = {...s17,decks:4};
+  assert.equal(logic.blackjackInitialEvSupported(fourDeckS17),true);
+  assert.deepEqual(logic.blackjackInitialDecisionEv(eights,card('6','s'),fourDeckS17), {
+    stand:-0.159434, hit:-0.422727, double:-0.845454, split:0.403949, surrender:-0.5
+  });
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('6','s'),{...fourDeckS17,das:false}).split,0.290792);
+  const fourDeckH17 = {...rules,decks:4};
+  assert.equal(logic.blackjackInitialEvSupported(fourDeckH17),true);
+  assert.deepEqual(logic.blackjackInitialDecisionEv(eights,card('6','s'),fourDeckH17), {
+    stand:-0.126803, hit:-0.434843, double:-0.869686, split:0.371721, surrender:-0.5
+  });
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('6','s'),{...fourDeckH17,das:false}).split,0.257753);
+  const twoDeckS17 = {...s17,decks:2};
+  assert.equal(logic.blackjackInitialEvSupported(twoDeckS17),true);
+  assert.deepEqual(logic.blackjackInitialDecisionEv(eights,card('6','s'),twoDeckS17), {
+    stand:-0.165417, hit:-0.414294, double:-0.828588, split:0.397872, surrender:-0.5
+  });
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('6','s'),{...twoDeckS17,das:false}).split,0.283990);
+  const twoDeckH17 = {...rules,decks:2};
+  assert.equal(logic.blackjackInitialEvSupported(twoDeckH17),true);
+  assert.deepEqual(logic.blackjackInitialDecisionEv(eights,card('6','s'),twoDeckH17), {
+    stand:-0.132803, hit:-0.426598, double:-0.853196, split:0.365032, surrender:-0.5
+  });
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('6','s'),{...twoDeckH17,das:false}).split,0.249727);
+  const oneDeckS17 = {...s17,decks:1};
+  assert.equal(logic.blackjackInitialEvSupported(oneDeckS17),true);
+  assert.deepEqual(logic.blackjackInitialDecisionEv(eights,card('6','s'),oneDeckS17), {
+    stand:-0.178171, hit:-0.396692, double:-0.793384, split:0.385156, surrender:-0.5
+  });
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('6','s'),{...oneDeckS17,das:false}).split,0.269350);
+  const oneDeckH17 = {...rules,decks:1};
+  assert.equal(logic.blackjackInitialEvSupported(oneDeckH17),true);
+  assert.deepEqual(logic.blackjackInitialDecisionEv(eights,card('6','s'),oneDeckH17), {
+    stand:-0.145647, hit:-0.409377, double:-0.818754, split:0.350700, surrender:-0.5
+  });
+  assert.equal(logic.blackjackInitialDecisionEv(eights,card('6','s'),{...oneDeckH17,das:false}).split,0.232605);
+});
+
+test('blackjack coaching UI exposes dealer probabilities and live EV controls', () => {
+  assert.match(indexSource, /\.bj-table\{[^}]*border-radius:14px 14px 50% 50% \/ 14px 14px 22% 22%/);
+  assert.match(indexSource, /id="bjShowDealerProbabilities"/);
+  assert.match(indexSource, /id="bjShowActionEv"/);
+  assert.match(indexSource, /id="bjDealerProbabilities"/);
+  assert.match(indexSource, /const chartMax = Math\.max\([^;]+\) \* 1\.05/);
+  assert.match(indexSource, /const barPercent=Math\.min\(100,\(value\/chartMax\)\*100\)\.toFixed\(1\)/);
+  assert.match(indexSource, /class="bj-dealer-probability-bar" style="--bj-probability:\$\{barPercent\}%"/);
+  assert.match(indexSource, /\.bj-dealer-probability-bar::before\{[^}]*width:var\(--bj-probability,0%\)/);
+  assert.match(indexSource, /Uses this round's face-up cards only/);
+  assert.match(indexSource, /Calculated from this round's face-up cards and current rules/);
+  assert.match(indexSource, /new Worker\('blackjack-ev-worker\.js\?v=/);
+  assert.match(indexSource, /const immediate = HUHELogic\.blackjackInitialDecisionEv/);
+  assert.match(indexSource, /bj\.evWorker\.addEventListener\('error'/);
+  assert.match(indexSource, /bjRunEvFallback/);
+  assert.match(indexSource, /},10000\)/);
+  assert.match(indexSource, /function bjInvalidateActionEvs\(\)/);
+  assert.match(indexSource, /bjTrackDecision\(finalAction\);\s*bjInvalidateActionEvs\(\);\s*if\(finalAction === 'hit'\)/);
+  assert.match(indexSource, /blackjackCanPlaceBet[\s\S]*?bjInvalidateActionEvs\(\);\s*bjHideResultFlash\(\)/);
+  assert.match(indexSource, /const laterDecision = !!\(hand\.split \|\| hand\.cards\.length > 2\)/);
+  assert.match(indexSource, /laterDecision[\s\S]*?HUHELogic\.blackjackActionEvs\(request\.input\)/);
+});
+
+test('blackjack live EV engine matches supplied compositions and supports later decisions', () => {
+  const rules = {decks:6, soft17:'hit', das:true, surrender:true, blackjackPayout:'3:2'};
+  const evaluate = (cards,dealer,extra={}) => {
+    const hand = {cards, status:'active', split:false, splitAces:false, doubled:false, ...extra};
+    return logic.blackjackActionEvs({hand,dealerUpCard:dealer,visibleCards:[dealer,...cards],rules,handCount:1,peeked:true});
+  };
+  const pair = evaluate([card('8','c'),card('8','d')],card('T','s'));
+  assert.ok(Math.abs(pair.stand - (-0.536853)) < 0.000001);
+  assert.ok(Math.abs(pair.hit - (-0.535361)) < 0.000001);
+  assert.ok(Math.abs(pair.double - (-1.070722)) < 0.000001);
+  assert.equal(pair.split,-0.475385);
+  assert.equal(pair.surrender,-0.5);
+  const soft = evaluate([card('A','c'),card('2','d')],card('A','s'));
+  assert.ok(Math.abs(soft.stand - (-0.597220)) < 0.000001);
+  assert.ok(Math.abs(soft.hit - (-0.100433)) < 0.000001);
+  assert.ok(Math.abs(soft.double - (-0.584256)) < 0.000001);
+  const later = evaluate([card('9','c'),card('2','d'),card('5','h')],card('6','s'));
+  assert.deepEqual(Object.keys(later).sort(),['hit','stand']);
+  assert.ok(later.stand > later.hit);
+  const opening = logic.blackjackInitialDecisionEv(
+    {cards:[card('9','c'),card('2','d')],status:'active',split:false},card('6','s'),rules
+  );
+  assert.notEqual(later.stand,opening.stand);
+  assert.notEqual(later.hit,opening.hit);
+  const alternate = logic.blackjackActionEvs({
+    hand:{cards:[card('6','c'),card('5','d')],status:'active',split:false,splitAces:false,doubled:false},
+    dealerUpCard:card('6','s'),visibleCards:[card('6','s'),card('6','c'),card('5','d')],
+    rules:{decks:1,soft17:'stand',das:false,surrender:false,blackjackPayout:'6:5'},handCount:1,peeked:true
+  });
+  assert.ok(alternate.double > alternate.hit);
 });
 
 test('blackjack house edge matches Wizard cut-card and CSM results', () => {

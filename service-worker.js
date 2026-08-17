@@ -1,14 +1,15 @@
 importScripts("app-config.js");
 
-const VERSION = self.HUHEAppConfig?.cacheVersion || "v4.4";
+const VERSION = self.HUHEAppConfig?.cacheVersion || "v4.21";
 const STATIC_CACHE = `golden-table-static-${VERSION}`;
 const HTML_CACHE = `golden-table-html-${VERSION}`;
 const OFFLINE_PAGE = "index.html";
-const NETWORK_FIRST_ASSETS = ["app-config.js", "game-logic.js", "app.js", "manifest.webmanifest"];
+const NETWORK_FIRST_ASSETS = ["app-config.js", "game-logic.js", "blackjack-ev-worker.js", "app.js", "manifest.webmanifest"];
 const ASSETS = [
   "index.html",
   "app-config.js",
   "game-logic.js",
+  "blackjack-ev-worker.js",
   "app.js",
   "manifest.webmanifest",
   "icons/apple-touch-icon-180.png",
