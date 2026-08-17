@@ -949,9 +949,11 @@
   .bj-primary-slot{display:grid;min-width:0;}
   .bj-primary-slot>button{grid-area:1 / 1;}
   .bj-conditional-actions{display:grid;grid-template-columns:repeat(2,minmax(90px,1fr));gap:8px;}
-  .bj-conditional-actions.allows-surrender{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .bj-conditional-actions.has-one-action{grid-template-columns:1fr;}
+  .bj-conditional-actions.has-three-actions{grid-template-columns:repeat(3,minmax(0,1fr));}
   .bj-conditional-actions:not(.has-actions){display:none;}
   .bj-action-slot{display:grid;min-width:0;min-height:48px;}
+  .bj-action-slot[hidden]{display:none;}
   .bj-play-actions button{min-height:48px;padding:10px 8px;font-size:15px;box-shadow:0 5px 12px rgba(0,0,0,.25);}
   .bj-action-ev{display:block;margin-top:2px;font-size:10px;font-weight:800;line-height:1;color:#dceaff;opacity:.88;font-variant-numeric:tabular-nums;}
   #bjHit{background:#70272d;border-color:#d75b63;color:#fff;}
@@ -1018,7 +1020,6 @@
     .bj-screen.session-started .bj-sidebar-bet{grid-column:2;}
     .bj-screen.session-started .bj-log-detail{grid-column:1 / -1;}
     .bj-screen:not(.session-started) .mobile-setup-intro{display:block;}
-    .bj-screen.session-started .bj-conditional-actions:not(.has-actions){display:grid;}
     .bj-table{min-height:440px;}
   }
   @media(max-width:640px){
@@ -1954,8 +1955,8 @@
           <button id="bjStand" type="button" class="secondary">Stand</button>
         </div>
         <div id="bjConditionalActions" class="bj-conditional-actions">
-          <div class="bj-action-slot"><button id="bjDouble" type="button" class="secondary" hidden>Double</button></div>
-          <div class="bj-action-slot"><button id="bjSplit" type="button" class="secondary" hidden>Split</button></div>
+          <div id="bjDoubleSlot" class="bj-action-slot" hidden><button id="bjDouble" type="button" class="secondary" hidden>Double</button></div>
+          <div id="bjSplitSlot" class="bj-action-slot" hidden><button id="bjSplit" type="button" class="secondary" hidden>Split</button></div>
           <div id="bjSurrenderSlot" class="bj-action-slot" hidden><button id="bjSurrender" type="button" class="danger" hidden>Surrender</button></div>
         </div>
       </div>
@@ -2008,8 +2009,8 @@
   </div>
 </div>
 
-<script src="app-config.js?v=4.21"></script>
-<script src="game-logic.js?v=4.21"></script>
+<script src="app-config.js?v=4.22"></script>
+<script src="game-logic.js?v=4.22"></script>
 <script>
 const APP_CONFIG = window.HUHEAppConfig || {};
 const APP_STORAGE = APP_CONFIG.storage || {};
@@ -5707,7 +5708,7 @@ async function logSessionAndReset(options){
   }
   function bjEnsureEvWorker(){
     if(bj.evWorker || bj.evWorkerDisabled || !window.Worker) return bj.evWorker;
-    bj.evWorker = new Worker('blackjack-ev-worker.js?v=4.21');
+    bj.evWorker = new Worker('blackjack-ev-worker.js?v=4.22');
     bj.evWorker.addEventListener('message',event=>{
       const {id,key,values,error} = event.data || {};
       if(id !== bj.evRequestId || key !== bj.evKey) return;
@@ -5942,17 +5943,21 @@ async function logSessionAndReset(options){
     const canDouble = !!playerTurn && bjCanDouble(active);
     const canSplit = !!playerTurn && bjCanSplit(active);
     const canSurrender = !!playerTurn && bjCanSurrender(active);
+    const conditionalActionCount = [canDouble, canSplit, canSurrender].filter(Boolean).length;
     if(bjEls.deal){ bjEls.deal.hidden = !showDeal; bjEls.deal.disabled = bj.busy || !showDeal; }
     if(bjEls.hit){ bjEls.hit.hidden = showDeal; bjEls.hit.disabled = bj.busy || !playerTurn; }
     if(bjEls.stand) bjEls.stand.disabled = bj.busy || !playerTurn;
     if(bjEls.doubleBtn){ bjEls.doubleBtn.hidden = !canDouble; bjEls.doubleBtn.disabled = bj.busy || !canDouble; }
     if(bjEls.split){ bjEls.split.hidden = !canSplit; bjEls.split.disabled = bj.busy || !canSplit; }
     if(bjEls.surrenderBtn){ bjEls.surrenderBtn.hidden = !canSurrender; bjEls.surrenderBtn.disabled = bj.busy || !canSurrender; }
+    if(bjEls.doubleSlot) bjEls.doubleSlot.hidden = !canDouble;
+    if(bjEls.splitSlot) bjEls.splitSlot.hidden = !canSplit;
+    if(bjEls.surrenderSlot) bjEls.surrenderSlot.hidden = !canSurrender;
     if(bjEls.conditionalActions){
-      bjEls.conditionalActions.classList.toggle('has-actions', canDouble || canSplit || canSurrender);
-      bjEls.conditionalActions.classList.toggle('allows-surrender', !!bj.rules?.surrender);
+      bjEls.conditionalActions.classList.toggle('has-actions', conditionalActionCount > 0);
+      bjEls.conditionalActions.classList.toggle('has-one-action', conditionalActionCount === 1);
+      bjEls.conditionalActions.classList.toggle('has-three-actions', conditionalActionCount === 3);
     }
-    if(bjEls.surrenderSlot) bjEls.surrenderSlot.hidden = !bj.rules?.surrender;
     if(bjEls.startSession) bjEls.startSession.disabled = bj.busy || bj.started;
     const canExitRound = HUHELogic.blackjackCanExitRound(bj.stage, bj.busy);
     if(bjEls.endSession){
@@ -6350,7 +6355,9 @@ async function logSessionAndReset(options){
     bjEls.hit = document.getElementById('bjHit');
     bjEls.stand = document.getElementById('bjStand');
     bjEls.conditionalActions = document.getElementById('bjConditionalActions');
+    bjEls.doubleSlot = document.getElementById('bjDoubleSlot');
     bjEls.doubleBtn = document.getElementById('bjDouble');
+    bjEls.splitSlot = document.getElementById('bjSplitSlot');
     bjEls.split = document.getElementById('bjSplit');
     bjEls.surrenderSlot = document.getElementById('bjSurrenderSlot');
     bjEls.surrenderBtn = document.getElementById('bjSurrender');
@@ -6444,7 +6451,7 @@ async function logSessionAndReset(options){
   }
   window.blackjackInit = function(){ bjBind(); bjRender(); };
   window.openBlackjackRules = function(){
-    const version = APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.21';
+    const version = APP_CONFIG.games?.[BLACKJACK_GAME_ID]?.version || '1.22';
     alert(`Blackjack ${version}\n\nAmerican hole-card blackjack. Dealer peeks for blackjack. A natural blackjack pays according to the selected 3:2 or 6:5 rule. Double is allowed on any first two cards. Split to four hands. Split aces receive one card. Insurance is not offered. Session rule options lock when the session starts.`);
   };
   window.openBlackjackStrategy = function(){
@@ -6652,6 +6659,7 @@ async function logSessionAndReset(options){
       ['0.1', ['Initial Deuces Wild beta release.']]
     ],
     [BLACKJACK_GAME_ID]: [
+      ['1.22', ['Removed empty Blackjack action slots and sized the conditional-action row to its visible plays.']],
       ['1.21', ['Scaled dealer-outcome bars to the largest current probability with slight headroom, removing unused chart range.']],
       ['1.20', ['Added horizontal probability bars to the dealer-outcome coaching bubble for faster visual comparison.']],
       ['1.19', ['Extended the curved mobile Blackjack table rail to tablet and desktop layouts.']],
@@ -6803,7 +6811,7 @@ async function logSessionAndReset(options){
   });
 })();
 </script>
-<script src="app.js?v=4.21" defer></script>
+<script src="app.js?v=4.22" defer></script>
 </body>
 </html>
 

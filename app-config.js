@@ -5,7 +5,7 @@
     root.HUHEAppConfig = factory();
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function(){
-  const APP_VERSION = '4.21';
+  const APP_VERSION = '4.22';
   const CURRENT_GAME_ID = 'heads-up-hold-em';
   const VIDEO_POKER_GAME_ID = 'video-poker-jacks-or-better';
   const DEUCES_WILD_GAME_ID = 'video-poker-deuces-wild';
@@ -40,7 +40,7 @@
       [BLACKJACK_GAME_ID]: {
         id: BLACKJACK_GAME_ID,
         name: 'Blackjack',
-        version: '1.21',
+        version: '1.22',
         sessionSchemaVersion: 1
       }
     },

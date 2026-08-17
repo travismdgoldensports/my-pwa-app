@@ -32,15 +32,15 @@ test('hand evaluator classifies a royal flush', () => {
 });
 
 test('app config exposes game metadata and normalizes saved session summaries', () => {
-  assert.equal(appConfig.appVersion, '4.21');
-  assert.equal(appConfig.cacheVersion, 'v4.21');
+  assert.equal(appConfig.appVersion, '4.22');
+  assert.equal(appConfig.cacheVersion, 'v4.22');
   assert.equal(appConfig.appName, 'Golden Table Games');
   assert.equal(appConfig.currentGameId, 'heads-up-hold-em');
   assert.ok(appConfig.games[appConfig.currentGameId]);
   assert.equal(appConfig.games[appConfig.currentGameId].version, '2.11');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].version, '0.5');
   assert.equal(appConfig.games['video-poker-jacks-or-better'].status, 'beta');
-  assert.equal(appConfig.games.blackjack.version, '1.21');
+  assert.equal(appConfig.games.blackjack.version, '1.22');
   assert.equal(appConfig.games.blackjack.status, undefined);
   assert.equal(appConfig.storage.local.playerGameSettings, 'huhe.playerGameSettings');
   assert.equal(appConfig.games['video-poker-deuces-wild'].version, '0.5');
@@ -285,6 +285,12 @@ test('blackjack coaching UI exposes dealer probabilities and live EV controls', 
   assert.match(indexSource, /blackjackCanPlaceBet[\s\S]*?bjInvalidateActionEvs\(\);\s*bjHideResultFlash\(\)/);
   assert.match(indexSource, /const laterDecision = !!\(hand\.split \|\| hand\.cards\.length > 2\)/);
   assert.match(indexSource, /laterDecision[\s\S]*?HUHELogic\.blackjackActionEvs\(request\.input\)/);
+  assert.match(indexSource, /\.bj-action-slot\[hidden\]\{display:none;\}/);
+  assert.match(indexSource, /const conditionalActionCount = \[canDouble, canSplit, canSurrender\]\.filter\(Boolean\)\.length/);
+  assert.match(indexSource, /bjEls\.doubleSlot\.hidden = !canDouble/);
+  assert.match(indexSource, /bjEls\.splitSlot\.hidden = !canSplit/);
+  assert.match(indexSource, /bjEls\.surrenderSlot\.hidden = !canSurrender/);
+  assert.doesNotMatch(indexSource, /\.bj-screen\.session-started \.bj-conditional-actions:not\(\.has-actions\)\{display:grid;\}/);
 });
 
 test('blackjack live EV engine matches supplied compositions and supports later decisions', () => {
